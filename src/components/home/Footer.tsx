@@ -6,7 +6,7 @@ import '@fortawesome/fontawesome-free/css/all.css';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="bg-gray-600 shadow-md text-left py-14 px-8 text-white text-sm">
+    <footer className="bg-gray-600 shadow-md text-left py-12 px-8 text-white text-sm">
       <div className="flex flex-col sm:flex-row justify-between flex-wrap">
 
         {/* Footer Left */}
@@ -49,7 +49,7 @@ const Footer: React.FC = () => {
         {/* Footer Right */}
         <div className="sm:w-1/5">
           <p className="text-gray-300 mb-4 leading-6">
-            <span className="text-white font-bold block mb-2">عن الشركة</span>
+            <span className="text-white text-right font-bold block mb-2">عن الشركة</span>
             نقدم منصتنا كجسر متقدم يجمع بين الباحثين عن وظائف وأرباب العمل. في قلب مهمتنا، نسعى لتوفير فرص مهنية متميزة ولبناء جسور قوية تؤدي إلى مستقبل واعد. انضموا إلينا في رحلة اكتشاف الفرص وبناء مسارات وظيفية ناجحة.
           </p>
           <div className="flex space-x-2">

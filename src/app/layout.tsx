@@ -1,7 +1,7 @@
 // src/app/layout.tsx
 import React, { FC } from 'react';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
+import Navbar from '../components/home/Navbar';
+import Footer from '../components/home/Footer';
 import "../styles/globals.css";
 import '../lib/fontawesome';
 
