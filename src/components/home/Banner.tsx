@@ -1,12 +1,30 @@
+'use client'
 import React from 'react';
 import Image from 'next/image';
+import { useMediaQuery } from '@/hooks/useMediaQuery';
+
 
 const Banner: React.FC = () => {
+    // Check if the screen is phone size (≤480px) or tablet size (≤750px)
+    const isSmallest = useMediaQuery('(max-width: 450px)');
+    const isPhone = useMediaQuery('(max-width: 640px)');
+    const isTablet = useMediaQuery('(max-width: 1024px)');
+  
+    // Determine which image to load based on screen size
+    let imageSrc = '/images/avatar-girl.jpg'; // Default: desktop
+    if (isSmallest) {
+      imageSrc = '/images/avatar_girl_smallest.JPG'; // For smallest phones
+    } else if (isPhone) {
+      imageSrc = '/images/avatar_girl_phone.JPG'; // For phones
+    } else if (isTablet) {
+      imageSrc = '/images/avatar_girl_700.JPG'; // For tablets (≤750px)
+    } 
   return (
+    
     <div className="relative h-[500px] w-full">
       {/* Background Image */}
       <Image
-        src="/images/avatar-girl.jpg"
+        src={imageSrc}
         alt="Banner background"
         fill
         priority

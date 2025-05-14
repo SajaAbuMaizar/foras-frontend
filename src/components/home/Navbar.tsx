@@ -2,6 +2,8 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
+import SignUpModal from './SignUpModal';
+import SignInModal from './SignInModal';
 
 interface NavbarProps {
     isAuthenticated: boolean;
@@ -14,6 +16,10 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName }) 
 
     const toggleMenu = () => setIsOpen(!isOpen);
 
+    const [showSignUpModal, setShowSignUpModal] = useState(false);
+
+    const [isSignInOpen, setIsSignInOpen] = useState(false);
+
     return (
         <header dir="rtl" className="absolute z-[99999] w-full h-20 bg-transparent transition-all">
             <nav className="px-4 lg:px-10 py-4 flex items-center justify-between">
@@ -22,7 +28,7 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName }) 
                     {isOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
 
-                <div className={` lg:flex flex-col lg:flex-row items-center w-1/3 lg:w-full lg:static absolute top-20 left-2 bg-white shadow-lg lg:shadow-none lg:bg-transparent overflow-hidden transition-all duration-1000 ease-in-out ${isOpen ? 'max-h-[1000px]' : 'max-h-0'}`}>
+                <div className={`flex-col items-center w-1/3 lg:w-full absolute top-20 left-2 lg:static bg-white lg:bg-transparent shadow-lg lg:shadow-none overflow-hidden transition-all duration-500 ease-in-out ${isOpen ? 'max-h-[1000px]' : 'max-h-0'} lg:max-h-none lg:flex lg:flex-row`}>
                     <ul className="flex flex-col lg:flex-row w-full text-center lg:text-right">
                         {isAuthenticated ? (
                             <>
@@ -66,19 +72,24 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName }) 
                                 <li>
                                     <button
                                         className="bg-blue-600 text-white rounded px-4 py-2 m-1"
-                                        onClick={() => console.log('Open signup modal')}
+                                        onClick={() => {
+                                            setIsOpen(false); // close mobile nav
+                                            setShowSignUpModal(true); // open modal
+                                        }}
                                     >
                                         اشتراك
                                     </button>
                                 </li>
+
                                 <li>
                                     <button
                                         className="bg-gray-600 text-white rounded px-4 py-2 m-1"
-                                        onClick={() => console.log('Open signin modal')}
+                                        onClick={() => setIsSignInOpen(true)}
                                     >
                                         تسجيل دخول
                                     </button>
                                 </li>
+
                             </>
                         )}
                         <li className="mx-[15px]">
@@ -100,7 +111,7 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName }) 
                         </li>
                         {!isAuthenticated && (
                             <li>
-                                <Link href="/employer/signin" className="absolute left-10 bg-[#41ae9d] text-white py-4 px-8 rounded-full font-medium">
+                                <Link href="/employer/signin" className="static lg:absolute left-10 bg-[#41ae9d] text-white py-4 px-8 rounded-full font-medium">
                                     نشر وظيفة
                                 </Link>
                             </li>
@@ -109,6 +120,9 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName }) 
                     </ul>
                 </div>
             </nav>
+            <SignUpModal isOpen={showSignUpModal} onClose={() => setShowSignUpModal(false)} />
+            <SignInModal isOpen={isSignInOpen} onClose={() => setIsSignInOpen(false)} />
+
         </header>
     );
 };

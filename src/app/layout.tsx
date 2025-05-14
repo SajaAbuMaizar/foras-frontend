@@ -1,5 +1,6 @@
 // src/app/layout.tsx
 import React, { FC } from 'react';
+import { Toaster } from 'react-hot-toast';
 import Navbar from '../components/home/Navbar';
 import Footer from '../components/home/Footer';
 import "../styles/globals.css";
@@ -27,6 +28,7 @@ const PublicLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
 
         <Footer />
+        <Toaster />
       </body>
     </html>
   );
