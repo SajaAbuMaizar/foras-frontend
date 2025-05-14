@@ -22,7 +22,7 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName }) 
                     {isOpen ? <X size={24} /> : <Menu size={24} />}
                 </button>
 
-                <div className={`lg:flex flex-col lg:flex-row items-center w-full lg:static absolute top-20 right-2 transition-all duration-300 bg-white shadow-lg lg:shadow-none lg:bg-transparent ${isOpen ? 'flex' : 'hidden'}`}>
+                <div className={` lg:flex flex-col lg:flex-row items-center w-1/3 lg:w-full lg:static absolute top-20 left-2 bg-white shadow-lg lg:shadow-none lg:bg-transparent overflow-hidden transition-all duration-1000 ease-in-out ${isOpen ? 'max-h-[1000px]' : 'max-h-0'}`}>
                     <ul className="flex flex-col lg:flex-row w-full text-center lg:text-right">
                         {isAuthenticated ? (
                             <>
