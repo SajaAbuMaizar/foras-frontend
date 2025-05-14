@@ -5,6 +5,7 @@ import Footer from '../components/home/Footer';
 import "../styles/globals.css";
 import '../lib/fontawesome';
 
+
 const PublicLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
   // Replace these with actual authentication checks
   const isAuthenticated = false;  // Replace with your logic
@@ -12,8 +13,9 @@ const PublicLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
   const userName = '';  // Replace with actual username if authenticated
 
   return (
-    <html lang="en">
-      <body className="flex flex-col min-h-screen antialiased">
+    <html lang="ar">
+      
+      <body className="font-poppin flex flex-col min-h-screen antialiased">
         <Navbar
           isAuthenticated={isAuthenticated}
           userType={userType}

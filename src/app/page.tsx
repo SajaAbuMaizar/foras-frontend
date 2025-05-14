@@ -1,10 +1,11 @@
 import Banner from '../components/home/Banner';
+import EmployerCarousel from '@/components/home/EmployerCarousel';
 
 export default function Home() {
   return (
     <main className="min-h-screen">
       <Banner / >
-      
+      < EmployerCarousel logos={[]} />
     </main>
   );
 }

@@ -8,9 +8,10 @@ const config: Config = {
     './src/**/*.{js,ts,jsx,tsx}', // <-- this is important if you're using /src
   ],
   theme: {
-    extend: {},
+
   },
   plugins: [],
+  
 }
 
 export default config
