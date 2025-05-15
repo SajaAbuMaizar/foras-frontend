@@ -1,10 +1,10 @@
 // src/app/layout.tsx
 import React, { FC } from 'react';
 import { Toaster } from 'react-hot-toast';
-import Navbar from '../components/home/Navbar';
-import Footer from '../components/home/Footer';
-import "../styles/globals.css";
-import '../lib/fontawesome';
+import Navbar from '@/components/home/Navbar';
+import Footer from '@/components/home/Footer';
+import "@/styles/globals.css";
+import '@/lib/fontawesome';
 
 
 const PublicLayout: FC<{ children: React.ReactNode }> = ({ children }) => {

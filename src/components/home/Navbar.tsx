@@ -126,7 +126,7 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName }) 
                             </Link>
                         </li>
                         <li>
-                            <Link href="/contact" className={`nav-link px-4 py-4 font-medium block lg:flex ${scrolled ? 'text-black' : 'text-white'}`}>
+                            <Link href="/contact-us" className={`nav-link px-4 py-4 font-medium block lg:flex ${scrolled ? 'text-black' : 'text-white'}`}>
                                 تواصل معنا
                             </Link>
                         </li>
