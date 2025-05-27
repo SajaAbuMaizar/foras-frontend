@@ -5,13 +5,14 @@ import { Menu, X } from 'lucide-react';
 import SignUpModal from './SignUpModal';
 import SignInModal from './SignInModal';
 
-interface NavbarProps {
+type NavbarProps = {
     isAuthenticated: boolean;
-    userType: 'user' | 'employer' | 'admin' | null;
-    userName?: string;
-}
+    userType: string | null;
+    userName: string;
+    variant?: 'default' | 'transparent';
+};
 
-const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName }) => {
+const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName, variant = 'default' }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [showSignUpModal, setShowSignUpModal] = useState(false);
     const [isSignInOpen, setIsSignInOpen] = useState(false);
@@ -28,13 +29,18 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName }) 
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+  const baseClasses =
+    'fixed top-0 z-[99999] w-full h-20 transition-all duration-300';
+
+  const backgroundClass =
+    variant === 'transparent'
+      ? scrolled
+        ? 'lg:bg-white lg:shadow-md'
+        : 'bg-transparent'
+      : 'bg-[rgba(35,35,35,0.9)] backdrop-blur-sm text-white shadow-md';
+
     return (
-        <header
-            dir="rtl"
-            className={`fixed top-0 z-[99999] w-full h-20 transition-all duration-300 ${
-                scrolled ? 'lg:bg-white lg:shadow-md' : 'bg-transparent'
-            }`}
-        >
+        <header dir="rtl" className={`${baseClasses} ${backgroundClass}`}>
             <nav className="px-4 lg:px-10 py-4 flex items-center justify-between">
                 <h1 className={`text-3xl lg:text-4xl font-extrabold ml-16 transition-colors ${scrolled ? 'text-black' : 'text-white'}`}>
                     فُـرَص
@@ -47,11 +53,9 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName }) 
                 </button>
 
                 <div
-                    className={`flex-col items-center w-1/3 lg:w-full absolute top-20 left-2 lg:static ${
-                        scrolled ? 'bg-white' : 'bg-white lg:bg-transparent'
-                    } shadow-lg lg:shadow-none overflow-hidden transition-all duration-500 ease-in-out ${
-                        isOpen ? 'max-h-[1000px]' : 'max-h-0'
-                    } lg:max-h-none lg:flex lg:flex-row`}
+                    className={`flex-col items-center w-1/3 lg:w-full absolute top-20 left-2 lg:static ${scrolled ? 'bg-white' : 'bg-white lg:bg-transparent'
+                        } shadow-lg lg:shadow-none overflow-hidden transition-all duration-500 ease-in-out ${isOpen ? 'max-h-[1000px]' : 'max-h-0'
+                        } lg:max-h-none lg:flex lg:flex-row`}
                 >
                     <ul className="flex flex-col lg:flex-row w-full text-center lg:text-right">
                         {isAuthenticated ? (
@@ -66,8 +70,8 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName }) 
                                                 userType === 'user'
                                                     ? '/user/profile'
                                                     : userType === 'employer'
-                                                    ? '/employer/dashboard'
-                                                    : '/admin/dashboard'
+                                                        ? '/employer/dashboard'
+                                                        : '/admin/dashboard'
                                             }
                                             className="block px-4 py-2 hover:bg-gray-100 text-black"
                                         >

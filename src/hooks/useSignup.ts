@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import toast from "react-hot-toast";
+import { useEffect, useState } from "react";
 
 const signupSchema = z.object({
   name: z.string().regex(/^[A-Za-z\s]+$/, "اسم صالح فقط (حروف انجليزية)"),
@@ -15,6 +16,16 @@ const signupSchema = z.object({
 
 export type SignupFormData = z.infer<typeof signupSchema>;
 
+interface City {
+  code: string;
+  nameAr: string;
+}
+
+interface Gender {
+  value: string;
+  labelAr: string;
+}
+
 export function useSignup() {
   const {
     register,
@@ -25,6 +36,31 @@ export function useSignup() {
     resolver: zodResolver(signupSchema),
   });
 
+  const [cities, setCities] = useState<City[]>([]);
+  const [genders, setGenders] = useState<Gender[]>([]);
+
+  // Fetch cities and genders
+  useEffect(() => {
+    async function fetchOptions() {
+      try {
+        const [citiesRes, gendersRes] = await Promise.all([
+          fetch("/api/cities"),
+          fetch("/api/enums/genders"),
+        ]);
+
+        const citiesData = await citiesRes.json();
+        const gendersData = await gendersRes.json();
+
+        setCities(citiesData);
+        setGenders(gendersData);
+      } catch (error) {
+        toast.error("فشل تحميل البيانات");
+      }
+    }
+
+    fetchOptions();
+  }, []);
+
   const onSubmit = async (data: SignupFormData) => {
     if (data.password !== data.confirmPassword) {
       toast.error("كلمة المرور غير متطابقة");
@@ -32,23 +68,25 @@ export function useSignup() {
     }
 
     try {
-      const res = await fetch("/user/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(data as any),
-      });
+    const res = await fetch("/api/user/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
 
-      if (res.ok) {
-        toast.success("تم إنشاء الحساب بنجاح!");
-        window.location.href = "/";
-      } else if (res.status === 400) {
-        toast.error("رقم الهاتف مستخدم بالفعل");
-      } else {
-        toast.error("حدث خطأ أثناء التسجيل");
-      }
-    } catch {
-      toast.error("تعذر الاتصال بالخادم");
+    const response = await res.json();
+    
+    if (!res.ok) {
+      throw new Error(response.message || "حدث خطأ أثناء التسجيل");
     }
+
+    toast.success(response.message || "تم إنشاء الحساب بنجاح!");
+    window.location.href = "/";
+  } catch (error) {
+    toast.error(
+      (error instanceof Error ? error.message : "تعذر الاتصال بالخادم")
+    );
+  }
   };
 
   return {
@@ -57,5 +95,7 @@ export function useSignup() {
     onSubmit,
     errors,
     watch,
+    cities,
+    genders,
   };
 }

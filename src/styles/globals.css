@@ -6,5 +6,12 @@ body {
     font-family: 'Poppins', serif;
   }
 
+  /* Optional: custom scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
 
-.input { @apply w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300 text-right; }
+::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 4px;
+}

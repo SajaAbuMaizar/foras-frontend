@@ -10,7 +10,7 @@ interface SignupModalProps {
 }
 
 const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
-  const { register, handleSubmit, onSubmit, errors, watch } = useSignup();
+  const { register, handleSubmit, onSubmit, errors, cities, genders } = useSignup();
 
   if (!isOpen) return null; // If the modal is not open, don't render anything
 
@@ -31,15 +31,17 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
 
           <select {...register('city')} className="w-full border p-2 rounded">
             <option value="">اختر المكان</option>
-            <option value="jerusalem">القدس</option>
-            <option value="hebron">الخليل</option>
+            {cities.map(city => (
+              <option key={city.code} value={city.code}>{city.nameAr}</option>
+            ))}
           </select>
           {errors.city && <p className="text-red-500 text-sm">{errors.city.message}</p>}
 
           <select {...register('gender')} className="w-full border p-2 rounded">
             <option value="">اختر الجنس</option>
-            <option value="false">ذكر</option>
-            <option value="true">أنثى</option>
+            {genders.map(gender => (
+              <option key={gender.value} value={gender.value}>{gender.labelAr}</option>
+            ))}
           </select>
           {errors.gender && <p className="text-red-500 text-sm">{errors.gender.message}</p>}
 

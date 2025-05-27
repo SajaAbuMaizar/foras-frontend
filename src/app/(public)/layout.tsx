@@ -10,9 +10,10 @@ import '@/lib/fontawesome';
 const PublicLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
   // Replace these with actual authentication checks
   const isAuthenticated = false;  // Replace with your logic
-  const userType: 'user' | 'employer' | 'admin' | null = null;  // Replace with actual user type
+  const userType: 'user' | 'employer' | 'admin' | null = null;
   const userName = '';  // Replace with actual username if authenticated
-
+  const variant = "transparent";
+  
   return (
     <html lang="ar">
       
@@ -21,6 +22,7 @@ const PublicLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
           isAuthenticated={isAuthenticated}
           userType={userType}
           userName={userName}
+          variant={variant}
         />
 
         <div className="flex-grow">
