@@ -5,30 +5,24 @@ import Navbar from '@/components/home/Navbar';
 import Footer from '@/components/home/Footer';
 import "@/styles/globals.css";
 import '@/lib/fontawesome';
+import { AuthProvider } from '@/context/AuthContext';
+
 
 
 const PublicLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Replace these with actual authentication checks
-  const isAuthenticated = false;  // Replace with your logic
-  const userType: 'user' | 'employer' | 'admin' | null = null;
-  const userName = '';  // Replace with actual username if authenticated
   const variant = "transparent";
   
   return (
     <html lang="ar">
       
       <body className="font-poppin flex flex-col min-h-screen antialiased">
-        <Navbar
-          isAuthenticated={isAuthenticated}
-          userType={userType}
-          userName={userName}
-          variant={variant}
-        />
-
+        <AuthProvider>
+        <Navbar variant={variant} />
+    
         <div className="flex-grow">
           {children} {/* Next.js will inject the correct page here */}
         </div>
-
+        </AuthProvider>
         <Footer />
         <Toaster />
       </body>

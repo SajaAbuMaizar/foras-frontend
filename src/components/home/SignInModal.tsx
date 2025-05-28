@@ -10,7 +10,7 @@ interface SigninModalProps {
 }
 
 const SigninModal: React.FC<SigninModalProps> = ({ isOpen, onClose }) => {
-  const { register, handleSubmit, onSubmit, errors } = useSignin();
+  const { register, handleSubmit, onSubmit, errors } = useSignin(onClose);
 
   if (!isOpen) return null; // If the modal is not open, don't render anything
 

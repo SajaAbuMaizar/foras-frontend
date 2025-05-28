@@ -4,19 +4,19 @@ import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import SignUpModal from './SignUpModal';
 import SignInModal from './SignInModal';
+import { useAuth } from '@/context/AuthContext';
 
 type NavbarProps = {
-    isAuthenticated: boolean;
-    userType: string | null;
-    userName: string;
     variant?: 'default' | 'transparent';
 };
 
-const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName, variant = 'default' }) => {
+const Navbar: React.FC<NavbarProps> = ({ variant = 'default' }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [showSignUpModal, setShowSignUpModal] = useState(false);
     const [isSignInOpen, setIsSignInOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
+    const { user, signout } = useAuth();
+
 
     const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -29,15 +29,15 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName, va
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-  const baseClasses =
-    'fixed top-0 z-[99999] w-full h-20 transition-all duration-300';
+    const baseClasses =
+        'fixed top-0 z-[99999] w-full h-20 transition-all duration-300';
 
-  const backgroundClass =
-    variant === 'transparent'
-      ? scrolled
-        ? 'lg:bg-white lg:shadow-md'
-        : 'bg-transparent'
-      : 'bg-[rgba(35,35,35,0.9)] backdrop-blur-sm text-white shadow-md';
+    const backgroundClass =
+        variant === 'transparent'
+            ? scrolled
+                ? 'lg:bg-white lg:shadow-md'
+                : 'bg-transparent'
+            : 'bg-[rgba(35,35,35,0.9)] backdrop-blur-sm text-white shadow-md';
 
     return (
         <header dir="rtl" className={`${baseClasses} ${backgroundClass}`}>
@@ -58,18 +58,18 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName, va
                         } lg:max-h-none lg:flex lg:flex-row`}
                 >
                     <ul className="flex flex-col lg:flex-row w-full text-center lg:text-right">
-                        {isAuthenticated ? (
+                        {user ? (
                             <>
                                 <li className="relative group">
                                     <button className={`nav-link px-4 py-2 font-medium ${scrolled ? 'text-black' : 'text-white'} lg:text-white`}>
-                                        مرحباً، {userName || 'المستخدم'}
+                                        مرحباً، {user.name || 'المستخدم'}
                                     </button>
                                     <div className="absolute hidden group-hover:block right-0 mt-2 w-48 bg-white border rounded shadow-md">
                                         <Link
                                             href={
-                                                userType === 'user'
+                                                user.type === 'user'
                                                     ? '/user/profile'
-                                                    : userType === 'employer'
+                                                    : user.type === 'employer'
                                                         ? '/employer/dashboard'
                                                         : '/admin/dashboard'
                                             }
@@ -77,7 +77,7 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName, va
                                         >
                                             لوحة التحكم
                                         </Link>
-                                        {userType === 'user' && (
+                                        {user.type === 'user' && (
                                             <>
                                                 <Link href="/user/applied-jobs" className="block px-4 py-2 hover:bg-gray-100 text-black">
                                                     الوظائف المتقدم لها
@@ -88,11 +88,6 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName, va
                                             </>
                                         )}
                                     </div>
-                                </li>
-                                <li className="bg-[#BC2009] m-1 rounded">
-                                    <Link href="/signoff" className="block px-4 py-2 text-white font-medium">
-                                        تسجيل الخروج
-                                    </Link>
                                 </li>
                             </>
                         ) : (
@@ -120,21 +115,21 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName, va
                             </>
                         )}
                         <li className="mx-[15px]">
-                            <Link href="/" className={`nav-link px-4 py-4 font-medium block lg:flex ${scrolled ? 'text-black' : 'text-white'}`}>
+                            <Link href="/" className={`nav-link px-4 py-4 font-medium block text-black lg:flex ${scrolled ? 'lg:text-black' : 'lg:text-white'}`}>
                                 الصفحة الرئيسية
                             </Link>
                         </li>
                         <li>
-                            <Link href="/about-us" className={`nav-link px-4 py-4 font-medium block lg:flex ${scrolled ? 'text-black' : 'text-white'}`}>
+                            <Link href="/about-us" className={`nav-link px-4 py-4 font-medium block text-black lg:flex ${scrolled ? 'lg:text-black' : 'lg:text-white'}`}>
                                 حولنا
                             </Link>
                         </li>
                         <li>
-                            <Link href="/contact-us" className={`nav-link px-4 py-4 font-medium block lg:flex ${scrolled ? 'text-black' : 'text-white'}`}>
+                            <Link href="/contact-us" className={`nav-link px-4 py-4 font-medium block text-black lg:flex ${scrolled ? 'lg:text-black' : 'lg:text-white'}`}>
                                 تواصل معنا
                             </Link>
                         </li>
-                        {!isAuthenticated && (
+                        {!user ? (
                             <li>
                                 <Link
                                     href="/employer/signin"
@@ -142,6 +137,12 @@ const Navbar: React.FC<NavbarProps> = ({ isAuthenticated, userType, userName, va
                                 >
                                     نشر وظيفة
                                 </Link>
+                            </li>
+                        ) : (
+                            <li>
+                                <button onClick={signout} className="static lg:absolute bg-[#BC2009] left-10 text-white py-4 px-8 rounded-full font-medium">
+                                    تسجيل الخروج
+                                </button>
                             </li>
                         )}
                     </ul>

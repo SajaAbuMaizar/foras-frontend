@@ -13,12 +13,7 @@ export default function EmployerLayout({ children }: { children: ReactNode }) {
     return (
         <html dir="rtl" lang="ar">
             <body className="font-poppin flex flex-col min-h-screen antialiased">
-                <Navbar
-                    isAuthenticated={isAuthenticated}
-                    userType={userType}
-                    userName={userName}
-                    variant={variant}
-                />
+                <Navbar variant={variant} />
 
                 <div className="flex min-h-screen">
                     {/* Main Content */}
