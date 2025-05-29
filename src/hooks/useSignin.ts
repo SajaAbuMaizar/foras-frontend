@@ -2,7 +2,7 @@
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/auth/AuthHooks';
 
 const schema = yup.object({
   phone: yup.string().required('رقم الهاتف مطلوب'),

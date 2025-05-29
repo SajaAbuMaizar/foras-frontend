@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 import SignUpModal from './SignUpModal';
 import SignInModal from './SignInModal';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/context/auth/AuthHooks';
 
 type NavbarProps = {
     variant?: 'default' | 'transparent';
@@ -64,7 +64,7 @@ const Navbar: React.FC<NavbarProps> = ({ variant = 'default' }) => {
                                     <button className={`nav-link px-4 py-2 font-medium ${scrolled ? 'text-black' : 'text-white'} lg:text-white`}>
                                         مرحباً، {user.name || 'المستخدم'}
                                     </button>
-                                    <div className="absolute hidden group-hover:block right-0 mt-2 w-48 bg-white border rounded shadow-md">
+                                    <div className="hidden group-hover:block right-0 mt-2 w-48 bg-white border rounded shadow-md">
                                         <Link
                                             href={
                                                 user.type === 'user'

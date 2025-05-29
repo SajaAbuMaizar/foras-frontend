@@ -5,7 +5,7 @@ import Navbar from '@/components/home/Navbar';
 import Footer from '@/components/home/Footer';
 import "@/styles/globals.css";
 import '@/lib/fontawesome';
-import { AuthProvider } from '@/context/AuthContext';
+import { AuthProvider } from '@/context/auth/AuthContext';
 
 
 

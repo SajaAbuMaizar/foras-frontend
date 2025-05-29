@@ -1,9 +1,9 @@
-// hooks/useSignup.ts
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/context/auth/AuthHooks";
 
 const signupSchema = z.object({
   name: z.string().regex(/^[A-Za-z\s]+$/, "اسم صالح فقط (حروف انجليزية)"),
@@ -26,20 +26,21 @@ interface Gender {
   labelAr: string;
 }
 
-export function useSignup() {
+export function useSignup(onClose: () => void) {
   const {
     register,
     handleSubmit,
     formState: { errors },
     watch,
+    reset,
   } = useForm<SignupFormData>({
     resolver: zodResolver(signupSchema),
   });
 
   const [cities, setCities] = useState<City[]>([]);
   const [genders, setGenders] = useState<Gender[]>([]);
+  const { signin } = useAuth();
 
-  // Fetch cities and genders
   useEffect(() => {
     async function fetchOptions() {
       try {
@@ -47,7 +48,6 @@ export function useSignup() {
           fetch("/api/cities"),
           fetch("/api/enums/genders"),
         ]);
-
         const citiesData = await citiesRes.json();
         const gendersData = await gendersRes.json();
 
@@ -68,25 +68,33 @@ export function useSignup() {
     }
 
     try {
-    const res = await fetch("/api/user/signup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
+      const res = await fetch("/api/user/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
 
-    const response = await res.json();
-    
-    if (!res.ok) {
-      throw new Error(response.message || "حدث خطأ أثناء التسجيل");
+      const response = await res.json();
+
+      if (!res.ok) {
+        throw new Error(response.message || "حدث خطأ أثناء التسجيل");
+      }
+
+      toast.success(response.message || "تم إنشاء الحساب بنجاح!");
+
+      // ✅ Automatically sign in after signup
+      const loggedIn = await signin(data.phone, data.password);
+
+      if (loggedIn) {
+        reset();         // ✅ Clear form
+        onClose();       // ✅ Close modal
+      }
+
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "تعذر الاتصال بالخادم"
+      );
     }
-
-    toast.success(response.message || "تم إنشاء الحساب بنجاح!");
-    window.location.href = "/";
-  } catch (error) {
-    toast.error(
-      (error instanceof Error ? error.message : "تعذر الاتصال بالخادم")
-    );
-  }
   };
 
   return {

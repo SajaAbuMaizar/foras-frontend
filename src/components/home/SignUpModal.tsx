@@ -10,7 +10,7 @@ interface SignupModalProps {
 }
 
 const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
-  const { register, handleSubmit, onSubmit, errors, cities, genders } = useSignup();
+  const { register, handleSubmit, onSubmit, errors, cities, genders } = useSignup(onClose);
 
   if (!isOpen) return null; // If the modal is not open, don't render anything
 
