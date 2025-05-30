@@ -2,7 +2,7 @@
 import React, { createContext, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { AuthContextType, User } from './types';
-import { fetchUser, loginUser, logoutUser } from './authService';
+import { fetchUser, loginCandidate, logout } from './authService';
 import LoadingSpinner from '@/components/LoadingSpinner';
 
 export const AuthContext = createContext<AuthContextType>({} as any);
@@ -17,21 +17,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 setUser(data ? { name: data.name, type: data.type } : null);
             } catch (error) {
                 setUser(null);
-                console.error('Error fetching user:', error);
+                console.error('Error fetching candidate:', error);
             }
         };
 
         init();
     }, []);
 
-    const signin = async (phone: string, password: string): Promise<boolean> => {
+    const candidateSignin = async (phone: string, password: string): Promise<boolean> => {
         try {
-            const res = await loginUser(phone, password);
+            const res = await loginCandidate(phone, password);
             const data = res.data as { name?: string; type?: string; message?: string };
 
             if (res.status === 200) {
                 toast.success('تم تسجيل الدخول بنجاح');
-                setUser({ name: data.name || '', type: data.type || 'user' });
+                setUser({ name: data.name || '', type: data.type || 'candidate' });
                 return true;
             }
 
@@ -50,7 +50,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const signout = async () => {
         try {
-            await logoutUser();
+            await logout();
             setUser(null);
             window.location.href = '/'; // redirect to homepage
         } catch (err) {
@@ -59,7 +59,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
 
     return (
-        <AuthContext.Provider value={{ user, signin, signout }}>
+        <AuthContext.Provider value={{ user, candidateSignin, signout }}>
             {user === undefined ? <LoadingSpinner /> : children}
         </AuthContext.Provider>
     );

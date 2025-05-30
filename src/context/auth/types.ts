@@ -5,6 +5,6 @@ export interface User {
 
 export interface AuthContextType {
   user: User | null | undefined;
-  signin: (phone: string, password: string) => Promise<boolean>;
+  candidateSignin: (phone: string, password: string) => Promise<boolean>;
   signout: () => Promise<void>;
 }

@@ -2,7 +2,7 @@
 
 import { useSignin } from '@/hooks/useEmployerSignin';
 import LabeledInput from "@/components/ui/LabeledInput";
-import { MdEmail, MdLock } from "react-icons/md";
+import { MdPhone, MdLock } from "react-icons/md";
 
 export default function SigninForm() {
     const { register, handleSubmit, onSubmit, errors } = useSignin();
@@ -10,11 +10,11 @@ export default function SigninForm() {
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <LabeledInput
-                type="email"
+                type="phone"
                 placeholder="البريد الإلكتروني"
-                {...register("email")}
-                icon={MdEmail}
-                error={errors.email}
+                {...register("phone")}
+                icon={MdPhone}
+                error={errors.phone}
             />
 
             <LabeledInput

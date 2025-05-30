@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 
 const signinSchema = z.object({
-  email: z.string().email("بريد إلكتروني غير صالح"),
+  phone: z.string().min(10, "يجب أن يتكون رقم الهاتف من 10 أرقام على الأقل"),
   password: z.string().min(1, "كلمة المرور مطلوبة"),
 });
 
@@ -23,15 +23,20 @@ export const useSignin = () => {
 
   const onSubmit = async (data: SigninFormData) => {
     try {
-      const res = await fetch("/employer/signin", {
+      const res = await fetch("/api/auth/employer/signin", {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams(data as any),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
       });
 
       if (res.ok) {
         toast.success("تم تسجيل الدخول بنجاح!");
-        window.location.href = "/";
+        window.location.href = "/employer/dashboard"; // Redirect to dashboard
+      } else if (res.status === 401) {
+        const response = await res.json();
+        toast.error(response.message || "بيانات الاعتماد غير صحيحة");  
       } else {
         toast.error("فشل تسجيل الدخول");
       }

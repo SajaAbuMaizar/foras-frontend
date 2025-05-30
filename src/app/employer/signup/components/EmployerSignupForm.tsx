@@ -27,15 +27,36 @@ const EmployerSignupForm = () => {
     const onSubmit = async (data: FormData) => {
         setIsLoading(true);
         try {
-            // בדיקה במקום קריאת API
-            await new Promise((res) => setTimeout(res, 1000));
-            toast.success("تم الاشتراك بنجاح!");
+            const res = await fetch("/api/auth/employer/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(data),
+            });
+
+            const response = await res.json();
+
+            if (!res.ok) {
+                // Handle specific error cases
+                if (res.status === 400 && response.message.includes("الهاتف")) {
+                    // Phone number related error
+                    throw new Error("رقم الهاتف مستخدم بالفعل، الرجاء استخدام رقم آخر");
+                }
+                throw new Error(response.message || "حدث خطأ أثناء التسجيل");
+            }
+
+            toast.success(response.message || "تم الاشتراك بنجاح!");
+
         } catch (error) {
-            toast.error("فشل الاشتراك");
+            toast.error(
+                error instanceof Error ? error.message : "تعذر الاتصال بالخادم"
+            );
         } finally {
             setIsLoading(false);
         }
     };
+
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 w-full text-right">

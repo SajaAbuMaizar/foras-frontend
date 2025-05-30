@@ -10,7 +10,7 @@ const schema = yup.object({
 });
 
 export const useSignin = (onClose: () => void) => {
-  const { signin } = useAuth();
+  const { candidateSignin } = useAuth();
 
   const {
     register,
@@ -21,7 +21,7 @@ export const useSignin = (onClose: () => void) => {
   });
 
   const onSubmit = async (data: any) => {
-    const success = await signin(data.phone, data.password);
+    const success = await candidateSignin(data.phone, data.password);
     if (success) onClose();
   };
 

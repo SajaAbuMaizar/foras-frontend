@@ -1,18 +1,16 @@
 import { ReactNode } from "react";
 import { Sidebar } from "./components/layouts/Sidebar";
 import Navbar from '@/components/home/Navbar';
+import { AuthProvider } from '@/context/auth/AuthContext';
 import "@/styles/globals.css";
 import '@/lib/fontawesome';
 
 export default function EmployerLayout({ children }: { children: ReactNode }) {
-    // Replace these with actual authentication checks
-    const isAuthenticated = false;  // Replace with your logic
-    const userType: 'user' | 'employer' | 'admin' | null = null;
-    const userName = '';  // Replace with actual username if authenticated
     const variant="default";
     return (
         <html dir="rtl" lang="ar">
             <body className="font-poppin flex flex-col min-h-screen antialiased">
+                <AuthProvider>
                 <Navbar variant={variant} />
 
                 <div className="flex min-h-screen">
@@ -24,6 +22,7 @@ export default function EmployerLayout({ children }: { children: ReactNode }) {
                     {/* Sidebar */}
                     <Sidebar />
                 </div>
+                </AuthProvider>
             </body>
         </html>
     );

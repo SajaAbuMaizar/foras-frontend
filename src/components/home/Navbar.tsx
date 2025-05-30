@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
-import SignUpModal from './SignUpModal';
-import SignInModal from './SignInModal';
+import SignUpModal from './CandidateSignUpModal';
+import SignInModal from './CandidateSignInModal';
 import { useAuth } from '@/context/auth/AuthHooks';
 
 type NavbarProps = {
@@ -67,8 +67,8 @@ const Navbar: React.FC<NavbarProps> = ({ variant = 'default' }) => {
                                     <div className="hidden group-hover:block right-0 mt-2 w-48 bg-white border rounded shadow-md">
                                         <Link
                                             href={
-                                                user.type === 'user'
-                                                    ? '/user/profile'
+                                                user.type === 'candidate'
+                                                    ? '/candidate/profile'
                                                     : user.type === 'employer'
                                                         ? '/employer/dashboard'
                                                         : '/admin/dashboard'
@@ -77,12 +77,12 @@ const Navbar: React.FC<NavbarProps> = ({ variant = 'default' }) => {
                                         >
                                             لوحة التحكم
                                         </Link>
-                                        {user.type === 'user' && (
+                                        {user.type === 'candidate' && (
                                             <>
-                                                <Link href="/user/applied-jobs" className="block px-4 py-2 hover:bg-gray-100 text-black">
+                                                <Link href="/candidate/applied-jobs" className="block px-4 py-2 hover:bg-gray-100 text-black">
                                                     الوظائف المتقدم لها
                                                 </Link>
-                                                <Link href="/user/saved-jobs" className="block px-4 py-2 hover:bg-gray-100 text-black">
+                                                <Link href="/candidate/saved-jobs" className="block px-4 py-2 hover:bg-gray-100 text-black">
                                                     الوظائف المحفوظة
                                                 </Link>
                                             </>

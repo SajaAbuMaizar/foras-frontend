@@ -1,5 +1,5 @@
 import Banner from '../../components/home/Banner';
-import EmployerCarousel from '@/app/(public)/components/EmployerCarousel';
+import EmployerCarousel from '@/app/(public)/components/CompanyLogoCarousel';
 
 export default function Home() {
   return (

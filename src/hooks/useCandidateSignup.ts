@@ -39,7 +39,7 @@ export function useSignup(onClose: () => void) {
 
   const [cities, setCities] = useState<City[]>([]);
   const [genders, setGenders] = useState<Gender[]>([]);
-  const { signin } = useAuth();
+  const { candidateSignin } = useAuth();
 
   useEffect(() => {
     async function fetchOptions() {
@@ -68,7 +68,7 @@ export function useSignup(onClose: () => void) {
     }
 
     try {
-      const res = await fetch("/api/user/signup", {
+      const res = await fetch("/api/candidate/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
@@ -83,7 +83,7 @@ export function useSignup(onClose: () => void) {
       toast.success(response.message || "تم إنشاء الحساب بنجاح!");
 
       // ✅ Automatically sign in after signup
-      const loggedIn = await signin(data.phone, data.password);
+      const loggedIn = await candidateSignin(data.phone, data.password);
 
       if (loggedIn) {
         reset();         // ✅ Clear form

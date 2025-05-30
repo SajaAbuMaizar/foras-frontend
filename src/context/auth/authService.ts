@@ -1,7 +1,7 @@
 import { api } from '@/lib/axios';
 
 export const fetchUser = async () => {
-  const res = await api.get('/api/auth/me', {
+  const res = await api.get('/api/me', {
     validateStatus: status => status < 500,
   });
 
@@ -9,10 +9,10 @@ export const fetchUser = async () => {
   return null;
 };
 
-export const loginUser = async (phone: string, password: string) => {
-  return await api.post('/api/auth/login', { phone, password });
+export const loginCandidate = async (phone: string, password: string) => {
+  return await api.post('/api/auth/candidate/login', { phone, password });
 };
 
-export const logoutUser = async () => {
-  return await api.post('/api/auth/logout');
+export const logout = async () => {
+  return await api.post('/api/auth/candidate/logout');
 };

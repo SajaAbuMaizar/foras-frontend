@@ -1,7 +1,7 @@
 // components/SigninModal.tsx
 'use client';
 import React from 'react';
-import { useSignin } from '@/hooks/useSignin';
+import { useSignin } from '@/hooks/useCandidateSignin';
 import { X } from 'lucide-react';
 
 interface SigninModalProps {
