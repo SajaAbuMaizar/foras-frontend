@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { Option } from '@/types/postJobTypes';
 
+
 type SelectFieldProps = {
   id: string;
   name: string;
@@ -18,7 +19,6 @@ export default function SelectField({
   required = false,
 }: SelectFieldProps) {
   useEffect(() => {
-    // Initialize Select2 if available
     if ((window as any).$?.fn?.select2) {
       (window as any).$(`#${id}`).select2({
         theme: 'bootstrap',
@@ -26,7 +26,6 @@ export default function SelectField({
     }
 
     return () => {
-      // Cleanup Select2 when component unmounts
       if ((window as any).$?.fn?.select2) {
         (window as any).$(`#${id}`).select2('destroy');
       }
@@ -43,13 +42,14 @@ export default function SelectField({
         id={id}
         name={name}
         required={required}
+        defaultValue=""
       >
-        <option value="" disabled selected>
+        <option value="" disabled>
           {`Select ${label}`}
         </option>
         {options.map((option) => (
-          <option key={option.value} value={option.value}>
-            {option.label}
+          <option key={option.id} value={option.id}>
+            {option.nameAr}
           </option>
         ))}
       </select>
