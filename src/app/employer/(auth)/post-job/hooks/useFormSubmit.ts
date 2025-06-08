@@ -10,7 +10,7 @@ export const useFormSubmit = (setIsLoading: (loading: boolean) => void) => {
     
     try {
       const formData = new FormData(e.target as HTMLFormElement);
-      const response = await fetch('/api/employer/job-application', {
+      const response = await fetch('/api/job/job-application', {
         method: 'POST',
         body: formData,
         credentials: 'include',

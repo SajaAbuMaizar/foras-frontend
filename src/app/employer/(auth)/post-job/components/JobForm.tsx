@@ -6,7 +6,7 @@ import FormSection from './FormSection';
 import InputField from './InputField';
 import SelectField from './SelectField';
 import MapInput from './MapInput';
-import LoadingOverlay from './LoadingOverlay';
+import LoadingSpinner from '@/components/LoadingSpinner';
 import CheckBoxField from './CheckboxField';
 import { Option } from '@/types/postJobTypes';
 import { fetchCities, fetchIndustries } from '@/lib/api';
@@ -128,7 +128,7 @@ export default function JobForm() {
         </button>
       </form>
 
-      <LoadingOverlay visible={isLoading} />
+    <LoadingSpinner visible={isLoading} message="Submitting your job..." />
     </>
   );
 }
