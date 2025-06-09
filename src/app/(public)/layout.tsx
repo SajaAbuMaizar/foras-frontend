@@ -11,20 +11,27 @@ import { AuthProvider } from '@/context/auth/AuthContext';
 
 const PublicLayout: FC<{ children: React.ReactNode }> = ({ children }) => {
   const variant = "transparent";
-  
+
   return (
     <html lang="ar">
-      
+
       <body className="font-poppin flex flex-col min-h-screen antialiased">
         <AuthProvider>
-        <Navbar variant={variant} />
-    
-        <div className="flex-grow">
-          {children} {/* Next.js will inject the correct page here */}
-        </div>
+          <Navbar variant={variant} />
+
+          <div className="flex-grow">
+            {children} {/* Next.js will inject the correct page here */}
+          </div>
         </AuthProvider>
         <Footer />
-        <Toaster />
+        <Toaster
+          toastOptions={{
+            style: {
+              zIndex: 9999,
+              marginTop: '50px',
+            },
+          }}
+        />
       </body>
     </html>
   );

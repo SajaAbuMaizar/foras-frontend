@@ -1,11 +1,13 @@
 import { api } from '@/lib/axios';
+import { User } from './types';
 
 export const fetchUser = async () => {
   const res = await api.get('/api/me', {
     validateStatus: status => status < 500,
   });
+  console.log('fetchUser response:', res);
 
-  if (res.status === 200) return res.data;
+  if (res.status === 200) return res.data as User;
   return null;
 };
 

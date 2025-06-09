@@ -5,6 +5,8 @@ import { useEffect, useState } from 'react';
 import LogoUploadAlert from './components/LogoUploadAlert';
 import JobListingsTable from './components/JobListingsTable';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import { useAuth } from '@/context/auth/AuthHooks';
+import { isEmployer } from '@/context/auth/types';
 
 type JobListing = {
   id: string;
@@ -26,14 +28,10 @@ type Employer = {
 
 const JobListingsPage = () => {
   const [lang, setLang] = useState<'ar' | 'he'>('ar');
-  const [employer] = useState<Employer>({
-    id: '123',
-    companyLogoUrl: null,
-  });
+  const { user } = useAuth();
   const [jobListings, setJobListings] = useState<JobListing[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Fetch employer data and job listings
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -52,35 +50,22 @@ const JobListingsPage = () => {
     fetchData();
   }, []);
 
-
+  if (!user) {
+    // Optionally: show loading or redirect or null while user is not loaded
+    return <div>Loading...</div>;
+  }
 
   const changeLanguage = (newLang: 'ar' | 'he') => {
     setLang(newLang);
-    // Here you would typically make an API call to update the language preference
   };
 
   const updateAllRecentDates = async (employerId: string) => {
     try {
       setIsLoading(true);
       // API call to update all job dates
-      // await updateAllJobDates(employerId);
       alert(lang === 'ar' ? 'تم تحديث جميع التواريخ بنجاح' : 'כל התאריכים עודכנו בהצלחה');
     } catch (error) {
       console.error('Error updating dates:', error);
-      alert(lang === 'ar' ? 'حدث خطأ أثناء التحديث' : 'אירעה שגיאה בעת העדכון');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const updateRecentDate = async (jobId: string) => {
-    try {
-      setIsLoading(true);
-      // API call to update single job date
-      // await updateJobDate(jobId);
-      alert(lang === 'ar' ? 'تم تحديث التاريخ بنجاح' : 'התאריך עודכן בהצלחה');
-    } catch (error) {
-      console.error('Error updating date:', error);
       alert(lang === 'ar' ? 'حدث خطأ أثناء التحديث' : 'אירעה שגיאה בעת העדכון');
     } finally {
       setIsLoading(false);
@@ -94,7 +79,7 @@ const JobListingsPage = () => {
           <LanguageSwitcher />
         </div>
 
-        {!employer.companyLogoUrl && (
+        {user && isEmployer(user) && !user.companyLogoUrl && (
           <LogoUploadAlert lang={lang} />
         )}
 
@@ -105,7 +90,7 @@ const JobListingsPage = () => {
 
           <div className="text-left mb-6">
             <button
-              onClick={() => updateAllRecentDates(employer.id)}
+              // onClick={() => updateAllRecentDates(user.id)}
               disabled={isLoading}
               className="bg-violet-600 hover:bg-violet-700 text-white font-medium py-2 px-4 rounded shadow-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
@@ -117,12 +102,16 @@ const JobListingsPage = () => {
             jobListings={jobListings}
             lang={lang}
             isLoading={isLoading}
-            onUpdateDate={updateRecentDate}
+            onUpdateDate={(jobId) => {
+              // You can add user check here as well if needed
+              //  updateRecentDate(jobId);
+            }}
           />
         </div>
       </div>
     </div>
   );
 };
+
 
 export default JobListingsPage;

@@ -13,29 +13,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     useEffect(() => {
         const init = async () => {
             try {
-                const data = await fetchUser() as User | null;
-                setUser(data ? { name: data.name, type: data.type } : null);
+                const data = await fetchUser(); // returns User | null
+                setUser(data); // no need to destructure or reconstruct
             } catch (error) {
+                console.error('Error fetching user:', error);
                 setUser(null);
-                console.error('Error fetching candidate:', error);
             }
         };
 
         init();
     }, []);
 
+
     const candidateSignin = async (phone: string, password: string): Promise<boolean> => {
         try {
             const res = await loginCandidate(phone, password);
-            const data = res.data as { name?: string; type?: string; message?: string };
 
             if (res.status === 200) {
+                // Safe to cast as User
+                const data = res.data as User;
                 toast.success('تم تسجيل الدخول بنجاح');
-                setUser({ name: data.name || '', type: data.type || 'candidate' });
+                setUser(data);
                 return true;
+            } else {
+                // For non-200 responses, treat data as error
+                const errorData = res.data as { message?: string };
+                throw new Error(errorData.message || 'بيانات الاعتماد غير صحيحة');
             }
-
-            throw new Error(data?.message || 'بيانات الاعتماد غير صحيحة');
         } catch (err: any) {
             const message =
                 err?.response?.data?.message ||
@@ -45,6 +49,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             return false;
         }
     };
+
 
 
 

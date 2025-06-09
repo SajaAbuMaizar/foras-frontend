@@ -33,9 +33,10 @@ export default function JobCard({ job }: Props) {
           <img src={job.imageUrl} alt="Job" className="w-full h-[180px] object-cover rounded-t-[30px]" />
         </a>
         <div className="relative text-center mt-2 p-3">
-          <a href={`/job/${job.employerId}`}>
-            <img src={job.employerCompanyLogoUrl} alt="Logo" className="w-[50px] h-[50px] absolute right-[18px] top-0 rounded-full shadow-[0_0_0_2px_white,_0_0_0_4px_rgb(0,31,63)]" />
+          <a href={`/jobs/${job.employerId}`}>
+            <img src={job.employerCompanyLogoUrl} alt="Logo" className="w-[50px] h-[50px] object-contain absolute right-[18px] top-0 rounded-full shadow-[0_0_0_2px_white,_0_0_0_4px_rgb(0,31,63)]" />
           </a>
+          
 
           {/* Share Button - kept inside the card */}
           <div className="absolute top-0 left-3">

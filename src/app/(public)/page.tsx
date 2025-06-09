@@ -4,8 +4,10 @@ import Banner from '../../components/home/Banner';
 import EmployerCarousel from '@/app/(public)/components/CompanyLogoCarousel';
 import JobCard from '@/components/JobCard'
 import { fetchJobs } from '@/lib/api';
+import { fetchEmployerLogos } from '@/lib/api';
 
 const jobs = await fetchJobs();
+const logos = await fetchEmployerLogos();
 
 
 export default function Home() {
@@ -13,7 +15,7 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       <Banner / >
-      < EmployerCarousel logos={[]} />
+      < EmployerCarousel logos={logos} />
       <div className="flex flex-wrap -mx-4 justify-center" dir='rtl'>
         {jobs.map(job => (
         <JobCard key={job.id} job={job} />
