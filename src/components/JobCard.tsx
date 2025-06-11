@@ -33,8 +33,8 @@ export default function JobCard({ job }: Props) {
           <img src={job.imageUrl} alt="Job" className="w-full h-[180px] object-cover rounded-t-[30px]" />
         </a>
         <div className="relative text-center mt-2 p-3">
-          <a href={`/jobs/${job.employerId}`}>
-            <img src={job.employerCompanyLogoUrl} alt="Logo" className="w-[50px] h-[50px] object-contain absolute right-[18px] top-0 rounded-full shadow-[0_0_0_2px_white,_0_0_0_4px_rgb(0,31,63)]" />
+          <a href={`/jobs/${job.employer.id}`}>
+            <img src={job.employer.companyLogoUrl} alt="Logo" className="w-[50px] h-[50px] object-contain absolute right-[18px] top-0 rounded-full shadow-[0_0_0_2px_white,_0_0_0_4px_rgb(0,31,63)]" />
           </a>
           
 
@@ -62,7 +62,7 @@ export default function JobCard({ job }: Props) {
           {/* Company */}
           <div className="flex justify-center items-center text-[#1a6692] gap-1">
             <FaUniversity/>
-            <span>{job.employerCompanyName}</span>
+            <span>{job.employer.companyName}</span>
           </div>
 
           {/* Type */}
@@ -115,7 +115,7 @@ export default function JobCard({ job }: Props) {
               </div>
             </div>
           )}
-          {job.hebrewRequired && (
+          {!job.hebrewRequired && (
             <div className="absolute top-4 left-[-1px] top-[80px] bg-blue-600 text-white px-3 py-1 text-sm font-medium shadow-md z-10"
               style={{
                 clipPath: 'polygon(0 0, 100% 0, 95% 50%, 100% 100%, 0 100%)',

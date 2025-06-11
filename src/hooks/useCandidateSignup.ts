@@ -2,7 +2,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
 import { useAuth } from "@/context/auth/AuthHooks";
 
 const signupSchema = z.object({
@@ -16,16 +15,6 @@ const signupSchema = z.object({
 
 export type SignupFormData = z.infer<typeof signupSchema>;
 
-interface City {
-  code: string;
-  nameAr: string;
-}
-
-interface Gender {
-  value: string;
-  labelAr: string;
-}
-
 export function useSignup(onClose: () => void) {
   const {
     register,
@@ -37,29 +26,9 @@ export function useSignup(onClose: () => void) {
     resolver: zodResolver(signupSchema),
   });
 
-  const [cities, setCities] = useState<City[]>([]);
-  const [genders, setGenders] = useState<Gender[]>([]);
+
   const { candidateSignin } = useAuth();
 
-  useEffect(() => {
-    async function fetchOptions() {
-      try {
-        const [citiesRes, gendersRes] = await Promise.all([
-          fetch("/api/cities"),
-          fetch("/api/enums/genders"),
-        ]);
-        const citiesData = await citiesRes.json();
-        const gendersData = await gendersRes.json();
-
-        setCities(citiesData);
-        setGenders(gendersData);
-      } catch (error) {
-        toast.error("فشل تحميل البيانات");
-      }
-    }
-
-    fetchOptions();
-  }, []);
 
   const onSubmit = async (data: SignupFormData) => {
     if (data.password !== data.confirmPassword) {
@@ -103,7 +72,5 @@ export function useSignup(onClose: () => void) {
     onSubmit,
     errors,
     watch,
-    cities,
-    genders,
   };
 }

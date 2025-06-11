@@ -3,6 +3,7 @@
 import React from 'react';
 import { useSignup } from '@/hooks/useCandidateSignup';
 import { X } from 'lucide-react';
+import { useOptions } from '@/context/options/OptionsContext';
 
 interface SignupModalProps {
   isOpen: boolean;
@@ -10,7 +11,8 @@ interface SignupModalProps {
 }
 
 const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
-  const { register, handleSubmit, onSubmit, errors, cities, genders } = useSignup(onClose);
+  const { register, handleSubmit, onSubmit, errors } = useSignup(onClose);
+  const { cities, genders } = useOptions();
 
   if (!isOpen) return null; // If the modal is not open, don't render anything
 
@@ -40,7 +42,7 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
           <select {...register('gender')} className="w-full border p-2 rounded">
             <option value="">اختر الجنس</option>
             {genders.map(gender => (
-              <option key={gender.value} value={gender.value}>{gender.labelAr}</option>
+              <option key={gender.id} value={gender.code}>{gender.nameAr}</option>
             ))}
           </select>
           {errors.gender && <p className="text-red-500 text-sm">{errors.gender.message}</p>}

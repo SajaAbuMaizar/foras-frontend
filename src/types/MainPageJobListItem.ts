@@ -3,9 +3,11 @@ export interface MainPageJobListItem {
   imageUrl: string
   salary: string
   jobTitle: string
-  employerCompanyLogoUrl: string
-  employerCompanyName: string
-  employerId: number
+  employer:{
+    id: number
+    companyName: string
+    companyLogoUrl: string
+  }
   jobDescription: string
   requiredQualifications: string
 

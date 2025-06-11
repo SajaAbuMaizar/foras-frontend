@@ -4,6 +4,7 @@ import { Option } from '../types/postJobTypes';
 import { MainPageJobListItem } from '@/types/MainPageJobListItem'
 import { EmployerJobDetailsItem } from '@/types/EmployerJobDetailsItem';
 import { EmployerLogoUrlItem } from '@/types/EmployerLogoUrlItem';
+import { PaginatedResponse } from '@/types/PaginatedResponseItem';
 
 export async function fetchCities(): Promise<Option[]> {
   try {
@@ -25,16 +26,24 @@ export async function fetchIndustries(): Promise<Option[]> {
   }
 }
 
-// Fetch all jobs for the main page
-export async function fetchJobs(): Promise<MainPageJobListItem[]> {
+export async function fetchGenders(): Promise<Option[]> {
   try {
-    const response = await api.get('/api/job/all');
-    return response.data as MainPageJobListItem[];
+    const response = await api.get("/api/enums/genders");
+    return response.data as Option[];
   } catch (error) {
-    console.error('Error fetching jobs:', error);
+    console.error('Error fetching genders:', error);
     return [];
   }
 }
+
+export async function fetchJobs(page = 0, searchParams?: Record<string, string>): Promise<PaginatedResponse<MainPageJobListItem>> {
+  const params = new URLSearchParams({ ...searchParams, page: page.toString(), size: "9" }).toString();
+  const response = await api.get(`/api/job${searchParams && Object.keys(searchParams).length > 0 ? "/search" : ""}?${params}`);
+  console.log('fetchJobs response:', response.data);
+  return response.data as MainPageJobListItem; // ✅ Return paginated response
+}
+
+
 
 export async function getJobDetails(id: string): Promise<EmployerJobDetailsItem> {
   try {
