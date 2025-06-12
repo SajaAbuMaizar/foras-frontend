@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { MainPageJobListItem } from '@/types/MainPageJobListItem'
 import { FaShekelSign, FaShareAlt, FaWhatsapp, FaFacebook, FaLink, FaUniversity, FaBriefcase, FaCalendar, FaMapMarker, FaRoad, FaBus } from 'react-icons/fa'
+import Image from 'next/image'
 
 interface Props {
   job: MainPageJobListItem
@@ -30,13 +31,20 @@ export default function JobCard({ job }: Props) {
     <div className="text-center p-5 relative"> {/* Added relative here */}
       <div className="shadow-lg w-[333px] rounded-[30px] border border-gray-200 overflow-hidden">
         <a href={`/job-details/${job.id}`}>
-          <img src={job.imageUrl} alt="Job" className="w-full h-[180px] object-cover rounded-t-[30px]" />
-        </a>
+          <div className="w-full h-[180px] relative rounded-t-[30px] overflow-hidden">
+            <Image
+              src={job.imageUrl}
+              alt="Job"
+              fill
+              quality={85}
+              className="object-cover"
+            />
+          </div>        </a>
         <div className="relative text-center mt-2 p-3">
           <a href={`/jobs/${job.employer.id}`}>
             <img src={job.employer.companyLogoUrl} alt="Logo" className="w-[50px] h-[50px] object-contain absolute right-[18px] top-0 rounded-full shadow-[0_0_0_2px_white,_0_0_0_4px_rgb(0,31,63)]" />
           </a>
-          
+
 
           {/* Share Button - kept inside the card */}
           <div className="absolute top-0 left-3">
@@ -61,7 +69,7 @@ export default function JobCard({ job }: Props) {
 
           {/* Company */}
           <div className="flex justify-center items-center text-[#1a6692] gap-1">
-            <FaUniversity/>
+            <FaUniversity />
             <span>{job.employer.companyName}</span>
           </div>
 

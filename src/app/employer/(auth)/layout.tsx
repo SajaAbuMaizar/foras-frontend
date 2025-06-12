@@ -5,6 +5,7 @@ import { AuthProvider } from '@/context/auth/AuthContext';
 import { Toaster } from 'react-hot-toast';
 import "@/styles/globals.css";
 import '@/lib/fontawesome';
+import { OptionsProvider } from "@/context/options/OptionsContext";
 
 export default function EmployerLayout({ children }: { children: ReactNode }) {
     const variant = "default";
@@ -12,8 +13,10 @@ export default function EmployerLayout({ children }: { children: ReactNode }) {
         <html dir="rtl" lang="ar">
             <body className="font-poppin flex flex-col min-h-screen antialiased">
                 <AuthProvider>
+                    <OptionsProvider>
                     <Navbar variant={variant} />
-
+                    
+                    
                     <div className="flex min-h-screen">
                         {/* Main Content */}
                         <main className="flex-1 p-4 bg-gray-50 rtl:pr-64">
@@ -23,7 +26,7 @@ export default function EmployerLayout({ children }: { children: ReactNode }) {
                         {/* Sidebar */}
                         <Sidebar />
                     </div>
-
+                    </OptionsProvider>
                 </AuthProvider>
                 <Toaster containerStyle={{ top: 150, }} />
             </body>

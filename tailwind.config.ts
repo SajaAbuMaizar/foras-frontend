@@ -5,7 +5,7 @@ const config: Config = {
     './app/**/*.{js,ts,jsx,tsx}',
     './pages/**/*.{js,ts,jsx,tsx}',
     './components/**/*.{js,ts,jsx,tsx}',
-    './src/**/*.{js,ts,jsx,tsx}', // <-- this is important if you're using /src
+    './src/**/*.{js,ts,jsx,tsx}',
   ],
   theme: {
 

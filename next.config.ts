@@ -1,7 +1,8 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
-  async rewrites() {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+    async rewrites() {
     return [
       {
         source: "/api/:path*",
@@ -9,6 +10,19 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  images: {
+    domains: ['res.cloudinary.com'],
+    // Optional: if you want to use Cloudinary's image optimization features
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'res.cloudinary.com',
+        pathname: '/**',
+      },
+    ],
+  },
+  // ... other config
 };
 
-export default nextConfig;
+module.exports = nextConfig;
+

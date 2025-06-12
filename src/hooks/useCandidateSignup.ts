@@ -37,7 +37,7 @@ export function useSignup(onClose: () => void) {
     }
 
     try {
-      const res = await fetch("/api/candidate/signup", {
+      const res = await fetch("/api/auth/candidate/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
