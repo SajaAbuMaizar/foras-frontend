@@ -1,72 +1,88 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { FaLock, FaLongArrowAltRight, FaPhone } from 'react-icons/fa';
+import { FaLock, FaPhone } from 'react-icons/fa';
+import { toast } from 'react-hot-toast';
 
-const LoginForm = () => {
-  const [email, setEmail] = useState('');
+const AdminLoginForm = () => {
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      const response = await fetch('/api/auth/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ phone, password }),
+        credentials: 'include',
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Login failed');
+      }
+
+      toast.success('Login successful!');
+      router.push('/');
+    } catch (error: any) {
+      toast.error(error.message || 'An error occurred during login');
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <form action="/admin/login" method="post" className="space-y-6">
-      <h2 className="text-2xl font-bold text-center text-gray-800 pb-6">
-        Member Login
+    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+      <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+        Admin Login
       </h2>
+      
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="relative">
+          <input
+            type="tel"
+            placeholder="Phone Number"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            required
+            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          />
+          <FaPhone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        </div>
 
-      <div className="relative">
-        <input
-          type="phone"
-          name="phone"
-          placeholder="Phome Number"
-          value={email}
-          onChange={e => setEmail(e.target.value)}
-          required
-          className="w-full px-14 py-3 rounded-full bg-gray-200 text-sm text-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
-        />
-        <span className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-500">
-          <FaPhone />
-        </span>
-      </div>
+        <div className="relative">
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          />
+          <FaLock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+        </div>
 
-      <div className="relative">
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          value={password}
-          onChange={e => setPassword(e.target.value)}
-          required
-          className="w-full px-14 py-3 rounded-full bg-gray-200 text-sm text-gray-700 focus:ring-2 focus:ring-green-500 focus:outline-none"
-        />
-        <span className="absolute left-5 top-1/2 transform -translate-y-1/2 text-gray-500">
-          <FaLock />
-        </span>
-      </div>
-
-      <div className="flex justify-center pt-4">
         <button
           type="submit"
-          className="bg-green-500 hover:bg-gray-800 text-white uppercase rounded-full px-6 py-3 w-full transition-all duration-300 font-bold"
+          disabled={isLoading}
+          className={`w-full py-2 px-4 rounded-lg font-medium text-white ${
+            isLoading ? 'bg-gray-400' : 'bg-green-500 hover:bg-green-600'
+          } transition-colors`}
         >
-          Login
+          {isLoading ? 'Logging in...' : 'Login'}
         </button>
-      </div>
-
-      <div className="text-center pt-4 text-sm text-gray-600">
-        <span>Forgot </span>
-        <a href="#" className="text-green-600 hover:text-green-800 underline">
-          Username / Password?
-        </a>
-      </div>
-
-      <div className="text-center pt-12">
-        <a href="#" className="text-gray-700 hover:text-green-600 inline-flex items-center space-x-2">
-          <span>Need Help</span>
-          <FaLongArrowAltRight />
-        </a>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 };
 
-export default LoginForm;
+export default AdminLoginForm;
