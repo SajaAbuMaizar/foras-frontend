@@ -4,7 +4,7 @@ import type { NextRequest } from 'next/server';
 const protectedRoutes = [
   { prefix: '/employer', allowedRoles: ['EMPLOYER'] },
   { prefix: '/candidate', allowedRoles: ['CANDIDATE'] },
-  { prefix: '/admin', allowedRoles: ['ADMIN'] },
+  { prefix: '/admin', allowedRoles: ['ROLE_SUPER_ADMIN'] },
 ];
 
 // These employer routes are public (no auth required)
@@ -13,6 +13,7 @@ const adminPublicPaths = ['/admin/login'];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  console.log('Request URL:', request.url);
 
   // Skip static assets and API
   if (pathname.startsWith('/_next') || pathname.startsWith('/api')) {
@@ -20,7 +21,7 @@ export function middleware(request: NextRequest) {
   }
 
 
-    // Allow public paths (both employer and admin)
+  // Allow public paths (both employer and admin)
   if (employerPublicPaths.includes(pathname) || adminPublicPaths.includes(pathname)) {
     return NextResponse.next();
   }
@@ -33,16 +34,22 @@ export function middleware(request: NextRequest) {
     // No token and trying to access protected route → redirect to login or homepage
     return NextResponse.redirect(new URL('/', request.url));
   }
+  console.log('Matched route:', matched?.prefix);
 
   if (matched && token) {
+    console.log('Token found, validating...');
     try {
       const payload = parseJwt(token);
       const role = payload?.userType || payload?.role;
+      console.log('User role:', role);
 
       // If user role not allowed for this route, redirect unauthorized
       if (!matched.allowedRoles.includes(role)) {
-        return NextResponse.redirect(new URL('/unauthorized', request.url));
+        const unauthorizedUrl = new URL('/unauthorized', request.url);
+        unauthorizedUrl.searchParams.set('role', role); // Pass role to page
+        return NextResponse.redirect(unauthorizedUrl);
       }
+
     } catch {
       // Invalid token, redirect to login
       return NextResponse.redirect(new URL('/', request.url));
