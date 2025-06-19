@@ -1,30 +1,35 @@
-// file: components/home/Banner.tsx
 'use client';
+
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useSearchParams } from 'next/navigation';
 import { useMediaQuery } from '@/hooks/useMediaQuery';
 import { useOptions } from '@/context/options/OptionsContext';
 import toast from 'react-hot-toast';
 
-export default function Banner() {
+type BannerProps = {
+  searchParams: Record<string, string>;
+};
+
+export default function Banner({ searchParams }: BannerProps) {
   const { cities, industries, loading } = useOptions();
-  const queryParams = useSearchParams();
+  const router = useRouter();
+
   const [formState, setFormState] = useState({
     city: 'all',
     industry: 'all',
     hebrewRequired: 'all',
     transportationAvailable: 'all',
   });
+
   const [isSearching, setIsSearching] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
-    const defaults: Record<string, string> = {};
-    for (const [key, val] of queryParams.entries()) defaults[key] = val;
-    setFormState(prev => ({ ...prev, ...defaults }));
-  }, [queryParams]);
+    setFormState(prev => ({
+      ...prev,
+      ...searchParams,
+    }));
+  }, [searchParams]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -34,12 +39,13 @@ export default function Banner() {
     }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSearching(true);
     try {
-      router.push(`/?${new URLSearchParams(formState).toString()}`);
-    } catch (error) {
+      const params = new URLSearchParams(formState).toString();
+      router.push(`/?${params}`);
+    } catch (err) {
       toast.error('حدث خطأ أثناء البحث');
     } finally {
       setIsSearching(false);
@@ -80,9 +86,7 @@ export default function Banner() {
               name="city"
               value={formState.city}
               onChange={handleInputChange}
-              aria-label="اختر منطقة"
               className="w-[200px] p-3 xl:w-[170px] xl:p-4 font-semibold rounded-lg text-center shadow-inner"
-              style={{ boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.3)' }}
             >
               <option value="all">📍 المنطقة</option>
               {cities.map(city => (
@@ -96,9 +100,7 @@ export default function Banner() {
               name="industry"
               value={formState.industry}
               onChange={handleInputChange}
-              aria-label="اختر مجال"
               className="w-[200px] p-3 xl:w-[170px] xl:p-4 font-semibold rounded-lg text-center shadow-inner"
-              style={{ boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.3)' }}
             >
               <option value="all">⚙️ المجال</option>
               {industries.map(industry => (
@@ -113,7 +115,6 @@ export default function Banner() {
               value={formState.hebrewRequired}
               onChange={handleInputChange}
               className="w-[200px] p-3 xl:w-[170px] xl:p-4 font-semibold rounded-lg text-center shadow-inner"
-              style={{ boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.3)' }}
             >
               <option value="all">🌐 العبرية</option>
               <option value="true">مع لغة عبرية</option>
@@ -125,7 +126,6 @@ export default function Banner() {
               value={formState.transportationAvailable}
               onChange={handleInputChange}
               className="w-[200px] p-3 xl:w-[170px] xl:p-4 font-semibold rounded-lg text-center shadow-inner"
-              style={{ boxShadow: 'inset 0 0 10px rgba(0, 0, 0, 0.3)' }}
             >
               <option value="all">🚗 وسيلة نقل</option>
               <option value="true">مع وسيلة نقل</option>

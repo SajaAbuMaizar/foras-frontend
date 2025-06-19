@@ -5,7 +5,7 @@ import Footer from '@/components/home/Footer';
 import Sidebar from './components/Sidebar';
 import "@/styles/globals.css";
 import '@/lib/fontawesome';
-import { AuthProvider } from '@/context/auth/AuthContext';
+import AuthProviderWrapper from '@/context/auth/AuthProviderWrapper';
 import { OptionsProvider } from '@/context/options/OptionsContext';
 
 const AdminLayout = ({ children }: { children: React.ReactNode }) => {
@@ -14,7 +14,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html>
       <body className="font-poppin flex flex-col min-h-screen antialiased">
-        <AuthProvider>
+        <AuthProviderWrapper>
           <OptionsProvider>
             <Navbar variant={variant} />
 
@@ -39,7 +39,7 @@ const AdminLayout = ({ children }: { children: React.ReactNode }) => {
               }}
             />
           </OptionsProvider>
-        </AuthProvider>
+        </AuthProviderWrapper>
       </body>
     </html>
   );

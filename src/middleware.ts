@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 const protectedRoutes = [
-  { prefix: '/employer', allowedRoles: ['EMPLOYER'] },
-  { prefix: '/candidate', allowedRoles: ['CANDIDATE'] },
+  { prefix: '/employer', allowedRoles: ['ROLE_EMPLOYER'] },
+  { prefix: '/candidate', allowedRoles: ['ROLE_CANDIDATE'] },
   { prefix: '/admin', allowedRoles: ['ROLE_SUPER_ADMIN'] },
 ];
 

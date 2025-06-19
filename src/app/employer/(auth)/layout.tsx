@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { Sidebar } from "./components/layouts/Sidebar";
 import Navbar from '@/components/home/Navbar';
-import { AuthProvider } from '@/context/auth/AuthContext';
+import AuthProviderWrapper from '@/context/auth/AuthProviderWrapper';
 import { Toaster } from 'react-hot-toast';
 import "@/styles/globals.css";
 import '@/lib/fontawesome';
@@ -12,7 +12,7 @@ export default function EmployerLayout({ children }: { children: ReactNode }) {
     return (
         <html dir="rtl" lang="ar">
             <body className="font-poppin flex flex-col min-h-screen antialiased">
-                <AuthProvider>
+                <AuthProviderWrapper>
                     <OptionsProvider>
                     <Navbar variant={variant} />
                     
@@ -27,7 +27,7 @@ export default function EmployerLayout({ children }: { children: ReactNode }) {
                         <Sidebar />
                     </div>
                     </OptionsProvider>
-                </AuthProvider>
+                </AuthProviderWrapper>
                 <Toaster containerStyle={{ top: 150, }} />
             </body>
         </html>

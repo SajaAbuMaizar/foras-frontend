@@ -3,8 +3,10 @@ import { api } from './axios';
 import { Option } from '../types/postJobTypes';
 import { MainPageJobListItem } from '@/types/MainPageJobListItem'
 import { EmployerJobDetailsItem } from '@/types/EmployerJobDetailsItem';
+import { JobListItem } from '@/types/JobListItem';
 import { EmployerLogoUrlItem } from '@/types/EmployerLogoUrlItem';
 import { PaginatedResponse } from '@/types/PaginatedResponseItem';
+
 
 export async function fetchCities(): Promise<Option[]> {
   try {
@@ -61,6 +63,16 @@ export async function fetchEmployerLogos(): Promise<EmployerLogoUrlItem[]> {
     return response.data as EmployerLogoUrlItem[];
   } catch (error) {
     console.error('Error fetching job details:', error);
+    throw error;
+  }
+}
+
+export async function fetchListJobs(): Promise<JobListItem[]> {
+  try {
+    const response = await api.get(`/api/job/admin/jobs`);
+    return response.data as JobListItem[];
+  } catch (error) {
+    console.error('Failed to fetch list jobs:', error);
     throw error;
   }
 }
