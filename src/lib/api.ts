@@ -1,9 +1,9 @@
 // src/lib/api.ts
 import { api } from './axios';
-import { Option } from '../types/postJobTypes';
-import { MainPageJobListItem } from '@/types/MainPageJobListItem'
+import { Option } from '../types/jobs/postJobTypes';
+import { MainPageJobListItem } from '@/types/jobs//MainPageJobListItem'
 import { EmployerJobDetailsItem } from '@/types/EmployerJobDetailsItem';
-import { JobListItem } from '@/types/JobListItem';
+import { JobListItem } from '@/types/jobs/JobListItem';
 import { EmployerLogoUrlItem } from '@/types/EmployerLogoUrlItem';
 import { PaginatedResponse } from '@/types/PaginatedResponseItem';
 

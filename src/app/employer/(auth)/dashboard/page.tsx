@@ -7,19 +7,8 @@ import JobListingsTable from './components/JobListingsTable';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useAuth } from '@/context/auth/AuthHooks';
 import { isEmployer } from '@/context/auth/types';
+import { JobListItem } from '@/types/jobs/JobListItem';
 
-type JobListing = {
-  id: string;
-  jobTitle: string;
-  cityName: {
-    nameAr: string;
-    nameHe: string;
-  };
-  jobDescription: string;
-  salary: string;
-  // status: 'PENDING' | 'APPROVED' | 'REJECTED';
-  //updatedAt: string;
-};
 
 type Employer = {
   id: string;
@@ -29,7 +18,7 @@ type Employer = {
 const JobListingsPage = () => {
   const [lang, setLang] = useState<'ar' | 'he'>('ar');
   const { user } = useAuth();
-  const [jobListings, setJobListings] = useState<JobListing[]>([]);
+  const [jobListings, setJobListings] = useState<JobListItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
@@ -97,6 +86,8 @@ const JobListingsPage = () => {
               {lang === 'ar' ? 'تحديث تاريخ جميع الوظائف' : 'הקפצת כל המשרות'}
             </button>
           </div>
+
+          
 
           <JobListingsTable
             jobListings={jobListings}

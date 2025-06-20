@@ -2,21 +2,10 @@
 
 import React from 'react';
 import JobStatusBadge from './JobStatusBadge';
-
-type JobListing = {
-  id: string;
-  jobTitle: string;
-  cityName: {
-    nameAr: string;
-    nameHe: string;
-  };
-  jobDescription: string;
-  salary: string;
-  status: 'PENDING' | 'APPROVED' | 'REJECTED';
-};
+import { JobListItem } from '@/types/jobs/JobListItem';
 
 type JobListingsTableProps = {
-  jobListings: JobListing[];
+  jobListings: JobListItem[];
   lang: 'ar' | 'he';
   isLoading?: boolean;
   role: 'employer' | 'admin';

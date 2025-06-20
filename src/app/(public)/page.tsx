@@ -6,7 +6,7 @@ import { fetchJobs, fetchEmployerLogos } from '@/lib/api';
 import Banner from '@/components/home/Banner';
 import EmployerCarousel from './components/CompanyLogoCarousel';
 import JobCard from '@/components/JobCard';
-import { MainPageJobListItem } from '@/types/MainPageJobListItem';
+import { MainPageJobListItem } from '@/types/jobs/MainPageJobListItem';
 import { EmployerLogoUrlItem } from '@/types/EmployerLogoUrlItem';
 
 export default function Home() {
