@@ -5,7 +5,7 @@ import { MainPageJobListItem } from '@/types/jobs//MainPageJobListItem'
 import { EmployerJobDetailsItem } from '@/types/EmployerJobDetailsItem';
 import { JobListItem } from '@/types/jobs/JobListItem';
 import { EmployerLogoUrlItem } from '@/types/EmployerLogoUrlItem';
-import { PaginatedResponse } from '@/types/PaginatedResponseItem';
+import { PaginatedResponseItem } from '@/types/PaginatedResponseItem';
 
 
 export async function fetchCities(): Promise<Option[]> {
@@ -38,11 +38,11 @@ export async function fetchGenders(): Promise<Option[]> {
   }
 }
 
-export async function fetchJobs(page = 0, searchParams?: Record<string, string>): Promise<PaginatedResponse<MainPageJobListItem>> {
+export async function fetchJobs(page = 0, searchParams?: Record<string, string>): Promise<PaginatedResponseItem<MainPageJobListItem>> {
   const params = new URLSearchParams({ ...searchParams, page: page.toString(), size: "9" }).toString();
   const response = await api.get(`/api/job${searchParams && Object.keys(searchParams).length > 0 ? "/search" : ""}?${params}`);
   console.log('fetchJobs response:', response.data);
-  return response.data as MainPageJobListItem; // ✅ Return paginated response
+  return response.data as PaginatedResponseItem<MainPageJobListItem>; // ✅ Return paginated response
 }
 
 
