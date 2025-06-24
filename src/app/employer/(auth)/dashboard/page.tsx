@@ -3,7 +3,7 @@
 
 import { useEffect, useState } from 'react';
 import LogoUploadAlert from './components/LogoUploadAlert';
-import JobListingsTable from './components/JobListingsTable';
+import JobListingsTable from '@/components/JobListingsTable';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import { useAuth } from '@/context/auth/AuthHooks';
 import { isEmployer } from '@/context/auth/types';
@@ -90,6 +90,7 @@ const JobListingsPage = () => {
           
 
           <JobListingsTable
+            role='employer'
             jobListings={jobListings}
             lang={lang}
             isLoading={isLoading}

@@ -8,7 +8,7 @@ import SelectField from './SelectField';
 import MapInput from './MapInput';
 import LoadingSpinner from '@/components/LoadingSpinner';
 import CheckBoxField from './CheckboxField';
-import { Option } from '@/types/postJobTypes';
+import { Option } from '@/types/jobs/postJobTypes';
 import { fetchCities, fetchIndustries } from '@/lib/api';
 
 const cities = await fetchCities();

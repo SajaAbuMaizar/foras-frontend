@@ -1,8 +1,8 @@
 import React from "react";
-import { JobDetailsItem } from "@/types/jobs/JobDetailsItem";
+import { AdminJobDetailsItem } from "@/types/AdminJobDetailsItem";
 
 interface Props {
-  job: JobDetailsItem;
+  job: AdminJobDetailsItem;
   showTranslationFields: boolean;
   handleTranslate: (e: React.FormEvent<HTMLFormElement>) => void;
 }
@@ -13,7 +13,7 @@ const JobTranslatedDetails: React.FC<Props> = ({ job, showTranslationFields, han
       <div>
         <strong>العنوان:</strong>
         <h2 className="text-xl font-semibold">
-          {job.title.translated || "لم يتم الترجمة بعد"}
+          {job.titleTranslated || "لم يتم الترجمة بعد"}
         </h2>
         {showTranslationFields && (
           <input
@@ -28,7 +28,7 @@ const JobTranslatedDetails: React.FC<Props> = ({ job, showTranslationFields, han
       <div>
         <strong>الوصف:</strong>
         <h3 className="text-gray-700">
-          {job.description.translated || "لم يتم الترجمة بعد"}
+          {job.descriptionTranslated || "لم يتم الترجمة بعد"}
         </h3>
         {showTranslationFields && (
           <textarea
@@ -39,12 +39,12 @@ const JobTranslatedDetails: React.FC<Props> = ({ job, showTranslationFields, han
       </div>
 
       <ul className="text-base space-y-1">
-        <li><strong>المنطقة:</strong> {job.location.getArabic}</li>
+        <li><strong>المنطقة:</strong> {job.cityName.nameAr}</li>
         <li><strong>نوع الوظيفة:</strong> {job.jobType}</li>
-        <li><strong>المجال:</strong> {job.industry.getArabic}</li>
+        <li><strong>المجال:</strong> {job.cityName.nameAr}</li>
         <li><strong>الراتب:</strong> {job.salary}</li>
         <li>
-          <strong>المؤهلات المطلوبة:</strong> {job.requiredQualifications.translated || "لم يتم الترجمة بعد"}
+          <strong>المؤهلات المطلوبة:</strong> {job.qualificationsTranslated || "لم يتم الترجمة بعد"}
           {showTranslationFields && (
             <textarea
               name="translatedRequiredQualifications"
@@ -53,7 +53,7 @@ const JobTranslatedDetails: React.FC<Props> = ({ job, showTranslationFields, han
           )}
         </li>
         <li><strong>تاريخ النشر:</strong> {job.publicationDate}</li>
-        <li><strong>وسيلة نقل:</strong> {job.transportation ? "نعم" : "لا"}</li>
+        <li><strong>وسيلة نقل:</strong> {job.transportationAvailable ? "نعم" : "لا"}</li>
       </ul>
 
       {showTranslationFields && (

@@ -1,7 +1,7 @@
 // pages/job/[id]/page.tsx
 'use client';
 import JobDetails from './components/JobDetails';
-import { getJobDetails } from '@/lib/api';
+import { getJobDetailsForEmployer } from '@/lib/api';
 import { useEffect, useState } from 'react';
 import { use } from 'react';
 import { EmployerJobDetailsItem } from '@/types/EmployerJobDetailsItem';
@@ -21,7 +21,7 @@ export default function JobPage({ params, searchParams }: Props) {
 
   useEffect(() => {
     setIsLoading(true);
-    getJobDetails(id)
+    getJobDetailsForEmployer(id)
       .then(data => {
         setJobDetails(data);
         setError(null);

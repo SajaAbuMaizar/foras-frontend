@@ -47,9 +47,9 @@ export async function fetchJobs(page = 0, searchParams?: Record<string, string>)
 
 
 
-export async function getJobDetails(id: string): Promise<EmployerJobDetailsItem> {
+export async function getJobDetailsForEmployer(id: string): Promise<EmployerJobDetailsItem> {
   try {
-    const response = await api.get(`/api/job/job-details/${id}`);
+    const response = await api.get(`/api/job/employer/job-details/${id}`);
     return response.data as EmployerJobDetailsItem;
   } catch (error) {
     console.error('Error fetching job details:', error);
