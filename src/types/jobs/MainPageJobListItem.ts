@@ -19,4 +19,6 @@ export interface MainPageJobListItem {
   latitude: number
   longitude: number
 
+  publishDate: string
+
 }

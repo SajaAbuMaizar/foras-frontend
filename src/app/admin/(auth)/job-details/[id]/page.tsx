@@ -32,7 +32,7 @@ const JobDetailsPage: React.FC = () => {
   }, [jobId]);
 
   const handleApprove = async () => {
-    await fetch(`/api/admin/approve-job/${job?.id}`, { method: "POST" });
+    await fetch(`/api/job/admin/approve-job/${job?.id}`, { method: "POST" });
     router.refresh();
   };
 
@@ -46,7 +46,7 @@ const JobDetailsPage: React.FC = () => {
   const handleTranslate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
-    await fetch(`/api/admin/translate-job/${job?.id}`, {
+    await fetch(`/api/job/admin/translate-job/${job?.id}`, {
       method: "POST",
       body: formData,
     });

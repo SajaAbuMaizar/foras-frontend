@@ -57,7 +57,7 @@ const JobTranslatedDetails: React.FC<Props> = ({ job, showTranslationFields, han
       </ul>
 
       {showTranslationFields && (
-        <button type="submit" className="btn btn-primary mt-4">
+        <button type="submit" className="px-4 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-lg shadow hover:shadow-lg transition">
           احفظ الترجمة
         </button>
       )}

@@ -1,6 +1,6 @@
 // app/job-application/components/SelectField.tsx
 import React, { useEffect } from 'react';
-import { Option } from '@/types/postJobTypes';
+import { Option } from '@/types/jobs/postJobTypes';
 
 
 type SelectFieldProps = {

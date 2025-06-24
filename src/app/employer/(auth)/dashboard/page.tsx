@@ -94,10 +94,6 @@ const JobListingsPage = () => {
             jobListings={jobListings}
             lang={lang}
             isLoading={isLoading}
-            onUpdateDate={(jobId) => {
-              // You can add user check here as well if needed
-              //  updateRecentDate(jobId);
-            }}
           />
         </div>
       </div>

@@ -1,30 +1,28 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useFormSubmit } from '../hooks/useFormSubmit';
-import FormSection from './FormSection';
-import InputField from './InputField';
-import SelectField from './SelectField';
-import MapInput from './MapInput';
-import LoadingSpinner from '@/components/LoadingSpinner';
-import CheckBoxField from './CheckboxField';
-import { Option } from '@/types/jobs/postJobTypes';
-import { fetchCities, fetchIndustries } from '@/lib/api';
+import { useState } from "react";
+import { useFormSubmit } from "../hooks/useFormSubmit";
+import FormSection from "./FormSection";
+import InputField from "./InputField";
+import SelectField from "./SelectField";
+import MapInput from "./MapInput";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import CheckBoxField from "./CheckboxField";
+import { Option } from "@/types/jobs/postJobTypes";
+import { fetchCities, fetchIndustries } from "@/lib/api";
 
 const cities = await fetchCities();
 const industries = await fetchIndustries();
 
-
 export default function JobForm() {
   const [isLoading, setIsLoading] = useState(false);
   const { handleSubmit } = useFormSubmit(setIsLoading);
-  
+
   const jobTypeOptions: Option[] = [
-    { code: 'full-time', id: '1', nameAr: 'دوام كامل', nameHe: 'משרה מלאה' },
-    { code: 'part-time', id: '2', nameAr: 'دوام جزئي', nameHe: 'משרה חלקית' },
+    { code: "full-time", id: "1", nameAr: "دوام كامل", nameHe: "משרה מלאה" },
+    { code: "part-time", id: "2", nameAr: "دوام جزئي", nameHe: "משרה חלקית" },
     // Add other job types as needed
   ];
-
 
   return (
     <>
@@ -32,6 +30,18 @@ export default function JobForm() {
         <div className="flex flex-wrap gap-6">
           {/* Left Section */}
           <FormSection>
+            <label className="block text-sm font-medium text-gray-700">
+              שפת המשרה
+            </label>
+            <select
+              name="language"
+              required
+              className="mt-1 block w-full border-gray-300 rounded-md"
+            >
+              <option value="he">עברית</option>
+              <option value="ar">عربي</option>
+            </select>
+
             <InputField
               id="jobTitle"
               name="jobTitle"
@@ -115,11 +125,7 @@ export default function JobForm() {
               label="Transportation Available?"
             />
 
-            <CheckBoxField
-              id="hebrew"
-              name="hebrew"
-              label="Hebrew Required?"
-            />
+            <CheckBoxField id="hebrew" name="hebrew" label="Hebrew Required?" />
           </FormSection>
         </div>
 
@@ -128,7 +134,7 @@ export default function JobForm() {
         </button>
       </form>
 
-    <LoadingSpinner visible={isLoading} message="Submitting your job..." />
+      <LoadingSpinner visible={isLoading} message="Submitting your job..." />
     </>
   );
 }

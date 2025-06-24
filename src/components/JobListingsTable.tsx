@@ -3,13 +3,13 @@
 import React from 'react';
 import JobStatusBadge from './JobStatusBadge';
 import { JobListItem } from '@/types/jobs/JobListItem';
+import { toast } from 'react-hot-toast';
 
 type JobListingsTableProps = {
   jobListings: JobListItem[];
   lang: 'ar' | 'he';
   isLoading?: boolean;
   role: 'employer' | 'admin';
-  onUpdateDate?: (jobId: string) => void;
 };
 
 const JobListingsTable: React.FC<JobListingsTableProps> = ({
@@ -17,12 +17,26 @@ const JobListingsTable: React.FC<JobListingsTableProps> = ({
   lang,
   isLoading = false,
   role,
-  onUpdateDate,
 }) => {
   const getJobDetailsUrl = (id: string) => {
     return role === 'admin'
       ? `/admin/job-details/${id}`
       : `/employer/job-details/${id}`;
+  };
+
+  const handleBoostDate = async (jobId: string) => {
+    try {
+      const res = await fetch(`/api/job/${jobId}/update-date`, {
+        method: 'POST',
+      });
+
+      if (!res.ok) throw new Error('Failed to update date');
+
+      toast.success(lang === 'ar' ? 'تم تحديث التاريخ' : 'תאריך עודכן בהצלחה');
+      window.location.reload(); // or router.refresh() if you use next/router
+    } catch (err) {
+      toast.error(lang === 'ar' ? 'فشل في التحديث' : 'עדכון נכשל');
+    }
   };
 
   return (
@@ -31,25 +45,25 @@ const JobListingsTable: React.FC<JobListingsTableProps> = ({
         <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-gray-500 font-medium uppercase tracking-wider">
                 {lang === 'ar' ? 'المسمى الوظيفي' : 'כותרת המשרה'}
               </th>
-              <th className="px-6 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-gray-500 font-medium uppercase tracking-wider">
                 {lang === 'ar' ? 'المكان' : 'המקום'}
               </th>
-              <th className="px-6 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-gray-500 font-medium uppercase tracking-wider">
                 {lang === 'ar' ? 'الوصف' : 'התיאור'}
               </th>
-              <th className="px-6 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-gray-500 font-medium uppercase tracking-wider">
                 {lang === 'ar' ? 'الراتب' : 'השכר'}
               </th>
-              <th className="px-6 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-gray-500 font-medium uppercase tracking-wider">
                 {lang === 'ar' ? 'معلومات اضافية' : 'מידע נוסף'}
               </th>
-              <th className="px-6 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">
-                  {lang === 'ar' ? 'تحديث تاريخ الوظيفة' : 'הקפצת המשרה'}
-                </th>
-              <th className="px-6 py-3 text-right font-medium text-gray-500 uppercase tracking-wider">
+              <th className="px-6 py-3 text-right text-gray-500 font-medium uppercase tracking-wider">
+                {lang === 'ar' ? 'تحديث التاريخ' : 'הקפצת המשרה'}
+              </th>
+              <th className="px-6 py-3 text-right text-gray-500 font-medium uppercase tracking-wider">
                 {lang === 'ar' ? 'حالة الوظيفة' : 'סטטוס המשרה'}
               </th>
             </tr>
@@ -57,7 +71,7 @@ const JobListingsTable: React.FC<JobListingsTableProps> = ({
           <tbody className="bg-white divide-y divide-gray-200">
             {jobListings.length === 0 ? (
               <tr>
-                <td className="px-6 py-4 text-center text-gray-500">
+                <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
                   {lang === 'ar' ? 'لا توجد وظائف مدرجة حتى الآن' : 'אין משרות מופיעות כרגע'}
                 </td>
               </tr>
@@ -92,14 +106,14 @@ const JobListingsTable: React.FC<JobListingsTableProps> = ({
                     </a>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                      <button
-                        onClick={() => onUpdateDate?.(job.id)}
-                        disabled={isLoading}
-                        className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700 disabled:opacity-50"
-                      >
-                        {lang === 'ar' ? 'تحديث التاريخ' : 'עדכן תאריך'}
-                      </button>
-                    </td>
+                    <button
+                      onClick={() => handleBoostDate(job.id)}
+                      disabled={isLoading}
+                      className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700 disabled:opacity-50"
+                    >
+                      {lang === 'ar' ? 'تحديث التاريخ' : 'עדכן תאריך'}
+                    </button>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <JobStatusBadge status={job.status} lang={lang} />
                   </td>

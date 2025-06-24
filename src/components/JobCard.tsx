@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { MainPageJobListItem } from '@/types/MainPageJobListItem'
+import { MainPageJobListItem } from '@/types/jobs/MainPageJobListItem'
 import { FaShekelSign, FaShareAlt, FaWhatsapp, FaFacebook, FaLink, FaUniversity, FaBriefcase, FaCalendar, FaMapMarker, FaRoad, FaBus } from 'react-icons/fa'
 import Image from 'next/image'
 
@@ -86,7 +86,7 @@ export default function JobCard({ job }: Props) {
           <div className="flex justify-center items-center gap-4 text-base mt-2">
             <div className="flex text-base items-center gap-1">
               <FaCalendar />
-              <span>{'05-05-2025'}</span>
+              <span>{job.publishDate}</span>
             </div>
             <div className="flex items-center gap-1">
               <FaMapMarker />
