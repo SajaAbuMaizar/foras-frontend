@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 import JobImage from "./components/JobImage";
 import JobOriginalDetails from "./components/JobOriginalDetails";
 import JobTranslatedDetails from "./components/JobTranslatedDetails";
@@ -11,6 +12,7 @@ const JobDetailsPage: React.FC = () => {
   const [job, setJob] = useState<AdminJobDetailsItem | null>(null);
   const [loading, setLoading] = useState(true);
   const [showTranslationFields, setShowTranslationFields] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
   const router = useRouter();
   const params = useParams();
   const jobId = params?.id;
@@ -32,29 +34,66 @@ const JobDetailsPage: React.FC = () => {
   }, [jobId]);
 
   const handleApprove = async () => {
-    await fetch(`/api/job/admin/approve-job/${job?.id}`, { method: "POST" });
-    router.refresh();
+    try {
+      await fetch(`/api/job/admin/approve-job/${job?.id}`, { method: "POST" });
+      toast.success("המשרה אושרה בהצלחה", {
+        position: "top-center",
+      });
+      router.refresh();
+    } catch (error) {
+      toast.error("שגיאה באישור המשרה", {
+        position: "top-center",
+      });
+    }
   };
 
   const handleDelete = async () => {
-    if (confirm("Are you sure you want to delete this job?")) {
-      await fetch(`/api/admin/delete-job/${job?.id}`, { method: "POST" });
-      router.push("/admin/jobs");
+    if (confirm("האם אתה בטוח שברצונך למחוק משרה זו?")) {
+      try {
+        await fetch(`/api/admin/delete-job/${job?.id}`, { method: "POST" });
+        toast.success("המשרה נמחקה בהצלחה", {
+          position: "top-center",
+        });
+        router.push("/admin/jobs");
+      } catch (error) {
+        toast.error("שגיאה במחיקת המשרה", {
+          position: "top-center",
+        });
+      }
     }
   };
 
   const handleTranslate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    await fetch(`/api/job/admin/translate-job/${job?.id}`, {
-      method: "POST",
-      body: formData,
-    });
-    router.refresh();
+    setIsTranslating(true);
+
+    try {
+      const formData = new FormData(e.currentTarget);
+      const response = await fetch(`/api/job/admin/translate-job/${job?.id}`, {
+        method: "POST",
+        body: formData,
+      });
+
+      if (response.ok) {
+        toast.success("התרגום נשמר בהצלחה", {
+          position: "top-center",
+        });
+        setShowTranslationFields(false);
+        router.refresh();
+      } else {
+        throw new Error("Translation failed");
+      }
+    } catch (error) {
+      toast.error("שגיאה בשמירת התרגום", {
+        position: "top-center",
+      });
+    } finally {
+      setIsTranslating(false);
+    }
   };
 
-  if (loading) return <div className="p-8">Loading...</div>;
-  if (!job) return <div className="p-8 text-red-600">Job not found</div>;
+  if (loading) return <div className="p-8">טוען...</div>;
+  if (!job) return <div className="p-8 text-red-600">המשרה לא נמצאה</div>;
 
   return (
     <div className="layout-page">
@@ -71,29 +110,37 @@ const JobDetailsPage: React.FC = () => {
           <div className="relative flex-1 md:flex gap-6">
             <JobOriginalDetails job={job} />
             <div className="hidden md:block absolute top-0 bottom-0 left-1/2 w-px bg-gray-300" />
-            <JobTranslatedDetails job={job} showTranslationFields={showTranslationFields} handleTranslate={handleTranslate} />
+            <JobTranslatedDetails
+              job={job}
+              showTranslationFields={showTranslationFields}
+              handleTranslate={handleTranslate}
+              isTranslating={isTranslating}
+            />
           </div>
         </div>
 
         <div className="flex justify-center mt-8">
           <div className="flex gap-4 flex-wrap justify-center">
             <button
-              className="px-6 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg shadow hover:shadow-lg transition"
+              className="px-6 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg shadow hover:shadow-lg transition disabled:opacity-50"
               onClick={() => setShowTranslationFields(!showTranslationFields)}
+              disabled={isTranslating}
             >
-              תרגם משרה
+              {showTranslationFields ? "בטל תרגום" : "תרגם משרה"}
             </button>
 
             <button
-              className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow hover:shadow-lg transition"
+              className="px-6 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg shadow hover:shadow-lg transition disabled:opacity-50"
               onClick={handleApprove}
+              disabled={isTranslating}
             >
               אשר משרה
             </button>
 
             <button
-              className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow hover:shadow-lg transition"
+              className="px-6 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow hover:shadow-lg transition disabled:opacity-50"
               onClick={handleDelete}
+              disabled={isTranslating}
             >
               מחק משרה
             </button>
