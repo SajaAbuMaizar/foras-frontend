@@ -1,7 +1,7 @@
 // components/SigninModal.tsx
 'use client';
 import React from 'react';
-import { useSignin } from '@/hooks/useCandidateSignin';
+import { useCandidateSignin } from '@/hooks/useCandidateSignin';
 import { X } from 'lucide-react';
 
 interface SigninModalProps {
@@ -10,7 +10,7 @@ interface SigninModalProps {
 }
 
 const SigninModal: React.FC<SigninModalProps> = ({ isOpen, onClose }) => {
-  const { register, handleSubmit, onSubmit, errors } = useSignin(onClose);
+  const { register, handleSubmit, onSubmit, errors } = useCandidateSignin(onClose);
 
   if (!isOpen) return null; // If the modal is not open, don't render anything
 

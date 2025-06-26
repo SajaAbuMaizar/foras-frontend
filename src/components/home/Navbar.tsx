@@ -2,8 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
-import SignUpModal from './CandidateSignUpModal';
-import SignInModal from './CandidateSignInModal';
+import SignUpModal from '@/components/modals/CandidateSignUpModal';
+import SignInModal from '@/components/modals/CandidateSignInModal';
 import { useAuth } from '@/context/auth/AuthHooks';
 
 type NavbarProps = {

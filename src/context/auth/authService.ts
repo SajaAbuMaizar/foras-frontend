@@ -19,5 +19,5 @@ export const loginCandidate = async (phone: string, password: string) => {
 };
 
 export const logout = async () => {
-  return await api.post('/api/auth/candidate/logout');
+  return await api.post('/api/user/logout');
 };

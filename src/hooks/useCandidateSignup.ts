@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import toast from "react-hot-toast";
-import { useAuth } from "@/context/auth/AuthHooks";
+import { useAuth } from "@/context/auth/AuthHooks"; // ✅
 
 const signupSchema = z.object({
   name: z.string().regex(/^[A-Za-z\s]+$/, "اسم صالح فقط (حروف انجليزية)"),
@@ -10,7 +10,7 @@ const signupSchema = z.object({
   city: z.string().min(1, "اختر المكان"),
   gender: z.string().min(1, "اختر الجنس"),
   password: z.string().min(6, "كلمة المرور يجب أن تكون 6 أحرف على الأقل"),
-  confirmPassword: z.string()
+  confirmPassword: z.string(),
 });
 
 export type SignupFormData = z.infer<typeof signupSchema>;
@@ -26,9 +26,7 @@ export function useSignup(onClose: () => void) {
     resolver: zodResolver(signupSchema),
   });
 
-
-  const { candidateSignin } = useAuth();
-
+  const { refreshUser } = useAuth(); // ✅
 
   const onSubmit = async (data: SignupFormData) => {
     if (data.password !== data.confirmPassword) {
@@ -50,15 +48,9 @@ export function useSignup(onClose: () => void) {
       }
 
       toast.success(response.message || "تم إنشاء الحساب بنجاح!");
-
-      // ✅ Automatically sign in after signup
-      const loggedIn = await candidateSignin(data.phone, data.password);
-
-      if (loggedIn) {
-        reset();         // ✅ Clear form
-        onClose();       // ✅ Close modal
-      }
-
+      await refreshUser(); // Update user globally
+      reset();
+      onClose();
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : "تعذر الاتصال بالخادم"
