@@ -40,7 +40,7 @@ export default function JobCard({ job }: Props) {
   };
 
   return (
-    <div className="text-center p-5 relative">
+    <div className="text-center p-5 relative" dir="rtl">
       {" "}
       {/* Added relative here */}
       <div className="shadow-lg w-[333px] rounded-[30px] border border-gray-200 overflow-hidden">

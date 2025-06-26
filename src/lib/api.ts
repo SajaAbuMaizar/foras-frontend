@@ -41,10 +41,8 @@ export async function fetchGenders(): Promise<Option[]> {
 export async function fetchJobs(page = 0, searchParams?: Record<string, string>): Promise<PaginatedResponseItem<MainPageJobListItem>> {
   const params = new URLSearchParams({ ...searchParams, page: page.toString(), size: "9" }).toString();
   const response = await api.get(`/api/job${searchParams && Object.keys(searchParams).length > 0 ? "/search" : ""}?${params}`);
-  console.log('fetchJobs response:', response.data);
-  return response.data as PaginatedResponseItem<MainPageJobListItem>; // ✅ Return paginated response
+  return response.data as PaginatedResponseItem<MainPageJobListItem>; // Return paginated response
 }
-
 
 
 export async function getJobDetailsForEmployer(id: string): Promise<EmployerJobDetailsItem> {

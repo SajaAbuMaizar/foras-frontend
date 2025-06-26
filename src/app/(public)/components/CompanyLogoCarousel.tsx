@@ -1,9 +1,9 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useState } from 'react';
-import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
-import { EmployerLogoUrlItem } from '@/types/EmployerLogoUrlItem';
+import Image from "next/image";
+import { useState } from "react";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { EmployerLogoUrlItem } from "@/types/EmployerLogoUrlItem";
 
 type EmployerCarouselProps = {
   logos: EmployerLogoUrlItem[];
@@ -52,17 +52,19 @@ export default function EmployerCarousel({ logos }: EmployerCarouselProps) {
                 className="h-[70px] flex-shrink-0 rounded-full bg-white shadow-[0_0_0_3px_white,0_0_0_6px_#001f3f] flex items-center justify-center overflow-hidden"
                 aria-label={`Visit job for employer ${logo.id}`}
               >
-                <Image
-                  src={logo.companyLogoUrl}
-                  alt={`Logo of employer ${logo.id}`}
-                  width={70}
-                  height={70}
-                  className="object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/images/logo-placeholder.png';
-                  }}
-                  unoptimized
-                />
+                <div className="h-[70px] w-[70px] relative rounded-full overflow-hidden bg-white">
+                  <Image
+                    src={logo.companyLogoUrl}
+                    alt={`Logo of employer ${logo.id}`}
+                    fill
+                    className="object-contain"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src =
+                        "/images/logo-placeholder.png";
+                    }}
+                    unoptimized
+                  />
+                </div>
               </a>
             ))}
           </div>

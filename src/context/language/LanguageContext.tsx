@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import { updateEmployerLanguage } from "@/services/languageService";
 
 type Language = "ar" | "he";
 
@@ -17,18 +18,18 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const setLang = async (newLang: Language) => {
     setLangState(newLang);
-    Cookies.set("lang", newLang, { expires: 30 });
+    Cookies.set("lang", newLang, {
+      expires: 30,
+      sameSite: "Lax",
+      secure: process.env.NODE_ENV === "production",
+    });
 
-    const isAuthenticated = Cookies.get("jwt");
-    if (isAuthenticated) {
-      await fetch("/api/employer/change-lang", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ lang: newLang }),
-      });
+    if (Cookies.get("jwt")) {
+      try {
+        await updateEmployerLanguage(newLang);
+      } catch (error) {
+        console.error("Error updating language on server:", error);
+      }
     }
   };
 

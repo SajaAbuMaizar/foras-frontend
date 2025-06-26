@@ -1,40 +1,37 @@
-'use client';
+"use client";
 
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { FaLock, FaPhone } from 'react-icons/fa';
-import { toast } from 'react-hot-toast';
+import { useState, useContext } from "react";
+import { useRouter } from "next/navigation";
+import { FaLock, FaPhone } from "react-icons/fa";
+import { toast } from "react-hot-toast";
+import { api } from "@/lib/axios";
+import { useAuth } from "@/context/auth/AuthHooks";
 
 const AdminLoginForm = () => {
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
   const router = useRouter();
+  const { refreshUser } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
-      const response = await fetch('/api/auth/admin/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ phone, password }),
-        credentials: 'include',
+      const response = await api.post("/api/auth/admin/login", {
+        phone,
+        password,
       });
 
-      const data = await response.json();
+      toast.success("تم تسجيل الدخول بنجاح");
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Login failed');
-      }
-
-      toast.success('Login successful!');
-      router.push('/');
+      await refreshUser(); // Refresh user context after login
+      router.push("/admin/dashboard"); // Redirect to dashboard
     } catch (error: any) {
-      toast.error(error.message || 'An error occurred during login');
+      const message = error.response?.data?.message || "فشل تسجيل الدخول";
+      toast.error(message);
     } finally {
       setIsLoading(false);
     }
@@ -43,14 +40,14 @@ const AdminLoginForm = () => {
   return (
     <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-        Admin Login
+        تسجيل دخول المدير
       </h2>
-      
+
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="relative">
           <input
             type="tel"
-            placeholder="Phone Number"
+            placeholder="رقم الهاتف"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             required
@@ -62,7 +59,7 @@ const AdminLoginForm = () => {
         <div className="relative">
           <input
             type="password"
-            placeholder="Password"
+            placeholder="كلمة المرور"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -75,10 +72,10 @@ const AdminLoginForm = () => {
           type="submit"
           disabled={isLoading}
           className={`w-full py-2 px-4 rounded-lg font-medium text-white ${
-            isLoading ? 'bg-gray-400' : 'bg-green-500 hover:bg-green-600'
+            isLoading ? "bg-gray-400" : "bg-green-500 hover:bg-green-600"
           } transition-colors`}
         >
-          {isLoading ? 'Logging in...' : 'Login'}
+          {isLoading ? "جارٍ تسجيل الدخول..." : "تسجيل الدخول"}
         </button>
       </form>
     </div>

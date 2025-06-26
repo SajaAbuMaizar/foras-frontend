@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import toast from "react-hot-toast";
-import { useAuth } from "@/context/auth/AuthHooks"; // ✅
+import { useAuth } from "@/context/auth/AuthHooks";
 
 const signupSchema = z.object({
   name: z.string().regex(/^[A-Za-z\s]+$/, "اسم صالح فقط (حروف انجليزية)"),
@@ -26,7 +26,7 @@ export function useSignup(onClose: () => void) {
     resolver: zodResolver(signupSchema),
   });
 
-  const { refreshUser } = useAuth(); // ✅
+  const { refreshUser } = useAuth();
 
   const onSubmit = async (data: SignupFormData) => {
     if (data.password !== data.confirmPassword) {
