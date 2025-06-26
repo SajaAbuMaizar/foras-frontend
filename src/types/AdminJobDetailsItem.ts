@@ -27,6 +27,6 @@ export interface AdminJobDetailsItem {
     nameHe: string
   }
 
-  publicationDate: string
+  createdAt: string
 
 }

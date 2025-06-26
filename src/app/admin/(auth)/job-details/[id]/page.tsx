@@ -23,6 +23,7 @@ const JobDetailsPage: React.FC = () => {
         const res = await fetch(`/api/job/admin/job-details/${jobId}`);
         const data = await res.json();
         setJob(data);
+        console.log("Fetched job details:", data);
       } catch (err) {
         console.error("Failed to fetch job:", err);
       } finally {
@@ -36,14 +37,10 @@ const JobDetailsPage: React.FC = () => {
   const handleApprove = async () => {
     try {
       await fetch(`/api/job/admin/approve-job/${job?.id}`, { method: "POST" });
-      toast.success("המשרה אושרה בהצלחה", {
-        position: "top-center",
-      });
+      toast.success("המשרה אושרה בהצלחה");
       router.refresh();
     } catch (error) {
-      toast.error("שגיאה באישור המשרה", {
-        position: "top-center",
-      });
+      toast.error("שגיאה באישור המשרה");
     }
   };
 
@@ -51,14 +48,10 @@ const JobDetailsPage: React.FC = () => {
     if (confirm("האם אתה בטוח שברצונך למחוק משרה זו?")) {
       try {
         await fetch(`/api/admin/delete-job/${job?.id}`, { method: "POST" });
-        toast.success("המשרה נמחקה בהצלחה", {
-          position: "top-center",
-        });
+        toast.success("המשרה נמחקה בהצלחה");
         router.push("/admin/jobs");
       } catch (error) {
-        toast.error("שגיאה במחיקת המשרה", {
-          position: "top-center",
-        });
+        toast.error("שגיאה במחיקת המשרה");
       }
     }
   };
@@ -75,18 +68,14 @@ const JobDetailsPage: React.FC = () => {
       });
 
       if (response.ok) {
-        toast.success("התרגום נשמר בהצלחה", {
-          position: "top-center",
-        });
+        toast.success("התרגום נשמר בהצלחה");
         setShowTranslationFields(false);
         router.refresh();
       } else {
         throw new Error("Translation failed");
       }
     } catch (error) {
-      toast.error("שגיאה בשמירת התרגום", {
-        position: "top-center",
-      });
+      toast.error("שגיאה בשמירת התרגום");
     } finally {
       setIsTranslating(false);
     }

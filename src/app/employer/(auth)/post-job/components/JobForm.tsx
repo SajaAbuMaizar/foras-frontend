@@ -34,6 +34,7 @@ export default function JobForm() {
               שפת המשרה
             </label>
             <select
+              id="language"
               name="language"
               required
               className="mt-1 block w-full border-gray-300 rounded-md"
