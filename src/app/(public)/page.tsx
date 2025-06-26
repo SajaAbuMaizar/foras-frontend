@@ -74,7 +74,7 @@ export default function Home() {
     <main className="min-h-screen">
       <Banner searchParams={searchParamsObj} />
       <EmployerCarousel logos={logos} />
-      <div className="flex flex-wrap justify-center gap-4 px-4 py-8" dir="rtl">
+      <div className="flex flex-wrap justify-center gap-4 px-4 py-8">
         {jobs.map(job => (
           <JobCard key={job.id} job={job} />
         ))}

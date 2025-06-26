@@ -1,18 +1,30 @@
 'use client';
 
+import { useLanguage } from '@/context/language/LanguageContext';
+
 export default function LanguageSwitcher() {
-  const changeLanguage = (lang: string) => {
-    const form = document.getElementById('language-form') as HTMLFormElement;
-    const input = document.getElementById('lang-input') as HTMLInputElement;
-    input.value = lang;
-    form.submit();
-  };
+  const { setLang } = useLanguage();
 
   return (
-    <form id="language-form" action="/employer/change-lang" method="post" className="flex gap-2 mb-4">
-      <input type="hidden" id="lang-input" name="lang" />
-      <button type="button" onClick={() => changeLanguage('ar')} className="text-sm text-blue-600 hover:underline">العربية</button>
-      <button type="button" onClick={() => changeLanguage('he')} className="text-sm text-blue-600 hover:underline">עברית</button>
-    </form>
+    <div className="flex gap-4 mb-6 p-3 bg-white/10 backdrop-blur-sm rounded-lg shadow-sm">
+      <button
+        onClick={() => setLang('ar')}
+        className="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200
+                  bg-gradient-to-r from-blue-500 to-indigo-500 text-white
+                  hover:from-blue-600 hover:to-indigo-600 active:scale-95 transform
+                  shadow-md hover:shadow-lg"
+      >
+        العربية
+      </button>
+      <button
+        onClick={() => setLang('he')}
+        className="px-4 py-2 rounded-md text-sm font-medium transition-all duration-200
+                  bg-gradient-to-r from-emerald-500 to-teal-500 text-white
+                  hover:from-emerald-600 hover:to-teal-600 active:scale-95 transform
+                  shadow-md hover:shadow-lg"
+      >
+        עברית
+      </button>
+    </div>
   );
 }

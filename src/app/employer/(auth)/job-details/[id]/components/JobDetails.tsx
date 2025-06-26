@@ -29,7 +29,7 @@ const JobDetails: React.FC<JobDetailsProps> = ({ job, lang }) => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen p-5 md:p-8 bg-white dark:bg-gray-900">
+    <div className="flex flex-col min-h-screen p-5 md:p-8 dark:bg-gray-900">
       <h1 className="text-2xl font-bold mb-6 text-right">
         {t("تفاصيل الوظيفة", "פרטי משרה")}
       </h1>

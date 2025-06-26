@@ -39,7 +39,7 @@ const JobListingsPage = () => {
   if (!user) return <div>Loading...</div>;
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="min-h-screen bg-gray-100 rtl:pr-64" dir="rtl">
       <div className="flex-grow p-4 md:p-6">
         <div className="flex justify-end mb-4">
           <LanguageSwitcher />

@@ -40,12 +40,12 @@ export default function JobPage({ params, searchParams }: Props) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 rtl:pr-64" dir="rtl">
       <main className="max-w-7xl mx-auto">
         <JobDetails 
-          job={jobDetails!} 
+          job={jobDetails!} // fixme
           lang={'ar'} // Fallback to 'ar' if lang is undefined
-        />
+        /> 
       </main>
     </div>
   );

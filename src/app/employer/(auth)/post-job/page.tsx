@@ -1,9 +1,11 @@
-import JobForm from './components/JobForm';
+import JobForm from "./components/JobForm";
 
 export default function postJobPage() {
-
   return (
-    <div className="flex flex-col items-stretch w-full mr-[30px] mt-2 pb-0 min-h-[1px]">
+    <div
+      className="flex flex-col items-stretch w-full mr-[30px] mt-2 pb-0 min-h-[1px] rtl:pr-64"
+      dir="rtl"
+    >
       <h1 className="text-xl font-semibold px-5 py-4">طلب وظيفي</h1>
       <div className="px-[1.625rem] w-full">
         <div className="-mx-[0.8125rem] flex flex-wrap">
