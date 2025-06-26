@@ -23,7 +23,7 @@ const JobListingsPage = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const { data } = await api.get<JobListItem[]>("/job/my-jobs");
+        const { data } = await api.get<JobListItem[]>("/api/job/my-jobs");
         setJobListings(data);
       } catch (err) {
         console.error("Error fetching data:", err);
