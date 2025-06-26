@@ -1,36 +1,33 @@
-// pages/job-listings.tsx
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import LogoUploadAlert from './components/LogoUploadAlert';
-import JobListingsTable from '@/components/JobListingsTable';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
-import { useAuth } from '@/context/auth/AuthHooks';
-import { isEmployer } from '@/context/auth/types';
-import { JobListItem } from '@/types/jobs/JobListItem';
-
-
-type Employer = {
-  id: string;
-  companyLogoUrl: string | null;
-};
+import { useEffect, useState } from "react";
+import LogoUploadAlert from "./components/LogoUploadAlert";
+import JobListingsTable from "@/components/JobListingsTable";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useAuth } from "@/context/auth/AuthHooks";
+import { isEmployer } from "@/context/auth/types";
+import { JobListItem } from "@/types/jobs/JobListItem";
+import { api } from "@/lib/axios";
 
 const JobListingsPage = () => {
-  const [lang, setLang] = useState<'ar' | 'he'>('ar');
+  const [lang, setLang] = useState<"ar" | "he">("ar");
   const { user } = useAuth();
   const [jobListings, setJobListings] = useState<JobListItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const isUserEmployer = user && isEmployer(user);
+  const [hasLogo, setHasLogo] = useState<boolean>(
+    isUserEmployer ? !!user.companyLogoUrl : false
+  );
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const jobsRes = await fetch('/api/job/my-jobs');
-        if (!jobsRes.ok) throw new Error('Failed to fetch job listings');
-        const jobsData = await jobsRes.json();
-        setJobListings(jobsData);
+        const { data } = await api.get<JobListItem[]>("/job/my-jobs");
+        setJobListings(data);
       } catch (err) {
-        console.error('Error fetching data:', err);
+        console.error("Error fetching data:", err);
+        // You can add toast notifications here if needed
       } finally {
         setIsLoading(false);
       }
@@ -39,27 +36,7 @@ const JobListingsPage = () => {
     fetchData();
   }, []);
 
-  if (!user) {
-    // Optionally: show loading or redirect or null while user is not loaded
-    return <div>Loading...</div>;
-  }
-
-  const changeLanguage = (newLang: 'ar' | 'he') => {
-    setLang(newLang);
-  };
-
-  const updateAllRecentDates = async (employerId: string) => {
-    try {
-      setIsLoading(true);
-      // API call to update all job dates
-      alert(lang === 'ar' ? 'تم تحديث جميع التواريخ بنجاح' : 'כל התאריכים עודכנו בהצלחה');
-    } catch (error) {
-      console.error('Error updating dates:', error);
-      alert(lang === 'ar' ? 'حدث خطأ أثناء التحديث' : 'אירעה שגיאה בעת העדכון');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  if (!user) return <div>Loading...</div>;
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -68,29 +45,20 @@ const JobListingsPage = () => {
           <LanguageSwitcher />
         </div>
 
-        {user && isEmployer(user) && !user.companyLogoUrl && (
-          <LogoUploadAlert lang={lang} />
+        {isUserEmployer && !hasLogo && (
+          <LogoUploadAlert
+            lang={lang}
+            onLogoUploaded={() => setHasLogo(true)}
+          />
         )}
 
         <div className="container mx-auto px-4">
           <h1 className="text-2xl font-bold mb-6 text-right">
-            {lang === 'ar' ? 'الوظائف المعلنة' : 'המשרות המודעות'}
+            {lang === "ar" ? "الوظائف المعلنة" : "המשרות המודעות"}
           </h1>
 
-          <div className="text-left mb-6">
-            <button
-              // onClick={() => updateAllRecentDates(user.id)}
-              disabled={isLoading}
-              className="bg-violet-600 hover:bg-violet-700 text-white font-medium py-2 px-4 rounded shadow-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {lang === 'ar' ? 'تحديث تاريخ جميع الوظائف' : 'הקפצת כל המשרות'}
-            </button>
-          </div>
-
-          
-
           <JobListingsTable
-            role='employer'
+            role="employer"
             jobListings={jobListings}
             lang={lang}
             isLoading={isLoading}
@@ -100,6 +68,5 @@ const JobListingsPage = () => {
     </div>
   );
 };
-
 
 export default JobListingsPage;
