@@ -1,4 +1,3 @@
-// components/auth/EmployerSignupForm.tsx
 "use client";
 
 import { useTermsModal } from "@/hooks/useTermsModal";
@@ -13,8 +12,14 @@ import {
   MdLockOutline,
 } from "react-icons/md";
 import { useEmployerSignup } from "@/hooks/useEmployerSignup";
+import { useLanguage } from "@/context/language/LanguageContext";
+import ar from "@/translations/ar";
+import he from "@/translations/he";
 
 const EmployerSignupForm = () => {
+  const { lang } = useLanguage();
+  const t = lang === "ar" ? ar.signupPage.form : he.signupPage.form;
+
   const termsModal = useTermsModal();
   const { isLoading, formMethods, onSubmit } = useEmployerSignup();
   const {
@@ -30,7 +35,7 @@ const EmployerSignupForm = () => {
     >
       <LabeledInput
         type="text"
-        placeholder="الاسم الكامل"
+        placeholder={t.namePlaceholder}
         {...register("name")}
         icon={MdPerson}
         error={errors.name}
@@ -38,7 +43,7 @@ const EmployerSignupForm = () => {
 
       <LabeledInput
         type="text"
-        placeholder="اسم الشركة"
+        placeholder={t.companyNamePlaceholder}
         {...register("companyName")}
         icon={MdBusiness}
         error={errors.companyName}
@@ -46,14 +51,14 @@ const EmployerSignupForm = () => {
 
       <LabeledInput
         type="email"
-        placeholder="البريد الإلكتروني"
+        placeholder={t.emailPlaceholder}
         {...register("email")}
         icon={MdEmail}
         error={errors.email}
       />
 
       <LabeledInput
-        placeholder="رقم الهاتف"
+        placeholder={t.phonePlaceholder}
         {...register("phone")}
         icon={MdPhone}
         error={errors.phone}
@@ -61,7 +66,7 @@ const EmployerSignupForm = () => {
 
       <LabeledInput
         type="password"
-        placeholder="كلمة المرور"
+        placeholder={t.passwordPlaceholder}
         {...register("password")}
         icon={MdLock}
         error={errors.password}
@@ -69,7 +74,7 @@ const EmployerSignupForm = () => {
 
       <LabeledInput
         type="password"
-        placeholder="تأكيد كلمة المرور"
+        placeholder={t.confirmPasswordPlaceholder}
         {...register("confirmPassword")}
         icon={MdLockOutline}
         error={errors.confirmPassword}
@@ -82,18 +87,18 @@ const EmployerSignupForm = () => {
           className="accent-blue-600"
         />
         <span>
-          أوافق على{" "}
+          {t.agreeTermsText}
           <button
             type="button"
             className="underline text-blue-600"
             onClick={termsModal.open}
           >
-            الشروط والأحكام
+            {t.termsButtonText}
           </button>
         </span>
       </label>
       {errors.agreeTerms && (
-        <p className="text-red-600 text-sm">{errors.agreeTerms.message}</p>
+        <p className="text-red-600 text-sm">{t.termsError}</p>
       )}
 
       <button
@@ -105,7 +110,7 @@ const EmployerSignupForm = () => {
             : "bg-blue-600 hover:bg-blue-700"
         }`}
       >
-        {isLoading ? "جارٍ التسجيل..." : "تسجيل"}
+        {isLoading ? t.registering : t.submitButton}
       </button>
 
       <TermsModal isOpen={termsModal.isOpen} onClose={termsModal.close} />

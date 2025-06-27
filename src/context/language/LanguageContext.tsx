@@ -1,6 +1,7 @@
+// context/language/LanguageContext.tsx
 "use client";
 
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useState } from "react";
 import Cookies from "js-cookie";
 import { updateEmployerLanguage } from "@/services/languageService";
 
@@ -11,10 +12,11 @@ const LanguageContext = createContext<{
   setLang: (lang: Language) => void;
 } | null>(null);
 
-export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => {
-  const [lang, setLangState] = useState<Language>("ar");
+export const LanguageProvider: React.FC<{
+  children: React.ReactNode;
+  initialLang: Language;
+}> = ({ children, initialLang }) => {
+  const [lang, setLangState] = useState<Language>(initialLang);
 
   const setLang = async (newLang: Language) => {
     setLangState(newLang);
@@ -32,13 +34,6 @@ export const LanguageProvider: React.FC<{ children: React.ReactNode }> = ({
       }
     }
   };
-
-  useEffect(() => {
-    const storedLang = Cookies.get("lang");
-    if (storedLang === "ar" || storedLang === "he") {
-      setLangState(storedLang);
-    }
-  }, []);
 
   return (
     <LanguageContext.Provider value={{ lang, setLang }}>

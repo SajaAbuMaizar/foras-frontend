@@ -1,8 +1,12 @@
 // app/layout.tsx
-import "@/styles/globals.css"; // Tailwind CSS
+
+//export const dynamic = "force-dynamic"; // <-- THIS IS THE MAGIC
+
+import "@/styles/globals.css";
 import AuthProviderWrapper from "@/context/auth/AuthProviderWrapper";
 import { LanguageProvider } from "@/context/language/LanguageContext";
 import { ToastProvider } from "@/components/ui/ToastProvider";
+import { cookies } from "next/headers";
 
 export const metadata = {
   title: "Foras | Job Portal",
@@ -12,15 +16,18 @@ export const metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const cookieStore = await cookies();
+  const lang = cookieStore.get("lang")?.value === "he" ? "he" : "ar";
+
   return (
-    <html>
+    <html lang={lang} dir={lang === "ar" ? "rtl" : "ltr"}>
       <body className="bg-gray-50 text-gray-900 antialiased">
-        <LanguageProvider>
+        <LanguageProvider initialLang={lang}>
           <AuthProviderWrapper>
             {children}
             <ToastProvider />
