@@ -8,9 +8,11 @@ import { useAuth } from "@/context/auth/AuthHooks";
 import { isEmployer } from "@/context/auth/types";
 import { JobListItem } from "@/types/jobs/JobListItem";
 import { api } from "@/lib/axios";
+import { useEmployerTranslations } from "@/context/language/useEmployerTranslations";
+
 
 const JobListingsPage = () => {
-  const [lang, setLang] = useState<"ar" | "he">("ar");
+  const t = useEmployerTranslations().jobListingsPage;
   const { user } = useAuth();
   const [jobListings, setJobListings] = useState<JobListItem[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -46,21 +48,15 @@ const JobListingsPage = () => {
         </div>
 
         {isUserEmployer && !hasLogo && (
-          <LogoUploadAlert
-            lang={lang}
-            onLogoUploaded={() => setHasLogo(true)}
-          />
+          <LogoUploadAlert onLogoUploaded={() => setHasLogo(true)} />
         )}
 
         <div className="container mx-auto px-4">
-          <h1 className="text-2xl font-bold mb-6 text-right">
-            {lang === "ar" ? "الوظائف المعلنة" : "המשרות המודעות"}
-          </h1>
+          <h1 className="text-2xl font-bold mb-6 text-right">{t.heading}</h1>
 
           <JobListingsTable
             role="employer"
             jobListings={jobListings}
-            lang={lang}
             isLoading={isLoading}
           />
         </div>

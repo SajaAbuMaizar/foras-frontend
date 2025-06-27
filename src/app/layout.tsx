@@ -25,7 +25,7 @@ export default async function RootLayout({
   const lang = cookieStore.get("lang")?.value === "he" ? "he" : "ar";
 
   return (
-    <html lang={lang} dir={lang === "ar" ? "rtl" : "ltr"}>
+    <html lang={lang}>
       <body className="bg-gray-50 text-gray-900 antialiased">
         <LanguageProvider initialLang={lang}>
           <AuthProviderWrapper>

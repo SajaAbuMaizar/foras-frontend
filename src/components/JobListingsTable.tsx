@@ -1,25 +1,28 @@
-'use client';
+"use client";
 
-import React from 'react';
-import JobStatusBadge from './JobStatusBadge';
-import { JobListItem } from '@/types/jobs/JobListItem';
-import { toast } from 'react-hot-toast';
+import React from "react";
+import JobStatusBadge from "./JobStatusBadge";
+import { JobListItem } from "@/types/jobs/JobListItem";
+import { toast } from "react-hot-toast";
+import { useLanguage } from "@/context/language/LanguageContext";
+import { translations } from "@/translations";
 
 type JobListingsTableProps = {
   jobListings: JobListItem[];
-  lang: 'ar' | 'he';
   isLoading?: boolean;
-  role: 'employer' | 'admin';
+  role: "employer" | "admin";
 };
 
 const JobListingsTable: React.FC<JobListingsTableProps> = ({
   jobListings,
-  lang,
   isLoading = false,
   role,
 }) => {
+  const { lang } = useLanguage();
+  const t = translations[lang].jobListingsPage;
+
   const getJobDetailsUrl = (id: string) => {
-    return role === 'admin'
+    return role === "admin"
       ? `/admin/job-details/${id}`
       : `/employer/job-details/${id}`;
   };
@@ -27,15 +30,15 @@ const JobListingsTable: React.FC<JobListingsTableProps> = ({
   const handleBoostDate = async (jobId: string) => {
     try {
       const res = await fetch(`/api/job/${jobId}/update-date`, {
-        method: 'POST',
+        method: "POST",
       });
 
-      if (!res.ok) throw new Error('Failed to update date');
+      if (!res.ok) throw new Error("Failed to update date");
 
-      toast.success(lang === 'ar' ? 'تم تحديث التاريخ' : 'תאריך עודכן בהצלחה');
+      toast.success(t.boostSuccess);
       window.location.reload(); // or router.refresh() if you use next/router
     } catch (err) {
-      toast.error(lang === 'ar' ? 'فشل في التحديث' : 'עדכון נכשל');
+      toast.error(t.boostFail);
     }
   };
 
@@ -46,25 +49,25 @@ const JobListingsTable: React.FC<JobListingsTableProps> = ({
           <thead className="bg-gray-50">
             <tr>
               <th className="px-6 py-3 text-right text-gray-500 font-medium uppercase tracking-wider">
-                {lang === 'ar' ? 'المسمى الوظيفي' : 'כותרת המשרה'}
+                {t.table.title}
               </th>
               <th className="px-6 py-3 text-right text-gray-500 font-medium uppercase tracking-wider">
-                {lang === 'ar' ? 'المكان' : 'המקום'}
+                {t.table.city}
               </th>
               <th className="px-6 py-3 text-right text-gray-500 font-medium uppercase tracking-wider">
-                {lang === 'ar' ? 'الوصف' : 'התיאור'}
+                {t.table.description}
               </th>
               <th className="px-6 py-3 text-right text-gray-500 font-medium uppercase tracking-wider">
-                {lang === 'ar' ? 'الراتب' : 'השכר'}
+                {t.table.salary}
               </th>
               <th className="px-6 py-3 text-right text-gray-500 font-medium uppercase tracking-wider">
-                {lang === 'ar' ? 'معلومات اضافية' : 'מידע נוסף'}
+                {t.table.moreInfo}
               </th>
               <th className="px-6 py-3 text-right text-gray-500 font-medium uppercase tracking-wider">
-                {lang === 'ar' ? 'تحديث التاريخ' : 'הקפצת המשרה'}
+                {t.table.boost}
               </th>
               <th className="px-6 py-3 text-right text-gray-500 font-medium uppercase tracking-wider">
-                {lang === 'ar' ? 'حالة الوظيفة' : 'סטטוס המשרה'}
+                {t.table.status}
               </th>
             </tr>
           </thead>
@@ -72,7 +75,7 @@ const JobListingsTable: React.FC<JobListingsTableProps> = ({
             {jobListings.length === 0 ? (
               <tr>
                 <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
-                  {lang === 'ar' ? 'لا توجد وظائف مدرجة حتى الآن' : 'אין משרות מופיעות כרגע'}
+                  {t.noJobs}
                 </td>
               </tr>
             ) : (
@@ -87,22 +90,20 @@ const JobListingsTable: React.FC<JobListingsTableProps> = ({
                     </a>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    {lang === 'ar'
+                    {lang === "ar"
                       ? job.cityName.nameAr || job.cityName.nameHe
                       : job.cityName.nameHe}
                   </td>
                   <td className="px-6 py-4 max-w-xs truncate">
                     {job.jobDescription}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    {job.salary}
-                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">{job.salary}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <a
                       href={getJobDetailsUrl(job.id)}
                       className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700"
                     >
-                      {lang === 'ar' ? 'معلومات اضافية' : 'מידע נוסף'}
+                      {t.table.moreInfo}
                     </a>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -111,7 +112,7 @@ const JobListingsTable: React.FC<JobListingsTableProps> = ({
                       disabled={isLoading}
                       className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700 disabled:opacity-50"
                     >
-                      {lang === 'ar' ? 'تحديث التاريخ' : 'עדכן תאריך'}
+                      {t.table.boost}
                     </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
