@@ -10,11 +10,10 @@ import LoadingSpinner from "@/components/LoadingSpinner";
 import CheckBoxField from "./CheckboxField";
 import { Option } from "@/types/jobs/postJobTypes";
 import { fetchCities, fetchIndustries } from "@/lib/api";
-
-const cities = await fetchCities();
-const industries = await fetchIndustries();
+import { useOptions } from "@/context/options/OptionsContext";
 
 export default function JobForm() {
+  const { cities, industries, loading: optionsLoading } = useOptions();
   const [isLoading, setIsLoading] = useState(false);
   const { handleSubmit } = useFormSubmit(setIsLoading);
 

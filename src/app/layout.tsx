@@ -1,20 +1,16 @@
-// app/layout.tsx
-
-//export const dynamic = "force-dynamic"; // <-- THIS IS THE MAGIC
-
+// src/app/layout.tsx
 import "@/styles/globals.css";
 import AuthProviderWrapper from "@/context/auth/AuthProviderWrapper";
-import { LanguageProvider } from "@/context/language/LanguageContext";
-import { ToastProvider } from "@/components/ui/ToastProvider";
+import ClientProviders from "@/components/ClientProviders";
 import { cookies } from "next/headers";
+import { generateSEOMetadata } from "@/components/SEO/SEO";
 
-export const metadata = {
-  title: "Foras | Job Portal",
-  description: "وظائف وفرص عمل في القدس",
-  icons: {
-    icon: "/favicon.ico",
-  },
-};
+export const metadata = generateSEOMetadata({
+  title: "وظائف في القدس - فرص عمل متميزة",
+  description:
+    "ابحث عن أفضل الوظائف في القدس والمناطق المحيطة. وظائف بدوام كامل وجزئي في جميع المجالات.",
+  keywords: ["وظائف", "القدس", "فرص عمل", "توظيف", "وظائف عربية"],
+});
 
 export default async function RootLayout({
   children,
@@ -27,12 +23,9 @@ export default async function RootLayout({
   return (
     <html lang={lang}>
       <body className="bg-gray-50 text-gray-900 antialiased">
-        <LanguageProvider initialLang={lang}>
-          <AuthProviderWrapper>
-            {children}
-            <ToastProvider />
-          </AuthProviderWrapper>
-        </LanguageProvider>
+        <AuthProviderWrapper>
+          <ClientProviders initialLang={lang}>{children}</ClientProviders>
+        </AuthProviderWrapper>
       </body>
     </html>
   );

@@ -57,6 +57,7 @@ const ar = {
     },
     boostSuccess: "تم تحديث التاريخ",
     boostFail: "فشل في التحديث",
+    fetchError: "خطأ في جلب البيانات",
   },
     jobDetailsPage: {
         title: "تفاصيل الوظيفة",

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useContext } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FaLock, FaPhone } from "react-icons/fa";
 import { toast } from "react-hot-toast";
-import { api } from "@/lib/axios";
+import { apiClient } from "@/lib/api-client";
 import { useAuth } from "@/context/auth/AuthHooks";
 
 const AdminLoginForm = () => {
@@ -20,13 +20,11 @@ const AdminLoginForm = () => {
     setIsLoading(true);
 
     try {
-      const response = await api.post("/api/auth/admin/login", {
-        phone,
-        password,
-      });
+      await apiClient.withRetry(() =>
+        apiClient.post("/api/auth/admin/login", { phone, password })
+      );
 
       toast.success("تم تسجيل الدخول بنجاح");
-
       await refreshUser(); // Refresh user context after login
       router.push("/admin/dashboard"); // Redirect to dashboard
     } catch (error: any) {

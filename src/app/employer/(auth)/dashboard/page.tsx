@@ -7,15 +7,14 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/context/auth/AuthHooks";
 import { isEmployer } from "@/context/auth/types";
 import { JobListItem } from "@/types/jobs/JobListItem";
-import { api } from "@/lib/axios";
+import { apiClient } from "@/lib/api-client";
 import { useEmployerTranslations } from "@/context/language/useEmployerTranslations";
-
 
 const JobListingsPage = () => {
   const t = useEmployerTranslations().jobListingsPage;
   const { user } = useAuth();
   const [jobListings, setJobListings] = useState<JobListItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const isUserEmployer = user && isEmployer(user);
   const [hasLogo, setHasLogo] = useState<boolean>(
     isUserEmployer ? !!user.companyLogoUrl : false
@@ -25,11 +24,12 @@ const JobListingsPage = () => {
     const fetchData = async () => {
       try {
         setIsLoading(true);
-        const { data } = await api.get<JobListItem[]>("/api/job/my-jobs");
+        const data = await apiClient.withRetry(() =>
+          apiClient.get<JobListItem[]>("/api/job/my-jobs")
+        );
         setJobListings(data);
       } catch (err) {
-        console.error("Error fetching data:", err);
-        // You can add toast notifications here if needed
+        // Error is handled by api-client
       } finally {
         setIsLoading(false);
       }

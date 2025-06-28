@@ -1,13 +1,14 @@
-'use client';
+"use client";
 
-import { useEffect, useState, useMemo, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { fetchJobs, fetchEmployerLogos } from '@/lib/api';
-import Banner from '@/components/home/Banner';
-import EmployerCarousel from './components/CompanyLogoCarousel';
-import JobCard from '@/components/JobCard';
-import { MainPageJobListItem } from '@/types/jobs/MainPageJobListItem';
-import { EmployerLogoUrlItem } from '@/types/EmployerLogoUrlItem';
+import { useEffect, useState, useMemo, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
+import { fetchJobs, fetchEmployerLogos } from "@/lib/api";
+import Banner from "@/components/home/Banner";
+import EmployerCarousel from "./components/CompanyLogoCarousel";
+import JobCard from "@/components/JobCard";
+import { MainPageJobListItem } from "@/types/jobs/MainPageJobListItem";
+import { EmployerLogoUrlItem } from "@/types/EmployerLogoUrlItem";
+import { JobCardSkeleton } from "@/components/ui/Skeleton";
 
 export default function Home() {
   const searchParams = useSearchParams();
@@ -16,6 +17,7 @@ export default function Home() {
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
 
   const searchParamsObj = useMemo(
     () => Object.fromEntries(searchParams.entries()),
@@ -28,10 +30,11 @@ export default function Home() {
       try {
         const response = await fetchJobs(pageToLoad, params);
         if (response.content.length > 0) {
-          setJobs(prevJobs => [
+          setJobs((prevJobs) => [
             ...prevJobs,
-            ...response.content.filter((job: { id: number; }) =>
-              prevJobs.findIndex(j => j.id === job.id) === -1
+            ...response.content.filter(
+              (job: { id: number }) =>
+                prevJobs.findIndex((j) => j.id === job.id) === -1
             ),
           ]);
         }
@@ -56,7 +59,8 @@ export default function Home() {
   useEffect(() => {
     const handleScroll = () => {
       if (
-        window.innerHeight + window.scrollY >= document.body.offsetHeight - 100 &&
+        window.innerHeight + window.scrollY >=
+          document.body.offsetHeight - 100 &&
         hasMore &&
         !isLoading
       ) {
@@ -66,8 +70,8 @@ export default function Home() {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [page, hasMore, isLoading, loadJobs, searchParamsObj]);
 
   return (
@@ -75,12 +79,15 @@ export default function Home() {
       <Banner searchParams={searchParamsObj} />
       <EmployerCarousel logos={logos} />
       <div className="flex flex-wrap justify-center gap-4 px-4 py-8">
-        {jobs.map(job => (
-          <JobCard key={job.id} job={job} />
-        ))}
+        {isInitialLoad && isLoading
+          ? // Show skeletons on initial load
+            Array.from({ length: 6 }).map((_, i) => <JobCardSkeleton key={i} />)
+          : jobs.map((job) => <JobCard key={job.id} job={job} />)}
       </div>
-      {isLoading && hasMore && (
-        <div className="text-center text-gray-500 py-4">جاري تحميل وظائف إضافية...</div>
+      {isLoading && hasMore && !isInitialLoad && (
+        <div className="text-center text-gray-500 py-4">
+          جاري تحميل وظائف إضافية...
+        </div>
       )}
     </main>
   );

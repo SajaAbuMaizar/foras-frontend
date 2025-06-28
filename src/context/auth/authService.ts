@@ -1,23 +1,39 @@
-import { api } from '@/lib/axios';
-import { User } from './types';
+import { apiClient } from "@/lib/api-client";
+import { User } from "./types";
 
 export const fetchUser = async (cookie?: string) => {
-  const res = await api.get('/api/user/me', {
-    headers: {
-      ...(cookie ? { cookie } : {}),
-    },
-    validateStatus: status => status < 500,
-  });
-
-  if (res.status === 200) return res.data as User;
-  return null;
+  try {
+    const user = await apiClient.withRetry(() =>
+      apiClient.get<User>("/api/user/me", {
+        headers: {
+          ...(cookie ? { cookie } : {}),
+        },
+        validateStatus: (status: number) => status < 500,
+      })
+    );
+    return user;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return null;
+  }
 };
 
-
 export const loginCandidate = async (phone: string, password: string) => {
-  return await api.post('/api/auth/candidate/login', { phone, password });
+  try {
+    return await apiClient.withRetry(() =>
+      apiClient.post("/api/auth/candidate/login", { phone, password })
+    );
+  } catch (error) {
+    console.error("Login failed:", error);
+    throw error; // Re-throw to let the calling component handle it
+  }
 };
 
 export const logout = async () => {
-  return await api.post('/api/user/logout');
+  try {
+    return await apiClient.withRetry(() => apiClient.post("/api/user/logout"));
+  } catch (error) {
+    console.error("Logout failed:", error);
+    throw error;
+  }
 };

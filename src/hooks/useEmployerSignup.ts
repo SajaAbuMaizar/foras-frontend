@@ -4,7 +4,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { employerSignupSchema } from "@/schemas/employerSignupSchema";
-import { api } from "@/lib/axios";
+import { apiClient } from "@/lib/api-client";
 
 type FormData = yup.InferType<typeof employerSignupSchema>;
 
@@ -18,27 +18,31 @@ export const useEmployerSignup = () => {
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
     try {
-      const response = await api.post("/api/auth/employer/signup", data);
+      await apiClient.withRetry(
+        () => apiClient.post("/api/auth/employer/signup", data),
+        {
+          retries: 2, // Fewer retries for signup to avoid duplicate submissions
+          retryCondition: (error) => {
+            // Only retry on network errors or server errors (not 400s)
+            return !error.response || error.response.status >= 500;
+          },
+        }
+      );
 
       window.location.href = "/employer/dashboard";
       toast.success("تم الاشتراك بنجاح!");
-      
     } catch (error: any) {
       let errorMessage = "تعذر الاتصال بالخادم";
 
+      // The error is already handled by apiClient's interceptor, but we add specific cases
       if (error.response) {
-        // Handle HTTP errors
         if (
           error.response.status === 400 &&
           error.response.data.message?.includes("الهاتف")
         ) {
           errorMessage = "رقم الهاتف مستخدم بالفعل، الرجاء استخدام رقم آخر";
-        } else {
-          errorMessage = error.response.data.message || errorMessage;
         }
-      } else if (error.request) {
-        // The request was made but no response was received
-        errorMessage = "لا يوجد اتصال بالخادم";
+        // Other cases are already handled by apiClient's error interceptor
       }
 
       toast.error(errorMessage);

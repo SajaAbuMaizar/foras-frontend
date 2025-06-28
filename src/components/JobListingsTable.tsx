@@ -1,3 +1,4 @@
+// src/components/JobListingsTable.tsx
 "use client";
 
 import React from "react";
@@ -6,6 +7,7 @@ import { JobListItem } from "@/types/jobs/JobListItem";
 import { toast } from "react-hot-toast";
 import { useLanguage } from "@/context/language/LanguageContext";
 import { translations } from "@/translations";
+import { TableRowSkeleton } from "@/components/ui/Skeleton";
 
 type JobListingsTableProps = {
   jobListings: JobListItem[];
@@ -36,7 +38,7 @@ const JobListingsTable: React.FC<JobListingsTableProps> = ({
       if (!res.ok) throw new Error("Failed to update date");
 
       toast.success(t.boostSuccess);
-      window.location.reload(); // or router.refresh() if you use next/router
+      window.location.reload();
     } catch (err) {
       toast.error(t.boostFail);
     }
@@ -72,19 +74,28 @@ const JobListingsTable: React.FC<JobListingsTableProps> = ({
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {jobListings.length === 0 ? (
+            {isLoading ? (
+              // Show skeleton rows when loading
+              <>
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <TableRowSkeleton key={`skeleton-${index}`} columns={7} />
+                ))}
+              </>
+            ) : jobListings.length === 0 ? (
+              // Show empty state
               <tr>
                 <td colSpan={7} className="px-6 py-4 text-center text-gray-500">
                   {t.noJobs}
                 </td>
               </tr>
             ) : (
+              // Show actual data rows
               jobListings.map((job) => (
-                <tr key={job.id}>
+                <tr key={job.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <a
                       href={getJobDetailsUrl(job.id)}
-                      className="text-violet-600 hover:text-violet-800 hover:underline"
+                      className="text-violet-600 hover:text-violet-800 hover:underline font-medium"
                     >
                       {job.jobTitle}
                     </a>
@@ -94,14 +105,16 @@ const JobListingsTable: React.FC<JobListingsTableProps> = ({
                       ? job.cityName.nameAr || job.cityName.nameHe
                       : job.cityName.nameHe}
                   </td>
-                  <td className="px-6 py-4 max-w-xs truncate">
+                  <td className="px-6 py-4 max-w-xs truncate text-gray-600">
                     {job.jobDescription}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{job.salary}</td>
+                  <td className="px-6 py-4 whitespace-nowrap font-medium">
+                    {job.salary}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <a
                       href={getJobDetailsUrl(job.id)}
-                      className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700"
+                      className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700 transition-colors"
                     >
                       {t.table.moreInfo}
                     </a>
@@ -110,7 +123,7 @@ const JobListingsTable: React.FC<JobListingsTableProps> = ({
                     <button
                       onClick={() => handleBoostDate(job.id)}
                       disabled={isLoading}
-                      className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700 disabled:opacity-50"
+                      className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-violet-600 hover:bg-violet-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                     >
                       {t.table.boost}
                     </button>

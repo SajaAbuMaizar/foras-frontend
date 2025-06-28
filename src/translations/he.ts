@@ -56,6 +56,7 @@ const he = {
     },
     boostSuccess: "תאריך עודכן בהצלחה",
     boostFail: "עדכון נכשל",
+    fetchError: "שגיאה בטעינת המשרות",
   },
   postJobPage: {
     title: "בקשת משרה",

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { apiClient } from "@/lib/api-client";
 
 export interface City {
   code: string;
@@ -25,16 +26,14 @@ export function useOptions() {
   useEffect(() => {
     async function fetchOptions() {
       try {
-        const [citiesRes, gendersRes, industriesRes] = await Promise.all([
-          fetch("/api/cities"),
-          fetch("/api/enums/genders"),
-          fetch("/api/industries"),
-        ]);
-
         const [citiesData, gendersData, industriesData] = await Promise.all([
-          citiesRes.json(),
-          gendersRes.json(),
-          industriesRes.json(),
+          apiClient.withRetry(() => apiClient.get<City[]>("/api/cities")),
+          apiClient.withRetry(() =>
+            apiClient.get<Gender[]>("/api/enums/genders")
+          ),
+          apiClient.withRetry(() =>
+            apiClient.get<Industry[]>("/api/industries")
+          ),
         ]);
 
         setCities(citiesData);
