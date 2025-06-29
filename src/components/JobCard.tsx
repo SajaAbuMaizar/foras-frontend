@@ -38,7 +38,7 @@ export default function JobCard({ job, onLoginRequired }: Props) {
 
   const handleApply = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     // Check if user is logged in
     if (!user) {
       toast.error("يجب تسجيل الدخول أولاً للتقديم للوظيفة");
@@ -82,7 +82,7 @@ export default function JobCard({ job, onLoginRequired }: Props) {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-
+    
     // Check if user is logged in
     if (!user) {
       toast.error("يجب تسجيل الدخول أولاً لحفظ الوظيفة");
@@ -209,13 +209,13 @@ export default function JobCard({ job, onLoginRequired }: Props) {
 
           {/* Buttons */}
           <div className="flex justify-center gap-2 flex-wrap mt-4">
-            <a
+            <a 
               href={`/job-details/${job.id}`}
               className="shadow-[inset_0_0_10px_rgba(0,0,0,0.3)] font-semibold border border-transparent rounded-[10px] px-4 py-1 text-blue-600 hover:bg-blue-50 transition-colors"
             >
               اقرأ المزيد
             </a>
-
+            
             <button
               onClick={handleApply}
               disabled={isApplying}
@@ -223,7 +223,7 @@ export default function JobCard({ job, onLoginRequired }: Props) {
             >
               {isApplying ? "جاري التقديم..." : "تقديم"}
             </button>
-
+            
             <button
               onClick={handleSave}
               disabled={isSaving}
@@ -261,7 +261,7 @@ export default function JobCard({ job, onLoginRequired }: Props) {
           )}
         </div>
       </div>
-
+      
       {/* Share Dropdown */}
       {showShare && (
         <div className="absolute left-[30px] top-[255px] bg-white shadow-lg rounded-md border border-gray-300 text-right z-20 min-w-[160px] py-2">
