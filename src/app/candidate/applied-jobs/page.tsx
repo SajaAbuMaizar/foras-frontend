@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import JobCard from "@/components/JobCard";
-import { MainPageJobListItem } from "@/types/jobs/MainPageJobListItem"; // adjust import path if needed
+import { MainPageJobListItem } from "@/types/jobs/MainPageJobListItem";
 
 export default function AppliedJobsPage() {
   const [jobs, setJobs] = useState<MainPageJobListItem[]>([]);
@@ -29,6 +29,12 @@ export default function AppliedJobsPage() {
     fetchAppliedJobs();
   }, []);
 
+  const handleLoginRequired = () => {
+    // This shouldn't happen since user is already authenticated to access this page
+    // But we can handle it gracefully
+    console.warn("Login required callback called on applied jobs page");
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 rtl:pr-64" dir="rtl">
       <div className="container mx-auto px-4 py-6">
@@ -36,9 +42,9 @@ export default function AppliedJobsPage() {
           الوظائف التي تقدمت لها
         </h1>
         {isLoading ? (
-          <div>جاري التحميل...</div>
+          <div className="text-center">جاري التحميل...</div>
         ) : error ? (
-          <div className="text-red-600">خطأ: {error}</div>
+          <div className="text-red-600 text-center">خطأ: {error}</div>
         ) : jobs.length === 0 ? (
           <div className="text-gray-600 text-center">
             لم تقم بالتقديم لأي وظيفة بعد.
@@ -46,7 +52,11 @@ export default function AppliedJobsPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {jobs.map((job) => (
-              <JobCard key={job.id} job={job} />
+              <JobCard
+                key={job.id}
+                job={job}
+                onLoginRequired={handleLoginRequired}
+              />
             ))}
           </div>
         )}

@@ -6,6 +6,7 @@ import { fetchJobs, fetchEmployerLogos } from "@/lib/api";
 import Banner from "@/components/home/Banner";
 import EmployerCarousel from "./components/CompanyLogoCarousel";
 import JobCard from "@/components/JobCard";
+import SignInModal from "@/components/modals/CandidateSignInModal";
 import { MainPageJobListItem } from "@/types/jobs/MainPageJobListItem";
 import { EmployerLogoUrlItem } from "@/types/EmployerLogoUrlItem";
 import { JobCardSkeleton } from "@/components/ui/Skeleton";
@@ -18,6 +19,7 @@ export default function Home() {
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const [showSignInModal, setShowSignInModal] = useState(false);
 
   const searchParamsObj = useMemo(
     () => Object.fromEntries(searchParams.entries()),
@@ -41,6 +43,7 @@ export default function Home() {
         setHasMore(response.totalPages > pageToLoad + 1);
       } finally {
         setIsLoading(false);
+        setIsInitialLoad(false);
       }
     },
     []
@@ -49,6 +52,7 @@ export default function Home() {
   useEffect(() => {
     setPage(0);
     setJobs([]);
+    setIsInitialLoad(true);
     loadJobs(0, searchParamsObj);
   }, [searchParamsObj, loadJobs]);
 
@@ -74,6 +78,14 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [page, hasMore, isLoading, loadJobs, searchParamsObj]);
 
+  const handleLoginRequired = () => {
+    setShowSignInModal(true);
+  };
+
+  const handleCloseSignInModal = () => {
+    setShowSignInModal(false);
+  };
+
   return (
     <main className="min-h-screen">
       <Banner searchParams={searchParamsObj} />
@@ -82,13 +94,21 @@ export default function Home() {
         {isInitialLoad && isLoading
           ? // Show skeletons on initial load
             Array.from({ length: 6 }).map((_, i) => <JobCardSkeleton key={i} />)
-          : jobs.map((job) => <JobCard key={job.id} job={job} />)}
+          : jobs.map((job) => (
+              <JobCard
+                key={job.id}
+                job={job}
+                onLoginRequired={handleLoginRequired}
+              />
+            ))}
       </div>
       {isLoading && hasMore && !isInitialLoad && (
         <div className="text-center text-gray-500 py-4">
           جاري تحميل وظائف إضافية...
         </div>
       )}
+
+      <SignInModal isOpen={showSignInModal} onClose={handleCloseSignInModal} />
     </main>
   );
 }

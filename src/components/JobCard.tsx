@@ -16,17 +16,112 @@ import {
   FaBus,
 } from "react-icons/fa";
 import Image from "next/image";
+import { useAuth } from "@/context/auth/AuthHooks";
+import { isCandidate } from "@/context/auth/types";
+import { toast } from "react-hot-toast";
 
 interface Props {
   job: MainPageJobListItem;
+  onLoginRequired: () => void; // Callback to show login modal
 }
 
-export default function JobCard({ job }: Props) {
+export default function JobCard({ job, onLoginRequired }: Props) {
   const [showShare, setShowShare] = useState(false);
+  const [isApplying, setIsApplying] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const { user } = useAuth();
 
   const handleCopy = (url: string) => {
     navigator.clipboard.writeText(url);
-    alert("تم نسخ الرابط");
+    toast.success("تم نسخ الرابط");
+  };
+
+  const handleApply = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Check if user is logged in
+    if (!user) {
+      toast.error("يجب تسجيل الدخول أولاً للتقديم للوظيفة");
+      onLoginRequired();
+      return;
+    }
+
+    // Check if user is a candidate
+    if (!isCandidate(user)) {
+      toast.error("يمكن للمرشحين فقط التقديم للوظائف");
+      return;
+    }
+
+    setIsApplying(true);
+    try {
+      const response = await fetch(`/api/job-applications/${job.id}`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        toast.success("تم التقديم للوظيفة بنجاح!");
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        if (response.status === 409) {
+          toast.error("لقد تقدمت لهذه الوظيفة من قبل");
+        } else {
+          toast.error(errorData.message || "حدث خطأ أثناء التقديم للوظيفة");
+        }
+      }
+    } catch (error) {
+      console.error("Application error:", error);
+      toast.error("حدث خطأ أثناء التقديم للوظيفة");
+    } finally {
+      setIsApplying(false);
+    }
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    // Check if user is logged in
+    if (!user) {
+      toast.error("يجب تسجيل الدخول أولاً لحفظ الوظيفة");
+      onLoginRequired();
+      return;
+    }
+
+    // Check if user is a candidate
+    if (!isCandidate(user)) {
+      toast.error("يمكن للمرشحين فقط حفظ الوظائف");
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const response = await fetch(`/api/candidate/save-job/${job.id}`, {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        toast.success("تم حفظ الوظيفة بنجاح!");
+      } else {
+        const errorData = await response.json().catch(() => ({}));
+        if (response.status === 409) {
+          toast.error("هذه الوظيفة محفوظة بالفعل");
+        } else {
+          toast.error(errorData.message || "حدث خطأ أثناء حفظ الوظيفة");
+        }
+      }
+    } catch (error) {
+      console.error("Save error:", error);
+      toast.error("حدث خطأ أثناء حفظ الوظيفة");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const jobTypeMap: Record<string, string> = {
@@ -41,8 +136,6 @@ export default function JobCard({ job }: Props) {
 
   return (
     <div className="text-center p-5 relative" dir="rtl">
-      {" "}
-      {/* Added relative here */}
       <div className="shadow-lg w-[333px] rounded-[30px] border border-gray-200 overflow-hidden">
         <a href={`/job-details/${job.id}`}>
           <div className="w-full h-[180px] relative rounded-t-[30px] overflow-hidden">
@@ -65,7 +158,7 @@ export default function JobCard({ job }: Props) {
             />
           </a>
 
-          {/* Share Button - kept inside the card */}
+          {/* Share Button */}
           <div className="absolute top-0 left-3">
             <button
               className="w-10 h-10 bg-gray-200 flex items-center justify-center rounded-full shadow-md"
@@ -93,7 +186,7 @@ export default function JobCard({ job }: Props) {
           {/* Type */}
           <div className="flex justify-center items-center text-[#1a6692] gap-1">
             <FaBriefcase />
-            <span>{jobTypeMap[job.jobType]}</span>
+            <span>{jobTypeMap[job.jobType] || job.jobType}</span>
           </div>
 
           {/* Details */}
@@ -115,26 +208,29 @@ export default function JobCard({ job }: Props) {
           </div>
 
           {/* Buttons */}
-          <div className="flex justify-center gap-2 flex-wrap">
-            <button className="shadow-[inset_0_0_10px_rgba(0,0,0,0.3)] font-semibold mt-[15px] border border-transparent rounded-[10px] px-4 py-1">
+          <div className="flex justify-center gap-2 flex-wrap mt-4">
+            <a
+              href={`/job-details/${job.id}`}
+              className="shadow-[inset_0_0_10px_rgba(0,0,0,0.3)] font-semibold border border-transparent rounded-[10px] px-4 py-1 text-blue-600 hover:bg-blue-50 transition-colors"
+            >
               اقرأ المزيد
+            </a>
+
+            <button
+              onClick={handleApply}
+              disabled={isApplying}
+              className="shadow-[inset_0_0_10px_rgba(0,0,0,0.3)] font-semibold border border-transparent rounded-[10px] px-4 py-1 bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {isApplying ? "جاري التقديم..." : "تقديم"}
             </button>
-            <form method="post" action={`/api/job-applications/${job.id}`}>
-              <button
-                type="submit"
-                className="shadow-[inset_0_0_10px_rgba(0,0,0,0.3)] font-semibold mt-[15px] border border-transparent rounded-[10px] px-4 py-1"
-              >
-                تقديم
-              </button>
-            </form>
-            <form method="post" action={`/user/save-job/${job.id}`}>
-              <button
-                type="submit"
-                className="shadow-[inset_0_0_10px_rgba(0,0,0,0.3)] font-semibold mt-[15px] mr-[7px] border border-transparent rounded-[10px] px-4 py-1"
-              >
-                حفظ
-              </button>
-            </form>
+
+            <button
+              onClick={handleSave}
+              disabled={isSaving}
+              className="shadow-[inset_0_0_10px_rgba(0,0,0,0.3)] font-semibold border border-transparent rounded-[10px] px-4 py-1 bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            >
+              {isSaving ? "جاري الحفظ..." : "حفظ"}
+            </button>
           </div>
 
           {/* Tags */}
@@ -165,7 +261,8 @@ export default function JobCard({ job }: Props) {
           )}
         </div>
       </div>
-      {/* Share Dropdown - moved outside the overflow-hidden container */}
+
+      {/* Share Dropdown */}
       {showShare && (
         <div className="absolute left-[30px] top-[255px] bg-white shadow-lg rounded-md border border-gray-300 text-right z-20 min-w-[160px] py-2">
           <a
