@@ -1,6 +1,6 @@
-// src/lib/api-client.ts
-import axios from 'axios';
-import toast from 'react-hot-toast';
+import axios from "axios";
+import type { AxiosInstance, AxiosError } from "axios";
+import toast from "react-hot-toast";
 
 interface RetryConfig {
   retries?: number;
@@ -8,8 +8,8 @@ interface RetryConfig {
   retryCondition?: (error: any) => boolean;
 }
 
-class APIClient {
-  private client: Axios.AxiosInstance;
+class ApiClient {
+  private client: AxiosInstance;
   private isRefreshing = false;
   private failedQueue: Array<{
     resolve: (value?: any) => void;
@@ -18,11 +18,10 @@ class APIClient {
 
   constructor() {
     this.client = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_URL,
+      baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
       withCredentials: true,
-      timeout: 30000,
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
     });
 
@@ -32,32 +31,39 @@ class APIClient {
   private setupInterceptors() {
     // Request interceptor
     this.client.interceptors.request.use(
-      (config: any) => {
-        // Add timestamp to prevent caching
-        if (config.method === 'get') {
-          config.params = {
-            ...config.params,
-            _t: Date.now(),
-          };
-        }
+      (config) => {
+        // Add any request modifications here
         return config;
       },
-      (error: any) => Promise.reject(error)
+      (error) => {
+        return Promise.reject(error);
+      }
     );
 
     // Response interceptor
     this.client.interceptors.response.use(
-      (response: any) => response,
-      async (error: any) => {
-        const originalRequest = error.config;
+      (response) => response,
+      async (error: AxiosError) => {
+        const originalRequest = error.config as any;
 
-        // Handle 401 Unauthorized
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        // If no response or no originalRequest, reject immediately
+        if (!error.response || !originalRequest) {
+          this.handleError(error);
+          return Promise.reject(error);
+        }
+
+        // Handle 401 errors
+        if (error.response.status === 401 && !originalRequest._retry) {
+          // Skip refresh for auth endpoints to prevent loops
+          if (originalRequest.url?.includes("/api/auth/")) {
+            return Promise.reject(error);
+          }
+
           if (this.isRefreshing) {
+            // If already refreshing, queue this request
             return new Promise((resolve, reject) => {
               this.failedQueue.push({ resolve, reject });
-            }).then(() => this.client(originalRequest))
-              .catch((err) => Promise.reject(err));
+            }).then(() => this.client(originalRequest));
           }
 
           originalRequest._retry = true;
@@ -67,10 +73,15 @@ class APIClient {
             // Try to refresh token
             await this.refreshToken();
             this.processQueue(null);
+
+            // Retry the original request
             return this.client(originalRequest);
           } catch (refreshError) {
             this.processQueue(refreshError);
-            window.location.href = '/';
+            // Only redirect to home if not already there
+            if (window.location.pathname !== "/") {
+              window.location.href = "/";
+            }
             return Promise.reject(refreshError);
           } finally {
             this.isRefreshing = false;
@@ -96,24 +107,40 @@ class APIClient {
   }
 
   private async refreshToken() {
-    // Implement token refresh logic
-    return this.client.post('/api/auth/refresh');
+    try {
+      // Use a direct axios call to avoid interceptor loops
+      const response = await axios.post(
+        `${
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+        }/api/auth/refresh`,
+        {},
+        { withCredentials: true }
+      );
+      return response;
+    } catch (error) {
+      throw error;
+    }
   }
 
   private handleError(error: any) {
+    // Don't show toast for auth check requests
+    if (error.config?.url?.includes("/api/user/me")) {
+      return;
+    }
+
     if (error.response) {
       const status = error.response.status;
       const data = error.response.data;
 
       switch (status) {
         case 400:
-          toast.error(data.message || 'طلب غير صالح');
+          toast.error(data.message || "طلب غير صالح");
           break;
         case 403:
-          toast.error('ليس لديك صلاحية للقيام بهذا الإجراء');
+          toast.error("ليس لديك صلاحية للقيام بهذا الإجراء");
           break;
         case 404:
-          toast.error('المورد المطلوب غير موجود');
+          toast.error("المورد المطلوب غير موجود");
           break;
         case 422:
           // Handle validation errors
@@ -124,15 +151,18 @@ class APIClient {
           }
           break;
         case 500:
-          toast.error('حدث خطأ في الخادم، يرجى المحاولة لاحقاً');
+          toast.error("حدث خطأ في الخادم، يرجى المحاولة لاحقاً");
           break;
         default:
-          toast.error(data.message || 'حدث خطأ غير متوقع');
+          if (status !== 401) {
+            // Don't show for 401 as it's handled by refresh
+            toast.error(data.message || "حدث خطأ غير متوقع");
+          }
       }
     } else if (error.request) {
-      toast.error('لا يوجد اتصال بالإنترنت');
+      toast.error("لا يوجد اتصال بالإنترنت");
     } else {
-      toast.error('حدث خطأ في الطلب');
+      toast.error("حدث خطأ في الطلب");
     }
   }
 
@@ -156,12 +186,14 @@ class APIClient {
         return await fn();
       } catch (error) {
         lastError = error;
-        
+
         if (i === retries || !retryCondition(lastError)) {
           throw lastError;
         }
 
-        await new Promise((resolve) => setTimeout(resolve, retryDelay * (i + 1)));
+        await new Promise((resolve) =>
+          setTimeout(resolve, retryDelay * (i + 1))
+        );
       }
     }
 
@@ -184,30 +216,15 @@ class APIClient {
     return response.data;
   }
 
+  async patch<T>(url: string, data?: any, config?: any): Promise<T> {
+    const response = await this.client.patch<T>(url, data, config);
+    return response.data;
+  }
+
   async delete<T>(url: string, config?: any): Promise<T> {
     const response = await this.client.delete<T>(url, config);
     return response.data;
   }
-
-  async upload<T>(url: string, formData: FormData, onProgress?: (progress: number) => void): Promise<T> {
-    const response = await this.client.post<T>(url, formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-      ...(onProgress && {
-        onUploadProgress: (progressEvent: any) => {
-          if (progressEvent.total) {
-            const progress = Math.round((progressEvent.loaded * 100) / progressEvent.total);
-            onProgress(progress);
-          }
-        },
-      }),
-    });
-    return response.data;
-  }
 }
 
-export const apiClient = new APIClient();
-
-// Export the original axios instance if needed
-export { axios };
+export const apiClient = new ApiClient();
