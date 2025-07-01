@@ -3,10 +3,10 @@
 @tailwind utilities;
 
 body {
-    font-family: 'Poppins', serif;
-  }
+  font-family: "Poppins", serif;
+}
 
-  /* Optional: custom scrollbar styling */
+/* Optional: custom scrollbar styling */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -14,4 +14,79 @@ body {
 ::-webkit-scrollbar-thumb {
   background-color: #cbd5e1;
   border-radius: 4px;
+}
+
+/* Accessibility Styles */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Skip Links */
+.skip-links {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+}
+
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: #000;
+  color: #fff;
+  padding: 8px 16px;
+  text-decoration: none;
+  border-radius: 0 0 4px 0;
+  font-weight: bold;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Focus Visible */
+*:focus-visible {
+  outline: 3px solid #4a90e2;
+  outline-offset: 2px;
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  :root {
+    --color-primary: #000;
+    --color-secondary: #fff;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+
+  .accessibility-widget,
+  .skip-links {
+    display: none !important;
+  }
 }

@@ -1,28 +1,39 @@
+// src/app/admin/(auth)/layout.tsx
 import React from "react";
 import Navbar from "@/components/home/Navbar";
 import Footer from "@/components/home/Footer";
 import Sidebar from "./components/Sidebar";
-import "@/styles/globals.css";
-import "@/lib/fontawesome";
 import { OptionsProvider } from "@/context/options/OptionsContext";
 
-const AdminLayout = ({ children }: { children: React.ReactNode }) => {
-  const variant = "default";
+interface AdminLayoutProps {
+  children: React.ReactNode;
+}
 
+const AdminLayout: React.FC<AdminLayoutProps> = ({ children }) => {
   return (
     <OptionsProvider>
-      <Navbar variant={variant} />
+      {/* Fixed Navbar at top */}
+      <Navbar variant="default" />
 
-      {/* Layout: Sidebar + Main Content */}
-      <div className="flex flex-1 min-h-screen" dir="rtl">
-        {/* Sidebar */}
-        <Sidebar />
+      {/* Main layout container */}
+      <div className="min-h-screen flex" dir="rtl">
+        {/* Fixed Sidebar */}
+        <div className="fixed right-0 top-20 h-[calc(100vh-5rem)] w-64 z-40">
+          <Sidebar />
+        </div>
 
-        {/* Main Content Area */}
-        <main className="flex-1 p-6 bg-gray-50 mt-16">{children}</main>
+        {/* Main Content Area with proper spacing */}
+        <div className="flex-1 mr-64">
+          <main className="min-h-[calc(100vh-5rem)] bg-gray-50 mt-20">
+            <div className="p-6">{children}</div>
+          </main>
+        </div>
       </div>
 
-      <Footer />
+      {/* Footer */}
+      <div className="mr-64" dir="rtl">
+        <Footer />
+      </div>
     </OptionsProvider>
   );
 };
