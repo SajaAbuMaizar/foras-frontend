@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { useSignin } from '@/hooks/useEmployerSignin';
+import { useSignin } from "@/hooks/useEmployerSignin";
 import LabeledInput from "@/components/ui/LabeledInput";
 import { MdPhone, MdLock } from "react-icons/md";
 import { useLanguage } from "@/context/language/LanguageContext";

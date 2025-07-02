@@ -1,3 +1,4 @@
+// src/hooks/useEmployerSignup.ts
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -8,15 +9,25 @@ import { apiClient } from "@/lib/api-client";
 
 type FormData = yup.InferType<typeof employerSignupSchema>;
 
+export interface SignUpError {
+  field?: "phone" | "email" | "general";
+  message: string;
+}
+
 export const useEmployerSignup = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [apiError, setApiError] = useState<SignUpError | null>(null);
 
   const formMethods = useForm<FormData>({
     resolver: yupResolver(employerSignupSchema),
   });
 
+  const { setError, reset } = formMethods;
+
   const onSubmit = async (data: FormData) => {
     setIsLoading(true);
+    setApiError(null);
+
     try {
       await apiClient.withRetry(
         () => apiClient.post("/api/auth/employer/signup", data),
@@ -29,23 +40,48 @@ export const useEmployerSignup = () => {
         }
       );
 
+      toast.success("تم إنشاء الحساب بنجاح!");
+      reset();
       window.location.href = "/employer/dashboard";
-      toast.success("تم الاشتراك بنجاح!");
     } catch (error: any) {
-      let errorMessage = "تعذر الاتصال بالخادم";
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "حدث خطأ أثناء التسجيل";
 
-      // The error is already handled by apiClient's interceptor, but we add specific cases
-      if (error.response) {
-        if (
-          error.response.status === 400 &&
-          error.response.data.message?.includes("الهاتف")
-        ) {
-          errorMessage = "رقم الهاتف مستخدم بالفعل، الرجاء استخدام رقم آخر";
-        }
-        // Other cases are already handled by apiClient's error interceptor
+      // Handle specific error types
+      if (
+        error?.response?.status === 409 ||
+        errorMessage.includes("الهاتف") ||
+        errorMessage.includes("مستخدم")
+      ) {
+        setApiError({
+          field: "phone",
+          message: "رقم الهاتف مسجل بالفعل. يرجى استخدام رقم آخر",
+        });
+        setError("phone", {
+          type: "manual",
+          message: "رقم الهاتف مسجل بالفعل",
+        });
+      } else if (
+        errorMessage.includes("البريد") ||
+        errorMessage.includes("email")
+      ) {
+        setApiError({
+          field: "email",
+          message: "البريد الإلكتروني مسجل بالفعل",
+        });
+        setError("email", {
+          type: "manual",
+          message: "البريد الإلكتروني مسجل بالفعل",
+        });
+      } else {
+        setApiError({
+          field: "general",
+          message: errorMessage,
+        });
+        toast.error(errorMessage);
       }
-
-      toast.error(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -55,5 +91,7 @@ export const useEmployerSignup = () => {
     isLoading,
     formMethods,
     onSubmit,
+    apiError,
+    reset,
   };
 };
