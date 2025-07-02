@@ -3,7 +3,7 @@
 
 import { createContext, useContext, useEffect, useState } from 'react';
 import { fetchCities, fetchGenders, fetchIndustries } from '@/lib/api';
-import { Option } from '@/types/postJobTypes';
+import { Option } from '@/types/jobs/postJobTypes';
 
 type OptionsContextType = {
   cities: Option[];

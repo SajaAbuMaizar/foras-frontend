@@ -137,7 +137,7 @@ export default function JobCard({ job, onLoginRequired }: Props) {
 
   return (
     <div className="text-center p-5 relative" dir="rtl">
-      <div className="shadow-lg w-[333px] rounded-[30px] border border-gray-200 overflow-hidden">
+      <div className="shadow-xl w-[333px] rounded-[30px] border border-gray-200 overflow-hidden bg-white hover:shadow-2xl transition-shadow duration-300">
         <a href={`/job-details/${job.id}`}>
           <div className="w-full h-[180px] relative rounded-t-[30px] overflow-hidden">
             <Image
@@ -146,62 +146,68 @@ export default function JobCard({ job, onLoginRequired }: Props) {
               fill
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               quality={85}
-              className="object-cover"
+              className="object-cover transition-transform duration-300 hover:scale-105"
             />
           </div>
         </a>
-        <div className="relative text-center mt-2 p-3">
+
+        <div className="relative mt-3 px-4 pb-5 text-center">
+          {/* Company Logo */}
           <a href={`/jobs/${job.employer.id}`}>
             <img
               src={job.employer.companyLogoUrl}
               alt="Logo"
-              className="w-[50px] h-[50px] object-contain absolute right-[18px] top-0 rounded-full shadow-[0_0_0_2px_white,_0_0_0_4px_rgb(0,31,63)]"
+              className="w-[50px] h-[50px] object-contain absolute right-4 top-[-25px] rounded-full shadow-[0_0_0_2px_white,_0_0_0_4px_rgb(0,31,63)] bg-white"
             />
           </a>
 
           {/* Share Button */}
-          <div className="absolute top-0 left-3">
+          <div className="absolute top-[-25px] left-4">
             <button
-              className="w-10 h-10 bg-gray-200 flex items-center justify-center rounded-full shadow-md"
+              className="w-10 h-10 bg-gray-100 hover:bg-gray-200 flex items-center justify-center rounded-full shadow-md transition"
               onClick={() => setShowShare(!showShare)}
             >
               <FaShareAlt className="text-gray-700" />
             </button>
           </div>
 
+          {/* Title */}
           <a href={`/job-details/${job.id}`}>
-            <h4 className="text-[#1a6692] text-xl mb-2">{job.jobTitle}</h4>
+            <h4 className="text-[#1a6692] text-xl font-bold mt-5 mb-2">
+              {job.jobTitle}
+            </h4>
           </a>
 
-          <h6 className="inline-block max-w-[16ch] truncate text-xl">
-            <FaShekelSign className="inline-block ml-1" />
+          {/* Salary */}
+          <div className="text-xl text-gray-800 mb-1 truncate max-w-[16ch] mx-auto">
+            <FaShekelSign className="inline ml-1 text-green-600" />
             <span>{job.salary}</span>
-          </h6>
+          </div>
 
-          {/* Company */}
-          <div className="flex justify-center items-center text-[#1a6692] gap-1">
+          {/* Employer */}
+          <div className="flex justify-center items-center text-[#1a6692] gap-1 text-sm mb-1">
             <FaUniversity />
             <span>{job.employer.companyName}</span>
           </div>
 
-          {/* Type */}
-          <div className="flex justify-center items-center text-[#1a6692] gap-1">
+          {/* Job Type */}
+          <div className="flex justify-center items-center text-[#1a6692] gap-1 text-sm mb-2">
             <FaBriefcase />
             <span>{jobTypeMap[job.jobType] || job.jobType}</span>
           </div>
 
-          {/* Details */}
-          <div className="flex justify-center items-center gap-4 text-base mt-2">
-            <div className="flex text-base items-center gap-1">
-              <FaCalendar />
+          {/* Info Row */}
+          <div className="flex justify-center items-center gap-4 text-sm text-gray-700 mb-4">
+            <div className="flex items-center gap-1">
+              <FaCalendar className="text-blue-600" />
               <span>{job.publishDate}</span>
             </div>
             <div className="flex items-center gap-1">
-              <FaMapMarker />
+              <FaMapMarker className="text-red-500" />
               <span>{job.cityName}</span>
             </div>
             <div className="flex items-center gap-1">
-              <FaRoad />
+              <FaRoad className="text-gray-500" />
               <span data-lat={job.latitude} data-lon={job.longitude}>
                 —
               </span>
@@ -209,26 +215,24 @@ export default function JobCard({ job, onLoginRequired }: Props) {
           </div>
 
           {/* Buttons */}
-          <div className="flex justify-center gap-2 flex-wrap mt-4">
+          <div className="flex justify-center flex-wrap gap-2">
             <a
               href={`/job-details/${job.id}`}
-              className="shadow-[inset_0_0_10px_rgba(0,0,0,0.3)] font-semibold border border-transparent rounded-[10px] px-4 py-1 text-blue-600 hover:bg-blue-50 transition-colors"
+              className="text-blue-600 border border-blue-600 hover:bg-blue-50 px-4 py-1 rounded-[10px] font-semibold shadow-inner transition"
             >
               اقرأ المزيد
             </a>
-
             <button
               onClick={handleApply}
               disabled={isApplying}
-              className="shadow-[inset_0_0_10px_rgba(0,0,0,0.3)] font-semibold border border-transparent rounded-[10px] px-4 py-1 bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="bg-green-600 text-white hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-1 rounded-[10px] font-semibold shadow-inner transition"
             >
               {isApplying ? "جاري التقديم..." : "تقديم"}
             </button>
-
             <button
               onClick={handleSave}
               disabled={isSaving}
-              className="shadow-[inset_0_0_10px_rgba(0,0,0,0.3)] font-semibold border border-transparent rounded-[10px] px-4 py-1 bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed px-4 py-1 rounded-[10px] font-semibold shadow-inner transition"
             >
               {isSaving ? "جاري الحفظ..." : "حفظ"}
             </button>
@@ -237,20 +241,20 @@ export default function JobCard({ job, onLoginRequired }: Props) {
           {/* Tags */}
           {job.transportationAvailable && (
             <div
-              className="absolute top-4 left-[-1px] top-[48px] bg-green-600 text-white px-3 py-1 text-sm font-medium shadow-md z-10"
+              className="absolute left-[-1px] top-[48px] bg-green-600 text-white px-3 py-1 text-sm font-medium shadow-md z-10"
               style={{
                 clipPath: "polygon(0 0, 100% 0, 95% 50%, 100% 100%, 0 100%)",
               }}
             >
               <div className="flex items-center gap-1">
-                <FaBus className="text-white" />
+                <FaBus />
                 <span>مواصلات</span>
               </div>
             </div>
           )}
           {!job.hebrewRequired && (
             <div
-              className="absolute top-4 left-[-1px] top-[80px] bg-blue-600 text-white px-3 py-1 text-sm font-medium shadow-md z-10"
+              className="absolute left-[-1px] top-[80px] bg-blue-600 text-white px-3 py-1 text-sm font-medium shadow-md z-10"
               style={{
                 clipPath: "polygon(0 0, 100% 0, 95% 50%, 100% 100%, 0 100%)",
               }}
@@ -265,11 +269,11 @@ export default function JobCard({ job, onLoginRequired }: Props) {
 
       {/* Share Dropdown */}
       {showShare && (
-        <div className="absolute left-[30px] top-[255px] bg-white shadow-lg rounded-md border border-gray-300 text-right z-20 min-w-[160px] py-2">
+        <div className="absolute left-[30px] top-[255px] bg-white shadow-lg rounded-md border border-gray-300 text-right z-20 min-w-[180px] py-2">
           <a
             href={`https://wa.me/?text=تفقد هذه الوظيفة: https://foras.co.il/job-details/${job.id}`}
             target="_blank"
-            className="block px-4 py-2 hover:bg-gray-100"
+            className="block px-4 py-2 hover:bg-gray-100 transition"
           >
             <FaWhatsapp className="inline ml-2 text-green-500" />
             مشاركة عبر واتساب
@@ -277,7 +281,7 @@ export default function JobCard({ job, onLoginRequired }: Props) {
           <a
             href={`https://www.facebook.com/sharer/sharer.php?u=https://foras.co.il/job-details/${job.id}`}
             target="_blank"
-            className="block px-4 py-2 hover:bg-gray-100"
+            className="block px-4 py-2 hover:bg-gray-100 transition"
           >
             <FaFacebook className="inline ml-2 text-blue-600" />
             مشاركة عبر فيسبوك
@@ -286,7 +290,7 @@ export default function JobCard({ job, onLoginRequired }: Props) {
             onClick={() =>
               handleCopy(`https://foras.co.il/job-details/${job.id}`)
             }
-            className="block px-4 py-2 hover:bg-gray-100 w-full text-right"
+            className="block px-4 py-2 hover:bg-gray-100 w-full text-right transition"
           >
             <FaLink className="inline ml-2 text-gray-500" />
             نسخ الرابط

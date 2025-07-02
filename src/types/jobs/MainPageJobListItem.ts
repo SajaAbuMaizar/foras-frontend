@@ -1,4 +1,5 @@
 export interface MainPageJobListItem {
+  title: ReactNode
   id: number
   imageUrl: string
   salary: string
