@@ -1,465 +1,470 @@
-// src/app/employer/signup/page.tsx
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import { employerSignupSchema } from "@/schemas/employerSignupSchema";
-import { apiClient } from "@/lib/api-client";
-import toast from "react-hot-toast";
-import { useTermsModal } from "@/hooks/useTermsModal";
-import TermsModal from "@/components/modals/TermsModal";
-import { useLanguage } from "@/context/language/LanguageContext";
-import ar from "@/translations/ar";
-import he from "@/translations/he";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
+import { useEmployerSignup } from "@/hooks/useEmployerSignup";
 import {
-  Mail,
-  Lock,
   User,
-  Building,
+  Building2,
+  Mail,
   Phone,
-  Eye,
-  EyeOff,
+  Lock,
   CheckCircle,
   ArrowLeft,
 } from "lucide-react";
-import Link from "next/link";
-
-type FormData = yup.InferType<typeof employerSignupSchema>;
-
-interface ApiError {
-  field?: "phone" | "email" | "general";
-  message: string;
-}
+import TermsModal from "@/components/modals/TermsModal";
+import { useDisclosure } from "@/hooks/useDisclosure";
+import { useEmployerTranslations } from "@/context/language/useEmployerTranslations";
+import { useLanguage } from "@/context/language/LanguageContext";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const EmployerSignupPage = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [apiError, setApiError] = useState<ApiError | null>(null);
-
+  const router = useRouter();
+  const t = useEmployerTranslations();
   const { lang } = useLanguage();
-  const t = lang === "ar" ? ar.signupPage : he.signupPage;
-  const termsModal = useTermsModal();
-
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setError,
-    watch,
-  } = useForm<FormData>({
-    resolver: yupResolver(employerSignupSchema),
+  const termsModal = useDisclosure();
+  const { onSubmit, isLoading } = useEmployerSignup();
+  const [formData, setFormData] = useState({
+    name: "",
+    companyName: "",
+    email: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
+    agreeTerms: false,
   });
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  const password = watch("password");
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
 
-  const onSubmit = async (data: FormData) => {
-    setApiError(null);
-    setIsLoading(true);
+    if (!formData.name) {
+      newErrors.name = t.signupPage.errors.nameRequired;
+    }
+
+    if (!formData.companyName) {
+      newErrors.companyName = t.signupPage.errors.companyNameRequired;
+    }
+
+    if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = t.signupPage.errors.emailInvalid;
+    }
+
+    if (!formData.phone) {
+      newErrors.phone = t.signupPage.errors.phoneRequired;
+    } else if (!/^\d{10}$/.test(formData.phone.replace(/[^0-9]/g, ""))) {
+      newErrors.phone = t.signupPage.errors.phoneInvalid;
+    }
+
+    if (!formData.password) {
+      newErrors.password = t.signupPage.errors.passwordRequired;
+    } else if (formData.password.length < 6) {
+      newErrors.password = t.signupPage.errors.passwordTooShort;
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = t.signupPage.errors.passwordMismatch;
+    }
+
+    if (!formData.agreeTerms) {
+      newErrors.agreeTerms = t.signupPage.form.termsError;
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
 
     try {
-      await apiClient.withRetry(
-        () => apiClient.post("/api/auth/employer/signup", data),
-        {
-          retries: 2,
-          retryCondition: (error) => {
-            return !error.response || error.response.status >= 500;
-          },
-        }
-      );
+      await onSubmit({
+        name: formData.name,
+        companyName: formData.companyName,
+        email: formData.email,
+        phone: formData.phone,
+        password: formData.password,
+        confirmPassword: "",
+        agreeTerms: false,
+      });
 
-      toast.success("تم إنشاء الحساب بنجاح!");
-      window.location.href = "/employer/dashboard";
+      toast.success(t.auth.welcome);
+      router.push("/employer/signin");
     } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "حدث خطأ أثناء التسجيل";
+      const errorMessage = error.response?.data?.message || error.message;
 
-      // Handle specific error types
-      if (
-        error?.response?.status === 409 ||
-        errorMessage.includes("الهاتف") ||
-        errorMessage.includes("مستخدم")
-      ) {
-        setApiError({
-          field: "phone",
-          message: "رقم الهاتف مسجل بالفعل. يرجى استخدام رقم آخر",
-        });
-        setError("phone", {
-          type: "manual",
-          message: "رقم الهاتف مسجل بالفعل",
-        });
-      } else if (
-        errorMessage.includes("البريد") ||
-        errorMessage.includes("email")
-      ) {
-        setApiError({
-          field: "email",
-          message: "البريد الإلكتروني مسجل بالفعل",
-        });
-        setError("email", {
-          type: "manual",
-          message: "البريد الإلكتروني مسجل بالفعل",
-        });
+      if (errorMessage.includes("email")) {
+        setErrors({ email: t.signupPage.errors.emailExists });
+      } else if (errorMessage.includes("phone")) {
+        setErrors({ phone: t.signupPage.errors.phoneExists });
       } else {
-        setApiError({
-          field: "general",
-          message: errorMessage,
-        });
+        toast.error(t.common.error);
       }
-    } finally {
-      setIsLoading(false);
     }
   };
 
   return (
     <div
-      className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center px-4 py-8"
+      className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center p-4"
       dir="rtl"
     >
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-6xl overflow-hidden">
-        <div className="grid grid-cols-1 lg:grid-cols-2">
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
+      </div>
+
+      <div className="max-w-6xl w-full bg-white rounded-2xl shadow-xl overflow-hidden">
+        <div className="flex flex-col lg:flex-row">
           {/* Form Section */}
-          <div className="p-8 lg:p-12">
-            {/* Logo/Icon */}
-            <div className="flex justify-center mb-6">
-              <div className="bg-blue-100 p-4 rounded-full">
-                <Building className="h-12 w-12 text-blue-600" />
-              </div>
-            </div>
+          <div className="flex-1 p-8 lg:p-12">
+            <div className="max-w-md mx-auto">
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                {t.signupPage.title}
+              </h1>
+              <p className="text-gray-600 mb-8">{t.signupPage.subtitle}</p>
 
-            <h1 className="text-3xl font-bold mb-2 text-center text-gray-800">
-              {t.title}
-            </h1>
-            <p className="text-center text-gray-600 mb-8">
-              أنشئ حساب صاحب عمل للبدء في التوظيف
-            </p>
-
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-              {/* API Error Display */}
-              {apiError && apiError.field === "general" && (
-                <div className="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm flex items-start">
-                  <svg
-                    className="w-5 h-5 mr-2 flex-shrink-0 mt-0.5"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                      clipRule="evenodd"
+              <form onSubmit={handleSubmit} className="space-y-5">
+                {/* Name Input */}
+                <div>
+                  <div className="relative">
+                    <User
+                      className={`absolute top-3 ${
+                        lang === "ar" ? "right-3" : "left-3"
+                      } h-5 w-5 text-gray-400`}
                     />
-                  </svg>
-                  {apiError.message}
-                </div>
-              )}
-
-              {/* Name Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  الاسم الكامل
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400" />
+                    <input
+                      type="text"
+                      required
+                      value={formData.name}
+                      onChange={(e) =>
+                        setFormData({ ...formData, name: e.target.value })
+                      }
+                      className={`w-full ${
+                        lang === "ar" ? "pr-10 pl-3" : "pl-10 pr-3"
+                      } py-3 border ${
+                        errors.name ? "border-red-500" : "border-gray-300"
+                      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                      placeholder={t.signupPage.form.namePlaceholder}
+                    />
                   </div>
-                  <input
-                    {...register("name")}
-                    type="text"
-                    placeholder={t.form.namePlaceholder}
-                    className={`w-full pr-10 pl-3 py-3 border-2 rounded-lg focus:outline-none transition-all ${
-                      errors.name
-                        ? "border-red-300 focus:border-red-500 bg-red-50"
-                        : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
-                    }`}
-                  />
+                  {errors.name && (
+                    <p className="mt-1 text-sm text-red-600">{errors.name}</p>
+                  )}
                 </div>
-                {errors.name && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.name.message}
-                  </p>
-                )}
-              </div>
 
-              {/* Company Name Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  اسم الشركة
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <Building className="h-5 w-5 text-gray-400" />
+                {/* Company Name Input */}
+                <div>
+                  <div className="relative">
+                    <Building2
+                      className={`absolute top-3 ${
+                        lang === "ar" ? "right-3" : "left-3"
+                      } h-5 w-5 text-gray-400`}
+                    />
+                    <input
+                      type="text"
+                      required
+                      value={formData.companyName}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          companyName: e.target.value,
+                        })
+                      }
+                      className={`w-full ${
+                        lang === "ar" ? "pr-10 pl-3" : "pl-10 pr-3"
+                      } py-3 border ${
+                        errors.companyName
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                      placeholder={t.signupPage.form.companyNamePlaceholder}
+                    />
                   </div>
-                  <input
-                    {...register("companyName")}
-                    type="text"
-                    placeholder={t.form.companyNamePlaceholder}
-                    className={`w-full pr-10 pl-3 py-3 border-2 rounded-lg focus:outline-none transition-all ${
-                      errors.companyName
-                        ? "border-red-300 focus:border-red-500 bg-red-50"
-                        : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
-                    }`}
-                  />
-                </div>
-                {errors.companyName && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.companyName.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Email Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  البريد الإلكتروني
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    {...register("email")}
-                    type="email"
-                    placeholder={t.form.emailPlaceholder}
-                    className={`w-full pr-10 pl-3 py-3 border-2 rounded-lg focus:outline-none transition-all ${
-                      errors.email || apiError?.field === "email"
-                        ? "border-red-300 focus:border-red-500 bg-red-50"
-                        : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
-                    }`}
-                  />
-                </div>
-                {(errors.email || apiError?.field === "email") && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.email?.message || apiError?.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Phone Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  رقم الهاتف
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <Phone className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    {...register("phone")}
-                    type="tel"
-                    placeholder={t.form.phonePlaceholder}
-                    className={`w-full pr-10 pl-3 py-3 border-2 rounded-lg focus:outline-none transition-all ${
-                      errors.phone || apiError?.field === "phone"
-                        ? "border-red-300 focus:border-red-500 bg-red-50"
-                        : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
-                    }`}
-                  />
-                </div>
-                {(errors.phone || apiError?.field === "phone") && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.phone?.message || apiError?.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Password Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  كلمة المرور
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    {...register("password")}
-                    type={showPassword ? "text" : "password"}
-                    placeholder={t.form.passwordPlaceholder}
-                    className={`w-full pr-10 pl-10 py-3 border-2 rounded-lg focus:outline-none transition-all ${
-                      errors.password
-                        ? "border-red-300 focus:border-red-500 bg-red-50"
-                        : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
-                    }`}
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 left-0 pl-3 flex items-center"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    )}
-                  </button>
-                </div>
-                {errors.password && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.password.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Confirm Password Input */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  تأكيد كلمة المرور
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    {...register("confirmPassword")}
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder={t.form.confirmPasswordPlaceholder}
-                    className={`w-full pr-10 pl-10 py-3 border-2 rounded-lg focus:outline-none transition-all ${
-                      errors.confirmPassword
-                        ? "border-red-300 focus:border-red-500 bg-red-50"
-                        : "border-gray-200 focus:border-blue-500 hover:border-gray-300"
-                    }`}
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 left-0 pl-3 flex items-center"
-                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  >
-                    {showConfirmPassword ? (
-                      <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    ) : (
-                      <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                    )}
-                  </button>
-                </div>
-                {errors.confirmPassword && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.confirmPassword.message}
-                  </p>
-                )}
-              </div>
-
-              {/* Terms Checkbox */}
-              <div className="relative flex items-start">
-                <div className="flex items-center h-5">
-                  <input
-                    {...register("agreeTerms")}
-                    type="checkbox"
-                    className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                  />
-                </div>
-                <div className="mr-3 text-sm">
-                  <label className="text-gray-700">
-                    {t.form.agreeTermsText}{" "}
-                    <button
-                      type="button"
-                      className="text-blue-600 hover:text-blue-800 underline font-medium"
-                      onClick={termsModal.open}
-                    >
-                      {t.form.termsButtonText}
-                    </button>
-                  </label>
-                  {errors.agreeTerms && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {t.form.termsError}
+                  {errors.companyName && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.companyName}
                     </p>
                   )}
                 </div>
-              </div>
 
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={isLoading}
-                className={`w-full py-3 rounded-lg font-medium text-white transition-all transform ${
-                  isLoading
-                    ? "bg-gray-400 cursor-not-allowed"
-                    : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg active:scale-[0.98]"
-                }`}
-              >
-                {isLoading ? (
-                  <span className="flex items-center justify-center">
-                    <svg
-                      className="animate-spin h-5 w-5 mr-2"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                        fill="none"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
-                    </svg>
-                    جاري إنشاء الحساب...
-                  </span>
-                ) : (
-                  t.form.submitButton
-                )}
-              </button>
+                {/* Email Input */}
+                <div>
+                  <div className="relative">
+                    <Mail
+                      className={`absolute top-3 ${
+                        lang === "ar" ? "right-3" : "left-3"
+                      } h-5 w-5 text-gray-400`}
+                    />
+                    <input
+                      type="email"
+                      required
+                      value={formData.email}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
+                      className={`w-full ${
+                        lang === "ar" ? "pr-10 pl-3" : "pl-10 pr-3"
+                      } py-3 border ${
+                        errors.email ? "border-red-500" : "border-gray-300"
+                      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                      placeholder={t.signupPage.form.emailPlaceholder}
+                    />
+                  </div>
+                  {errors.email && (
+                    <p className="mt-1 text-sm text-red-600">{errors.email}</p>
+                  )}
+                </div>
 
-              {/* Sign In Link */}
-              <p className="text-center text-sm text-gray-600">
-                {t.sideImage.loginTextBeforeLink}{" "}
-                <Link
-                  href="/employer/signin"
-                  className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                {/* Phone Input */}
+                <div>
+                  <div className="relative">
+                    <Phone
+                      className={`absolute top-3 ${
+                        lang === "ar" ? "right-3" : "left-3"
+                      } h-5 w-5 text-gray-400`}
+                    />
+                    <input
+                      type="tel"
+                      required
+                      value={formData.phone}
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
+                      className={`w-full ${
+                        lang === "ar" ? "pr-10 pl-3" : "pl-10 pr-3"
+                      } py-3 border ${
+                        errors.phone ? "border-red-500" : "border-gray-300"
+                      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                      placeholder={t.signupPage.form.phonePlaceholder}
+                    />
+                  </div>
+                  {errors.phone && (
+                    <p className="mt-1 text-sm text-red-600">{errors.phone}</p>
+                  )}
+                </div>
+
+                {/* Password Input */}
+                <div>
+                  <div className="relative">
+                    <Lock
+                      className={`absolute top-3 ${
+                        lang === "ar" ? "right-3" : "left-3"
+                      } h-5 w-5 text-gray-400`}
+                    />
+                    <input
+                      type="password"
+                      required
+                      value={formData.password}
+                      onChange={(e) =>
+                        setFormData({ ...formData, password: e.target.value })
+                      }
+                      className={`w-full ${
+                        lang === "ar" ? "pr-10 pl-3" : "pl-10 pr-3"
+                      } py-3 border ${
+                        errors.password ? "border-red-500" : "border-gray-300"
+                      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                      placeholder={t.signupPage.form.passwordPlaceholder}
+                    />
+                  </div>
+                  {errors.password && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.password}
+                    </p>
+                  )}
+                </div>
+
+                {/* Confirm Password Input */}
+                <div>
+                  <div className="relative">
+                    <Lock
+                      className={`absolute top-3 ${
+                        lang === "ar" ? "right-3" : "left-3"
+                      } h-5 w-5 text-gray-400`}
+                    />
+                    <input
+                      type="password"
+                      required
+                      value={formData.confirmPassword}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          confirmPassword: e.target.value,
+                        })
+                      }
+                      className={`w-full ${
+                        lang === "ar" ? "pr-10 pl-3" : "pl-10 pr-3"
+                      } py-3 border ${
+                        errors.confirmPassword
+                          ? "border-red-500"
+                          : "border-gray-300"
+                      } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                      placeholder={t.signupPage.form.confirmPasswordPlaceholder}
+                    />
+                  </div>
+                  {errors.confirmPassword && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.confirmPassword}
+                    </p>
+                  )}
+                </div>
+
+                {/* Terms Checkbox */}
+                <div>
+                  <label className="flex items-start">
+                    <input
+                      type="checkbox"
+                      checked={formData.agreeTerms}
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          agreeTerms: e.target.checked,
+                        })
+                      }
+                      className={`${
+                        lang === "ar" ? "ml-2" : "mr-2"
+                      } mt-0.5 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded`}
+                    />
+                    <span className="text-sm text-gray-700">
+                      {t.signupPage.form.agreeTermsText}{" "}
+                      <button
+                        type="button"
+                        onClick={termsModal.open}
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        {t.signupPage.form.termsButtonText}
+                      </button>{" "}
+                      {t.signupPage.form.andText}{" "}
+                      <Link
+                        href="/privacy"
+                        className="text-blue-600 hover:text-blue-800"
+                      >
+                        {t.signupPage.form.privacyPolicyText}
+                      </Link>
+                    </span>
+                  </label>
+                  {errors.agreeTerms && (
+                    <p className="mt-1 text-sm text-red-600">
+                      {errors.agreeTerms}
+                    </p>
+                  )}
+                </div>
+
+                {/* Submit Button */}
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className={`w-full py-3 px-4 text-white font-semibold rounded-lg transition-all duration-200 ${
+                    isLoading
+                      ? "bg-gray-400 cursor-not-allowed"
+                      : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg active:scale-[0.98]"
+                  }`}
                 >
-                  {t.sideImage.loginLinkText}
-                </Link>
-              </p>
-            </form>
+                  {isLoading ? (
+                    <span className="flex items-center justify-center">
+                      <svg
+                        className="animate-spin h-5 w-5 mr-2"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                          fill="none"
+                        />
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        />
+                      </svg>
+                      {t.signupPage.form.registering}
+                    </span>
+                  ) : (
+                    t.signupPage.form.submitButton
+                  )}
+                </button>
+
+                {/* Sign In Link */}
+                <p className="text-center text-sm text-gray-600">
+                  {t.signupPage.sideImage.loginTextBeforeLink}{" "}
+                  <Link
+                    href="/employer/signin"
+                    className="text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    {t.signupPage.sideImage.loginLinkText}
+                  </Link>
+                </p>
+              </form>
+            </div>
           </div>
 
-          {/* Side Panel */}
-          <div className="hidden lg:flex bg-gradient-to-br from-blue-600 to-indigo-700 p-12 items-center justify-center relative">
+          {/* Image Section */}
+          <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-600 to-indigo-700 p-12 items-center justify-center relative">
             <div className="absolute inset-0 bg-black opacity-10"></div>
-            <div className="relative z-10 text-white text-center">
-              <h2 className="text-3xl font-bold mb-6">{t.sideImage.heading}</h2>
-              <p className="text-lg mb-8 opacity-90">
-                {t.sideImage.description}
+            <div className="relative z-10 text-white">
+              <h3 className="text-3xl font-bold mb-4 text-center">
+                {t.signupPage.sideImage.heading}
+              </h3>
+              <p className="text-lg mb-8 opacity-90 text-center">
+                {t.signupPage.sideImage.description}
               </p>
 
-              {/* Features */}
               <div className="space-y-4 mb-8">
                 <div className="flex items-center bg-white/20 backdrop-blur-sm rounded-lg p-4">
-                  <CheckCircle className="h-6 w-6 ml-3 flex-shrink-0" />
-                  <span className="text-right">نشر وظائف غير محدودة</span>
-                </div>
-                <div className="flex items-center bg-white/20 backdrop-blur-sm rounded-lg p-4">
-                  <CheckCircle className="h-6 w-6 ml-3 flex-shrink-0" />
-                  <span className="text-right">
-                    الوصول إلى آلاف المرشحين المؤهلين
+                  <CheckCircle
+                    className={`h-6 w-6 ${
+                      lang === "ar" ? "ml-3" : "mr-3"
+                    } flex-shrink-0`}
+                  />
+                  <span
+                    className={`${lang === "ar" ? "text-right" : "text-left"}`}
+                  >
+                    {t.signupPage.sideImage.features.feature1}
                   </span>
                 </div>
                 <div className="flex items-center bg-white/20 backdrop-blur-sm rounded-lg p-4">
-                  <CheckCircle className="h-6 w-6 ml-3 flex-shrink-0" />
-                  <span className="text-right">
-                    أدوات إدارة التوظيف المتقدمة
+                  <CheckCircle
+                    className={`h-6 w-6 ${
+                      lang === "ar" ? "ml-3" : "mr-3"
+                    } flex-shrink-0`}
+                  />
+                  <span
+                    className={`${lang === "ar" ? "text-right" : "text-left"}`}
+                  >
+                    {t.signupPage.sideImage.features.feature2}
                   </span>
                 </div>
                 <div className="flex items-center bg-white/20 backdrop-blur-sm rounded-lg p-4">
-                  <CheckCircle className="h-6 w-6 ml-3 flex-shrink-0" />
-                  <span className="text-right">تحليلات ورؤى مفصلة</span>
+                  <CheckCircle
+                    className={`h-6 w-6 ${
+                      lang === "ar" ? "ml-3" : "mr-3"
+                    } flex-shrink-0`}
+                  />
+                  <span
+                    className={`${lang === "ar" ? "text-right" : "text-left"}`}
+                  >
+                    {t.signupPage.sideImage.features.feature3}
+                  </span>
                 </div>
               </div>
 
-              <div className="mt-8">
+              <div className="text-center">
                 <Link
                   href="/employer/signin"
                   className="inline-flex items-center bg-white text-blue-600 px-6 py-3 rounded-lg font-medium hover:bg-gray-100 transition-colors"
                 >
-                  <ArrowLeft className="ml-2 h-5 w-5" />
-                  العودة إلى تسجيل الدخول
+                  <ArrowLeft
+                    className={`${lang === "ar" ? "ml-2" : "mr-2"} h-5 w-5`}
+                  />
+                  {t.signupPage.sideImage.backToLogin}
                 </Link>
               </div>
             </div>

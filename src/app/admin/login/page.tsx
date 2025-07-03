@@ -9,7 +9,6 @@ export default function AdminLoginPage() {
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-6xl overflow-hidden">
         <div className="flex flex-col lg:flex-row" dir="rtl">
           {/* Form Section */}
-
           <LoginForm />
 
           {/* Image/Info Section */}
