@@ -3,49 +3,45 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Phone, Lock, Building2, Users, BarChart3 } from "lucide-react";
+import {
+  Phone,
+  Lock,
+  Building2,
+  Users,
+  BarChart3,
+  AlertCircle,
+} from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useSignin } from "@/hooks/useEmployerSignin";
 import { useEmployerTranslations } from "@/context/language/useEmployerTranslations";
 import { useLanguage } from "@/context/language/LanguageContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useEmployerSignup } from "@/hooks/useEmployerSignup";
 
 const EmployerSignInPage = () => {
   const router = useRouter();
   const t = useEmployerTranslations();
   const { lang } = useLanguage();
-  const { onSubmit, isLoading } = useSignin();
-  const [formData, setFormData] = useState({
-    phone: "",
-    password: "",
-    rememberMe: false,
-  });
+  const {
+    register,
+    handleSubmit,
+    onSubmit,
+    clearError,
+    errors,
+    isLoading,
+    apiError,
+  } = useSignin();
+  const [rememberMe, setRememberMe] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
+  const handleFormSubmit = async (data: any) => {
     try {
-      await onSubmit({
-        phone: formData.phone,
-        password: formData.password,
-      });
+      await onSubmit(data);
 
-      if (formData.rememberMe) {
+      if (rememberMe) {
         localStorage.setItem("rememberMe", "true");
       }
-
-      toast.success(t.auth.welcomeBack);
-      router.push("/employer/dashboard");
-    } catch (error: any) {
-      const errorMessage = error.response?.data?.message || error.message;
-
-      if (errorMessage.includes("Invalid credentials")) {
-        toast.error(t.signinPage.errors.invalidCredentials);
-      } else if (error.response?.status >= 500) {
-        toast.error(t.signinPage.errors.serverError);
-      } else {
-        toast.error(t.signinPage.errors.networkError);
-      }
+    } catch (error) {
+      // Error handling is done in the hook
     }
   };
 
@@ -68,7 +64,22 @@ const EmployerSignInPage = () => {
               </h1>
               <p className="text-gray-600 mb-8">{t.signinPage.subtitle}</p>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
+              {/* General Error Alert */}
+              {apiError?.field === "general" && (
+                <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200 flex items-start gap-3">
+                  <AlertCircle className="h-5 w-5 text-red-600 mt-0.5 flex-shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-sm text-red-800 font-medium">
+                      {apiError.message}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              <form
+                onSubmit={handleSubmit(handleFormSubmit)}
+                className="space-y-6"
+              >
                 {/* Phone Input */}
                 <div>
                   <div className="relative">
@@ -79,17 +90,25 @@ const EmployerSignInPage = () => {
                     />
                     <input
                       type="tel"
-                      required
-                      value={formData.phone}
-                      onChange={(e) =>
-                        setFormData({ ...formData, phone: e.target.value })
-                      }
+                      {...register("phone", {
+                        onChange: () => clearError("phone"), // Clear phone error when typing
+                      })}
                       className={`w-full ${
                         lang === "ar" ? "pr-10 pl-3" : "pl-10 pr-3"
-                      } py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                      } py-3 border ${
+                        errors.phone || apiError?.field === "phone"
+                          ? "border-red-500 focus:ring-red-500"
+                          : "border-gray-300 focus:ring-blue-500"
+                      } rounded-lg focus:ring-2 focus:border-transparent transition-colors`}
                       placeholder={t.signinPage.form.phonePlaceholder}
                     />
                   </div>
+                  {(errors.phone || apiError?.field === "phone") && (
+                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {errors.phone?.message || apiError?.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Password Input */}
@@ -102,34 +121,33 @@ const EmployerSignInPage = () => {
                     />
                     <input
                       type="password"
-                      required
-                      value={formData.password}
-                      onChange={(e) =>
-                        setFormData({ ...formData, password: e.target.value })
-                      }
+                      {...register("password")}
                       className={`w-full ${
                         lang === "ar" ? "pr-10 pl-3" : "pl-10 pr-3"
-                      } py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent`}
+                      } py-3 border ${
+                        errors.password || apiError?.field === "password"
+                          ? "border-red-500 focus:ring-red-500"
+                          : "border-gray-300 focus:ring-blue-500"
+                      } rounded-lg focus:ring-2 focus:border-transparent transition-colors`}
                       placeholder={t.signinPage.form.passwordPlaceholder}
                     />
                   </div>
+                  {(errors.password || apiError?.field === "password") && (
+                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                      <AlertCircle className="h-3 w-3" />
+                      {errors.password?.message || apiError?.message}
+                    </p>
+                  )}
                 </div>
 
                 {/* Remember Me & Forgot Password */}
                 <div className="flex items-center justify-between">
-                  <label className="flex items-center">
+                  <label className="flex items-center space-x-2 rtl:space-x-reverse cursor-pointer">
                     <input
                       type="checkbox"
-                      checked={formData.rememberMe}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          rememberMe: e.target.checked,
-                        })
-                      }
-                      className={`${
-                        lang === "ar" ? "ml-2" : "mr-2"
-                      } h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded`}
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                      className="w-4 h-4 text-blue-600 rounded border-gray-300 focus:ring-blue-500"
                     />
                     <span className="text-sm text-gray-700">
                       {t.signinPage.form.rememberMe}
@@ -137,7 +155,7 @@ const EmployerSignInPage = () => {
                   </label>
                   <Link
                     href="/employer/forgot-password"
-                    className="text-sm text-blue-600 hover:text-blue-800"
+                    className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
                   >
                     {t.signinPage.form.forgotPassword}
                   </Link>
@@ -147,16 +165,16 @@ const EmployerSignInPage = () => {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`w-full py-3 px-4 text-white font-semibold rounded-lg transition-all duration-200 ${
+                  className={`w-full py-3 px-4 rounded-lg font-medium text-white transition-all duration-200 transform ${
                     isLoading
                       ? "bg-gray-400 cursor-not-allowed"
-                      : "bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:shadow-lg active:scale-[0.98]"
+                      : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 hover:shadow-lg active:scale-[0.98]"
                   }`}
                 >
                   {isLoading ? (
                     <span className="flex items-center justify-center">
                       <svg
-                        className="animate-spin h-5 w-5 mr-2"
+                        className="animate-spin h-5 w-5 mr-2 rtl:ml-2 rtl:mr-0"
                         viewBox="0 0 24 24"
                       >
                         <circle
@@ -182,11 +200,11 @@ const EmployerSignInPage = () => {
                 </button>
 
                 {/* Sign Up Link */}
-                <p className="text-center text-sm text-gray-600">
+                <p className="text-center text-gray-600">
                   {t.signinPage.noAccount}{" "}
                   <Link
                     href="/employer/signup"
-                    className="text-blue-600 hover:text-blue-800 font-medium"
+                    className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
                   >
                     {t.signinPage.createAccount}
                   </Link>
@@ -196,33 +214,32 @@ const EmployerSignInPage = () => {
           </div>
 
           {/* Image Section */}
-          <div className="hidden md:flex md:w-1/2 bg-gradient-to-br from-blue-600 to-indigo-700 p-12 items-center justify-center relative">
-            <div className="absolute inset-0 bg-black opacity-10"></div>
-            <div className="relative z-10 text-white text-center">
-              <h3 className="text-3xl font-bold mb-4">
+          <div className="hidden md:block flex-1 bg-gradient-to-br from-blue-50 to-blue-100 p-12">
+            <div className="h-full flex flex-col justify-center">
+              <h2 className="text-3xl font-bold text-gray-900 mb-4">
                 {t.signinPage.imageSection.title}
-              </h3>
-              <p className="text-lg mb-8 opacity-90">
+              </h2>
+              <p className="text-lg text-gray-700 mb-8">
                 {t.signinPage.imageSection.subtitle}
               </p>
               <div className="space-y-4">
-                <div className="flex items-center bg-white/20 backdrop-blur-sm rounded-lg p-4">
-                  <Users
-                    className={`h-6 w-6 ${lang === "ar" ? "ml-3" : "mr-3"}`}
-                  />
-                  <span>{t.signinPage.imageSection.features.candidates}</span>
+                <div className="flex items-center gap-3">
+                  <Users className="h-6 w-6 text-blue-600" />
+                  <span className="text-gray-700">
+                    {t.signinPage.imageSection.features.candidates}
+                  </span>
                 </div>
-                <div className="flex items-center bg-white/20 backdrop-blur-sm rounded-lg p-4">
-                  <Building2
-                    className={`h-6 w-6 ${lang === "ar" ? "ml-3" : "mr-3"}`}
-                  />
-                  <span>{t.signinPage.imageSection.features.tools}</span>
+                <div className="flex items-center gap-3">
+                  <Building2 className="h-6 w-6 text-blue-600" />
+                  <span className="text-gray-700">
+                    {t.signinPage.imageSection.features.tools}
+                  </span>
                 </div>
-                <div className="flex items-center bg-white/20 backdrop-blur-sm rounded-lg p-4">
-                  <BarChart3
-                    className={`h-6 w-6 ${lang === "ar" ? "ml-3" : "mr-3"}`}
-                  />
-                  <span>{t.signinPage.imageSection.features.support}</span>
+                <div className="flex items-center gap-3">
+                  <BarChart3 className="h-6 w-6 text-blue-600" />
+                  <span className="text-gray-700">
+                    {t.signinPage.imageSection.features.support}
+                  </span>
                 </div>
               </div>
             </div>

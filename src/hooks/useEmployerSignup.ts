@@ -1,4 +1,3 @@
-// src/hooks/useEmployerSignup.ts
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -6,6 +5,7 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { employerSignupSchema } from "@/schemas/employerSignupSchema";
 import { apiClient } from "@/lib/api-client";
+import { useEmployerTranslations } from "@/context/language/useEmployerTranslations";
 
 type FormData = yup.InferType<typeof employerSignupSchema>;
 
@@ -17,6 +17,7 @@ export interface SignUpError {
 export const useEmployerSignup = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<SignUpError | null>(null);
+  const t = useEmployerTranslations();
 
   const formMethods = useForm<FormData>({
     resolver: yupResolver(employerSignupSchema),
@@ -28,7 +29,6 @@ export const useEmployerSignup = () => {
     setIsLoading(true);
     setApiError(null);
 
-    // Prepare data for backend (remove confirmPassword and agreeTerms)
     const backendData = {
       name: data.name,
       companyName: data.companyName,
@@ -41,55 +41,101 @@ export const useEmployerSignup = () => {
       await apiClient.withRetry(
         () => apiClient.post("/api/auth/employer/signup", backendData),
         {
-          retries: 2, // Fewer retries for signup to avoid duplicate submissions
+          retries: 2,
           retryCondition: (error) => {
-            // Only retry on network errors or server errors (not 400s)
             return !error.response || error.response.status >= 500;
           },
         }
       );
 
-      toast.success("تم إنشاء الحساب بنجاح!");
+      toast.success(t.auth.welcome || "تم إنشاء الحساب بنجاح!", {
+        style: {
+          background: "#ecfdf5",
+          color: "#065f46",
+          border: "1px solid #a7f3d0",
+        },
+      });
       window.location.href = "/employer/dashboard";
       reset();
     } catch (error: any) {
-      const errorMessage =
-        error?.response?.data?.message ||
-        error?.message ||
-        "حدث خطأ أثناء التسجيل";
+      const errorMessage = error?.response?.data?.message || error?.message;
+      const statusCode = error?.response?.status;
+      console.error("Signup error:", errorMessage, "Status code:", statusCode);
 
-      // Handle specific error types
-      if (
-        error?.response?.status === 409 ||
-        errorMessage.includes("الهاتف") ||
-        errorMessage.includes("مستخدم")
-      ) {
-        setApiError({
-          field: "phone",
-          message: "رقم الهاتف مسجل بالفعل. يرجى استخدام رقم آخر",
-        });
-        setError("phone", {
-          type: "manual",
-          message: "رقم الهاتف مسجل بالفعل",
-        });
-      } else if (
-        errorMessage.includes("البريد") ||
-        errorMessage.includes("email")
-      ) {
-        setApiError({
-          field: "email",
-          message: "البريد الإلكتروني مسجل بالفعل",
-        });
-        setError("email", {
-          type: "manual",
-          message: "البريد الإلكتروني مسجل بالفعل",
-        });
-      } else {
+      if (statusCode === 409) {
+        if (
+          errorMessage.toLowerCase().includes("phone") ||
+          errorMessage.includes("الهاتف")
+        ) {
+          const message = t.signupPage.errors.phoneExists;
+          console.log("Phone error:", errorMessage);
+          console.log("Phone error:", message);
+
+          setApiError({ field: "phone", message });
+          setError("phone", { type: "manual", message });
+        } else if (
+          errorMessage.toLowerCase().includes("email") ||
+          errorMessage.includes("البريد")
+        ) {
+          const message =
+            t.signupPage.errors.emailExists || "البريد الإلكتروني مسجل بالفعل";
+          setApiError({ field: "email", message });
+          setError("email", { type: "manual", message });
+        } else {
+          setApiError({ field: "general", message: errorMessage });
+          toast.error(errorMessage, {
+            style: {
+              background: "#fee2e2",
+              color: "#b91c1c",
+              border: "1px solid #fca5a5",
+            },
+          });
+        }
+      } else if (statusCode === 400) {
         setApiError({
           field: "general",
-          message: errorMessage,
+          message: t.signupPage.errors.validationError,
         });
-        toast.error(errorMessage);
+      } else if (statusCode === 429) {
+        const message =
+          t.signupPage.errors.tooManyAttempts || "تم تجاوز عدد المحاولات";
+        setApiError({ field: "general", message });
+        toast.error(message, {
+          style: {
+            background: "#fee2e2",
+            color: "#b91c1c",
+            border: "1px solid #fca5a5",
+          },
+        });
+      } else if (statusCode >= 500) {
+        const message = t.signupPage.errors.serverError || "خطأ في الخادم";
+        setApiError({ field: "general", message });
+        toast.error(message, {
+          style: {
+            background: "#fee2e2",
+            color: "#b91c1c",
+            border: "1px solid #fca5a5",
+          },
+        });
+      } else if (!error.response) {
+        const message = t.signupPage.errors.networkError || "خطأ في الاتصال";
+        setApiError({ field: "general", message });
+        toast.error(message, {
+          style: {
+            background: "#fee2e2",
+            color: "#b91c1c",
+            border: "1px solid #fca5a5",
+          },
+        });
+      } else {
+        setApiError({ field: "general", message: errorMessage });
+        toast.error(errorMessage, {
+          style: {
+            background: "#fee2e2",
+            color: "#b91c1c",
+            border: "1px solid #fca5a5",
+          },
+        });
       }
     } finally {
       setIsLoading(false);

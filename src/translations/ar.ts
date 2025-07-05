@@ -54,6 +54,9 @@ const ar = {
       invalidCredentials: "رقم الهاتف أو كلمة المرور غير صحيحة",
       serverError: "حدث خطأ في الخادم. يرجى المحاولة لاحقاً",
       networkError: "خطأ في الاتصال. تحقق من اتصالك بالإنترنت",
+      phoneNotFound: "رقم الهاتف غير مسجل. يرجى التسجيل أولاً",
+      accountDisabled: "الحساب معطل أو محظور. يرجى التواصل مع الدعم",
+      tooManyAttempts: "تم تجاوز عدد المحاولات المسموح. يرجى المحاولة لاحقاً",
     },
   },
 
@@ -100,6 +103,10 @@ const ar = {
       passwordMismatch: "كلمات المرور غير متطابقة",
       emailExists: "البريد الإلكتروني مستخدم بالفعل",
       phoneExists: "رقم الهاتف مستخدم بالفعل",
+      validationError: "يرجى التحقق من البيانات المدخلة",
+      serverError: "حدث خطأ في الخادم. يرجى المحاولة لاحقاً",
+      networkError: "خطأ في الاتصال. تحقق من اتصالك بالإنترنت",
+      tooManyAttempts: "تم تجاوز عدد المحاولات المسموح. يرجى المحاولة لاحقاً",
     },
   },
 
@@ -155,7 +162,7 @@ const ar = {
     declineButton: "رفض",
   },
 
-  // Job Listings Page (Already exists in your ar.ts, keeping as is)
+  // Job Listings Page
   jobListingsPage: {
     heading: "الوظائف المعلنة",
     searchPlaceholder: "البحث عن وظائف...",
@@ -185,7 +192,7 @@ const ar = {
     fetchError: "خطأ في جلب البيانات",
   },
 
-  // Post Job Page (Already exists in your ar.ts)
+  // Post Job Page
   postJobPage: {
     title: "طلب وظيفي",
     languageLabel: "لغة الوظيفة",

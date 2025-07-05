@@ -1,4 +1,3 @@
-// src/hooks/useEmployerSignin.ts
 "use client";
 
 import { useState } from "react";
@@ -7,6 +6,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { apiClient } from "@/lib/api-client";
+import { useEmployerTranslations } from "@/context/language/useEmployerTranslations";
 
 const signinSchema = z.object({
   phone: z.string().min(10, "يجب أن يتكون رقم الهاتف من 10 أرقام على الأقل"),
@@ -23,6 +23,12 @@ export interface SignInError {
 export const useSignin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<SignInError | null>(null);
+  const t = useEmployerTranslations();
+  const clearError = (field?: "phone" | "password" | "general") => {
+    if (!field || apiError?.field === field) {
+      setApiError(null);
+    }
+  };
 
   const {
     register,
@@ -43,58 +49,76 @@ export const useSignin = () => {
         apiClient.post("/api/auth/employer/signin", data)
       );
 
-      toast.success("تم تسجيل الدخول بنجاح!");
+      toast.success(t.auth.welcomeBack || "تم تسجيل الدخول بنجاح!");
       reset();
       window.location.href = "/employer/dashboard";
     } catch (error: any) {
       const errorMessage =
         error?.response?.data?.message || error?.message || "خطأ غير معروف";
+      const statusCode = error?.response?.status;
 
-      // Handle specific error types
-      if (
-        error?.response?.status === 404 ||
-        errorMessage.includes("غير مسجل") ||
-        errorMessage.includes("غير موجود")
-      ) {
+      // Handle specific error types based on status codes
+      if (statusCode === 404) {
         setApiError({
           field: "phone",
-          message: "رقم الهاتف غير مسجل. يرجى التسجيل أولاً",
+          message: t.signinPage.errors.phoneNotFound,
         });
-        setError("phone", {
-          type: "manual",
-          message: "رقم الهاتف غير مسجل",
-        });
-      } else if (
-        error?.response?.status === 401 ||
-        errorMessage.includes("كلمة المرور") ||
-        errorMessage.includes("خاطئة")
-      ) {
+      } else if (statusCode === 401) {
+        const backendMessage = error?.response?.data?.message;
+        const isPasswordError = backendMessage?.includes("كلمة المرور");
+
         setApiError({
-          field: "password",
-          message: "كلمة المرور غير صحيحة",
+          field: isPasswordError ? "password" : "general",
+          message:
+            backendMessage ||
+            t.signinPage.errors.invalidCredentials ||
+            "بيانات الاعتماد غير صحيحة",
         });
-        setError("password", {
-          type: "manual",
-          message: "كلمة المرور غير صحيحة",
-        });
-      } else if (
-        error?.response?.status === 403 ||
-        errorMessage.includes("محظور") ||
-        errorMessage.includes("معطل")
-      ) {
+
+        if (isPasswordError) {
+          setError("password", {
+            type: "manual",
+            message: backendMessage,
+          });
+        }
+      } else if (statusCode === 403) {
         setApiError({
           field: "general",
-          message: "الحساب معطل أو محظور. يرجى التواصل مع الدعم",
+          message:
+            t.signinPage.errors.accountDisabled ||
+            "الحساب معطل أو محظور. يرجى التواصل مع الدعم",
         });
+        toast.error(apiError?.message || "الحساب معطل");
+      } else if (statusCode === 429) {
+        setApiError({
+          field: "general",
+          message:
+            t.signinPage.errors.tooManyAttempts ||
+            "تم تجاوز عدد المحاولات المسموح. يرجى المحاولة لاحقاً",
+        });
+        toast.error(apiError?.message || "تم تجاوز عدد المحاولات");
+      } else if (statusCode >= 500) {
+        setApiError({
+          field: "general",
+          message:
+            t.signinPage.errors.serverError ||
+            "حدث خطأ في الخادم. يرجى المحاولة لاحقاً",
+        });
+        toast.error(apiError?.message || "خطأ في الخادم");
+      } else if (!error.response) {
+        setApiError({
+          field: "general",
+          message:
+            t.signinPage.errors.networkError ||
+            "خطأ في الاتصال. تحقق من اتصالك بالإنترنت",
+        });
+        toast.error(apiError?.message || "خطأ في الاتصال");
       } else {
+        // Generic error
         setApiError({
           field: "general",
           message: errorMessage,
         });
-      }
-
-      // Only show toast for general errors
-      if (apiError?.field === "general") {
         toast.error(errorMessage);
       }
     } finally {
@@ -111,5 +135,6 @@ export const useSignin = () => {
     isLoading,
     apiError,
     reset,
+    clearError,
   };
 };
