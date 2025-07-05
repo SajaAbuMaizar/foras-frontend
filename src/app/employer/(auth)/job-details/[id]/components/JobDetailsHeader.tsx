@@ -1,17 +1,21 @@
 "use client";
 
+import { ArrowLeft, ArrowRight, Briefcase, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/context/language/LanguageContext";
 import { useEmployerTranslations } from "@/context/language/useEmployerTranslations";
-import { ArrowLeft, ArrowRight, Briefcase } from "lucide-react";
 
-interface JobApplicationHeaderProps {
+interface JobDetailsHeaderProps {
+  jobTitle: string;
   jobId: string;
+  onBack: () => void;
 }
 
-export default function JobApplicationHeader({
+export default function JobDetailsHeader({
+  jobTitle,
   jobId,
-}: JobApplicationHeaderProps) {
+  onBack,
+}: JobDetailsHeaderProps) {
   const router = useRouter();
   const { lang } = useLanguage();
   const t = useEmployerTranslations();
@@ -22,7 +26,7 @@ export default function JobApplicationHeader({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <button
-            onClick={() => router.back()}
+            onClick={onBack}
             className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
           >
             {isRTL ? (
@@ -39,20 +43,21 @@ export default function JobApplicationHeader({
 
             <div>
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
-                {t.jobApplications.title}
+                {jobTitle}
               </h1>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                {t.jobApplications.jobId}: {jobId}
+                {t.jobDetails.jobId}: {jobId}
               </p>
             </div>
           </div>
         </div>
 
         <button
-          onClick={() => router.push(`/employer/job-details/${jobId}`)}
-          className="px-4 py-2 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg transition-colors text-sm font-medium"
+          onClick={() => router.push(`/employer/job-applications/${jobId}`)}
+          className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
         >
-          {t.jobApplications.viewJobDetails}
+          <Users className="h-5 w-5" />
+          {t.jobDetails.viewApplications}
         </button>
       </div>
     </div>

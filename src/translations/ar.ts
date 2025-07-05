@@ -17,6 +17,8 @@ const ar = {
     confirm: "تأكيد",
     yes: "نعم",
     no: "لا",
+    retry: "إعادة المحاولة",
+    goBack: "العودة",
   },
 
   // Authentication
@@ -225,6 +227,25 @@ const ar = {
       newApplicants: "متقدمون جدد",
       viewsToday: "المشاهدات اليوم",
     },
+  },
+
+  jobDetails: {
+    title: "تفاصيل الوظيفة",
+    jobId: "رقم الوظيفة",
+    viewApplications: "عرض المتقدمين",
+    location: "الموقع",
+    industry: "المجال",
+    jobType: "نوع الوظيفة",
+    salary: "الراتب",
+    postedOn: "تاريخ النشر",
+    transportation: "المواصلات",
+    hebrewRequired: "العبرية مطلوبة",
+    requiredQualifications: "المؤهلات المطلوبة",
+    applicants: "المتقدمين",
+    totalApplicants: "إجمالي المتقدمين",
+    noApplicantsYet: "لا يوجد متقدمين بعد",
+    errorLoading: "خطأ في تحميل تفاصيل الوظيفة",
+    notFound: "الوظيفة غير موجودة",
   },
 
   // Applicants

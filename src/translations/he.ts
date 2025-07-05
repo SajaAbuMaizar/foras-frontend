@@ -17,6 +17,8 @@ const he = {
     confirm: "אשר",
     yes: "כן",
     no: "לא",
+    retry: "נסה שוב",
+    goBack: "חזור",
   },
 
   // Authentication
@@ -225,6 +227,25 @@ const he = {
       newApplicants: "מועמדים חדשים",
       viewsToday: "צפיות היום",
     },
+  },
+
+  jobDetails: {
+    title: "פרטי משרה",
+    jobId: "מספר משרה",
+    viewApplications: "צפה במועמדים",
+    location: "מיקום",
+    industry: "תחום",
+    jobType: "סוג משרה",
+    salary: "שכר",
+    postedOn: "תאריך פרסום",
+    transportation: "הסעות",
+    hebrewRequired: "נדרשת עברית",
+    requiredQualifications: "כישורים נדרשים",
+    applicants: "מועמדים",
+    totalApplicants: "סה״כ מועמדים",
+    noApplicantsYet: "אין מועמדים עדיין",
+    errorLoading: "שגיאה בטעינת פרטי המשרה",
+    notFound: "המשרה לא נמצאה",
   },
 
   // Applicants
