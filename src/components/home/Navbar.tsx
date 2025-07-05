@@ -36,11 +36,11 @@ const Navbar: React.FC<NavbarProps> = ({ variant = "default" }) => {
       : "fixed top-0 z-[99999] w-full bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 backdrop-blur-sm shadow-2xl";
 
   const textColorClass =
-    variant === "transparent" && !scrolled
-      ? "text-white"
-      : scrolled
-      ? "text-slate-800"
-      : "text-white";
+    variant !== "transparent"
+      ? "text-white" // always white if not transparent
+      : !scrolled
+      ? "text-white" // transparent and not scrolled = white
+      : "text-slate-800"; // transparent and scrolled = slate (dark)
 
   return (
     <header dir="rtl" className={navbarClasses}>

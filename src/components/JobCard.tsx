@@ -166,6 +166,33 @@ export default function JobCard({ job, onLoginRequired }: Props) {
               />
             </a>
 
+            {/* Tags */}
+            {job.transportationAvailable && (
+              <div
+                className="absolute top-4 left-[-1px] top-[48px] bg-green-600 text-white px-3 py-1 text-sm font-medium shadow-md z-10"
+                style={{
+                  clipPath: "polygon(0 0, 100% 0, 95% 50%, 100% 100%, 0 100%)",
+                }}
+              >
+                <div className="flex items-center gap-1">
+                  <FaBus className="text-white" />
+                  <span>مواصلات</span>
+                </div>
+              </div>
+            )}
+            {!job.hebrewRequired && (
+              <div
+                className="absolute top-4 left-[-1px] top-[80px] bg-blue-600 text-white px-3 py-1 text-sm font-medium shadow-md z-10"
+                style={{
+                  clipPath: "polygon(0 0, 100% 0, 95% 50%, 100% 100%, 0 100%)",
+                }}
+              >
+                <div className="flex items-center gap-1">
+                  <span>بدون عبري</span>
+                </div>
+              </div>
+            )}
+
             {/* Share Button */}
             <div className="absolute top-[-25px] left-4">
               <button

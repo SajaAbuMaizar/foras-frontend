@@ -404,7 +404,6 @@ const AccessibilityWidget: React.FC = () => {
         }
 
         .high-contrast * {
-          background-color: white !important;
           color: black !important;
           border-color: black !important;
         }
@@ -416,7 +415,6 @@ const AccessibilityWidget: React.FC = () => {
 
         .high-contrast button {
           background-color: black !important;
-          color: white !important;
           border: 2px solid white !important;
         }
 

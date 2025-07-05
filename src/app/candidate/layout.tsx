@@ -8,7 +8,7 @@ const CandidateLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <OptionsProvider>
       <Navbar variant={variant} />
-      <div className="flex-grow">{children}</div>
+      <div className="flex-grow mt-20">{children}</div>
     </OptionsProvider>
   );
 };

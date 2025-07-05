@@ -37,9 +37,7 @@ export default function SavedJobsPage() {
   return (
     <div className="min-h-screen bg-gray-100 rtl:pr-64" dir="rtl">
       <div className="container mx-auto px-4 py-6">
-        <h1 className="text-2xl font-bold mb-6 text-right">
-          الوظائف المحفوظة
-        </h1>
+        <h1 className="text-2xl font-bold mb-6 text-right">الوظائف المحفوظة</h1>
         {isLoading ? (
           <div className="text-center">جاري التحميل...</div>
         ) : error ? (
@@ -51,9 +49,9 @@ export default function SavedJobsPage() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {jobs.map((job) => (
-              <JobCard 
-                key={job.id} 
-                job={job} 
+              <JobCard
+                key={job.id}
+                job={job}
                 onLoginRequired={handleLoginRequired}
               />
             ))}
