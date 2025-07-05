@@ -130,3 +130,25 @@ export async function updateApplicationStatus(
     throw error;
   }
 }
+
+// getCandidateProfile.ts
+export async function getCandidateProfile() {
+  return await apiClient.get("/api/candidate/me/profile");
+}
+
+// updateCandidateProfile.ts
+export async function updateCandidateProfile(data: any) {
+  return await apiClient.put("/api/candidate/me/profile", data);
+}
+
+// uploadCandidateAvatar.ts
+export async function uploadCandidateAvatar(file: File) {
+  const formData = new FormData();
+  formData.append("avatar", file);
+
+  return await apiClient.post("/api/candidate/me/avatar", formData, {
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+}
