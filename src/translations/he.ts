@@ -194,9 +194,12 @@ const he = {
 
   // Post Job Page (Already exists in your he.ts)
   postJobPage: {
-    title: "בקשת משרה",
+    title: "פרסום משרה חדשה",
+    subtitle: "צור הזדמנות תעסוקה חדשה",
+    basicInfo: "מידע בסיסי",
+    jobDetails: "פרטי המשרה",
     languageLabel: "שפת המשרה",
-    jobTitle: "שם המשרה",
+    jobTitle: "כותרת המשרה",
     jobDescription: "תיאור המשרה",
     location: "מיקום",
     jobType: "סוג המשרה",
@@ -206,9 +209,9 @@ const he = {
     jobImage: "תמונת המשרה",
     jobImageHelper: "פורמטים נתמכים: JPEG, PNG, GIF. גודל מירבי: 1MB.",
     transportation: "האם קיימת תחבורה?",
-    hebrewRequired: "נדרשת עברית?",
+    hebrewRequired: "האם נדרשת עברית?",
     submitButton: "פרסם משרה",
-    submitting: "שולח...",
+    submitting: "מפרסם...",
   },
 
   // Dashboard

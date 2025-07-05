@@ -194,13 +194,16 @@ const ar = {
 
   // Post Job Page
   postJobPage: {
-    title: "طلب وظيفي",
+    title: "نشر وظيفة جديدة",
+    subtitle: "أنشئ فرصة عمل جديدة",
+    basicInfo: "المعلومات الأساسية",
+    jobDetails: "تفاصيل الوظيفة",
     languageLabel: "لغة الوظيفة",
     jobTitle: "المسمى الوظيفي",
     jobDescription: "وصف الوظيفة",
     location: "الموقع",
     jobType: "نوع الوظيفة",
-    industry: "الصناعة",
+    industry: "المجال",
     salary: "الراتب",
     qualifications: "المؤهلات المطلوبة",
     jobImage: "صورة الوظيفة",
