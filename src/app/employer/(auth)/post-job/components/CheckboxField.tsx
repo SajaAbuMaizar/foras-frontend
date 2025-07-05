@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 type CheckBoxFieldProps = {
   id: string;
@@ -9,12 +9,7 @@ type CheckBoxFieldProps = {
 export default function CheckBoxField({ id, name, label }: CheckBoxFieldProps) {
   return (
     <div className="mb-3 form-check">
-      <input
-        type="checkbox"
-        className="form-check-input"
-        id={id}
-        name={name}
-      />
+      <input type="checkbox" className="form-check-input" id={id} name={name} />
       <label className="form-check-label" htmlFor={id}>
         {label}
       </label>

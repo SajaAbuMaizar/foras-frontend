@@ -5,6 +5,7 @@ import { JobListItem } from "@/types/jobs/JobListItem";
 import { EmployerLogoUrlItem } from "@/types/EmployerLogoUrlItem";
 import { PaginatedResponseItem } from "@/types/PaginatedResponseItem";
 import { apiClient } from "./api-client";
+import { JobApplication } from "@/types/JobApplication";
 
 export async function fetchCities(): Promise<Option[]> {
   try {
@@ -96,6 +97,36 @@ export async function fetchListJobs(): Promise<JobListItem[]> {
     );
   } catch (error) {
     console.error("Failed to fetch list jobs:", error);
+    throw error;
+  }
+}
+export async function getJobApplications(
+  jobId: string
+): Promise<JobApplication[]> {
+  try {
+    return await apiClient.withRetry(() =>
+      apiClient.get<JobApplication[]>(
+        `/api/job-application/job/${jobId}/applications`
+      )
+    );
+  } catch (error) {
+    console.error("Error fetching job applications:", error);
+    throw error;
+  }
+}
+
+export async function updateApplicationStatus(
+  applicationId: string,
+  status: string
+): Promise<void> {
+  try {
+    await apiClient.withRetry(() =>
+      apiClient.patch(`/api/job-application/${applicationId}/status`, {
+        status,
+      })
+    );
+  } catch (error) {
+    console.error("Error updating application status:", error);
     throw error;
   }
 }

@@ -1,24 +1,24 @@
-'use client';
-
-import React from 'react';
+import React from "react";
 
 interface LoadingSpinnerProps {
-  visible?: boolean;
+  visible: boolean;
   message?: string;
 }
 
 const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
-  visible = true,
+  visible,
   message,
 }) => {
   if (!visible) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="w-12 h-12 border-4 border-dashed rounded-full animate-spin border-primary" />
-      {message && (
-        <p className="mt-4 text-green text-lg text-center px-4">{message}</p>
-      )}
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white dark:bg-gray-800 rounded-lg p-6 flex flex-col items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        {message && (
+          <p className="mt-4 text-gray-700 dark:text-gray-300">{message}</p>
+        )}
+      </div>
     </div>
   );
 };

@@ -1,3 +1,5 @@
+import { jobApplications } from "./jobApplications.he";
+
 const he = {
   // Common
   common: {
@@ -247,6 +249,8 @@ const he = {
     compose: "כתוב הודעה",
     noMessages: "אין הודעות",
   },
+
+  jobApplications,
 };
 
 export default he;

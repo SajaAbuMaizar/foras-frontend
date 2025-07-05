@@ -28,9 +28,18 @@ export const useEmployerSignup = () => {
     setIsLoading(true);
     setApiError(null);
 
+    // Prepare data for backend (remove confirmPassword and agreeTerms)
+    const backendData = {
+      name: data.name,
+      companyName: data.companyName,
+      email: data.email,
+      phone: data.phone,
+      password: data.password,
+    };
+
     try {
       await apiClient.withRetry(
-        () => apiClient.post("/api/auth/employer/signup", data),
+        () => apiClient.post("/api/auth/employer/signup", backendData),
         {
           retries: 2, // Fewer retries for signup to avoid duplicate submissions
           retryCondition: (error) => {
@@ -41,8 +50,8 @@ export const useEmployerSignup = () => {
       );
 
       toast.success("تم إنشاء الحساب بنجاح!");
-      reset();
       window.location.href = "/employer/dashboard";
+      reset();
     } catch (error: any) {
       const errorMessage =
         error?.response?.data?.message ||

@@ -3,13 +3,12 @@
 import { useState } from "react";
 import { useFormSubmit } from "../hooks/useFormSubmit";
 import FormSection from "./FormSection";
-import InputField from "./InputField";
-import SelectField from "./SelectField";
+import { InputField } from "./InputField";
+import { SelectField } from "./SelectField";
 import MapInput from "./MapInput";
 import LoadingSpinner from "@/components/LoadingSpinner";
-import CheckBoxField from "./CheckboxField";
+import CheckboxField from "./CheckboxField";
 import { Option } from "@/types/jobs/postJobTypes";
-import { fetchCities, fetchIndustries } from "@/lib/api";
 import { useOptions } from "@/context/options/OptionsContext";
 
 export default function JobForm() {
@@ -119,13 +118,13 @@ export default function JobForm() {
               helperText="Accepted formats: JPEG, PNG, GIF. Max size: 1MB."
             />
 
-            <CheckBoxField
+            <CheckboxField
               id="transportation"
               name="transportation"
               label="Transportation Available?"
             />
 
-            <CheckBoxField id="hebrew" name="hebrew" label="Hebrew Required?" />
+            <CheckboxField id="hebrew" name="hebrew" label="Hebrew Required?" />
           </FormSection>
         </div>
 

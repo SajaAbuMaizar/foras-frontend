@@ -1,3 +1,5 @@
+import { jobApplications } from "./jobApplications.ar";
+
 const ar = {
   // Common
   common: {
@@ -247,6 +249,8 @@ const ar = {
     compose: "إنشاء رسالة",
     noMessages: "لا توجد رسائل",
   },
+
+  jobApplications,
 };
 
 export default ar;
