@@ -195,7 +195,7 @@ export default function CandidateFilterForm({
               </label>
               <div className="space-y-2">
                 {options.availableGenders.map((gender) => (
-                  <label key={gender.name} className="flex items-center">
+                  <label key={gender.id} className="flex items-center">
                     <input
                       type="checkbox"
                       checked={filters.genders?.includes(gender.name) || false}
