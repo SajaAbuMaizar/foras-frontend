@@ -7,7 +7,7 @@ export const fetchUser = async (cookie?: string): Promise<User | null> => {
       headers: cookie ? { cookie } : {},
     });
     return res;
-  } catch (error) {
+  } catch {
     return null;
   }
 };

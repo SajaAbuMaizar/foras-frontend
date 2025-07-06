@@ -5,10 +5,6 @@ import { fetchUser } from './authService';
 import { headers } from 'next/headers';
 
 
-interface Props {
-  children: React.ReactNode;
-}
-
 export default async function AuthProviderWrapper({ children }: { children: React.ReactNode }) {
   const headersList = headers();
   const cookie = (await headersList).get('cookie'); // get all cookies sent with SSR request

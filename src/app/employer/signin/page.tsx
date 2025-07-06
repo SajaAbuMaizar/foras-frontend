@@ -11,15 +11,12 @@ import {
   BarChart3,
   AlertCircle,
 } from "lucide-react";
-import { toast } from "react-hot-toast";
 import { useSignin } from "@/hooks/useEmployerSignin";
 import { useEmployerTranslations } from "@/context/language/useEmployerTranslations";
 import { useLanguage } from "@/context/language/LanguageContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
-import { useEmployerSignup } from "@/hooks/useEmployerSignup";
 
 const EmployerSignInPage = () => {
-  const router = useRouter();
   const t = useEmployerTranslations();
   const { lang } = useLanguage();
   const {
@@ -40,7 +37,7 @@ const EmployerSignInPage = () => {
       if (rememberMe) {
         localStorage.setItem("rememberMe", "true");
       }
-    } catch (error) {
+    } catch {
       // Error handling is done in the hook
     }
   };

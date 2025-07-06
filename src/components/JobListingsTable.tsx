@@ -39,7 +39,7 @@ const JobListingsTable: React.FC<JobListingsTableProps> = ({
 
       toast.success(t.boostSuccess);
       window.location.reload();
-    } catch (err) {
+    } catch{
       toast.error(t.boostFail);
     }
   };

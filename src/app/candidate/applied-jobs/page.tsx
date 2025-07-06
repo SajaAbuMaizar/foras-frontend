@@ -19,8 +19,8 @@ export default function AppliedJobsPage() {
         if (!res.ok) throw new Error("Failed to fetch applied jobs");
         const data = await res.json();
         setJobs(data);
-      } catch (e: any) {
-        setError(e.message || "Unknown error");
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Unknown error");
       } finally {
         setIsLoading(false);
       }

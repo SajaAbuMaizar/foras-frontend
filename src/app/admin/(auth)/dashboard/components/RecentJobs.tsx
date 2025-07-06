@@ -8,7 +8,6 @@ import {
   CheckCircle,
   XCircle,
   ArrowRight,
-  Loader2,
 } from "lucide-react";
 import Link from "next/link";
 import { JobListItem } from "@/types/jobs/JobListItem";

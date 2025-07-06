@@ -58,7 +58,7 @@ const AuthProvider: React.FC<AuthProviderProps> = ({
       await logout();
       setUser(null);
       window.location.href = "/";
-    } catch (err) {
+    } catch {
       toast.error("فشل تسجيل الخروج");
     }
   };

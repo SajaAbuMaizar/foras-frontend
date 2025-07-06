@@ -21,15 +21,12 @@ const SignupModal: React.FC<SignupModalProps> = ({ isOpen, onClose }) => {
     handleSubmit,
     onSubmit,
     errors,
-    watch,
     isLoading,
     apiError,
     reset,
   } = useSignup(() => {
     onClose();
   });
-
-  const password = watch("password");
 
   if (!isOpen) return null;
 

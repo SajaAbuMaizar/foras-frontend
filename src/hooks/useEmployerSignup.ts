@@ -6,6 +6,7 @@ import * as yup from "yup";
 import { employerSignupSchema } from "@/schemas/employerSignupSchema";
 import { apiClient } from "@/lib/api-client";
 import { useEmployerTranslations } from "@/context/language/useEmployerTranslations";
+import axios from "axios";
 
 type FormData = yup.InferType<typeof employerSignupSchema>;
 
@@ -43,7 +44,10 @@ export const useEmployerSignup = () => {
         {
           retries: 2,
           retryCondition: (error) => {
-            return !error.response || error.response.status >= 500;
+            if (axios.isAxiosError(error)) {
+              return !error.response || error.response.status >= 500;
+            }
+            return false;
           },
         }
       );

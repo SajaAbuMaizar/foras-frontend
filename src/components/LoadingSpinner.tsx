@@ -1,7 +1,7 @@
 import React from "react";
 
 interface LoadingSpinnerProps {
-  visible: boolean;
+  visible?: boolean;
   message?: string;
 }
 

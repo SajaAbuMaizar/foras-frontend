@@ -28,7 +28,7 @@ const JobListingsPage = () => {
           apiClient.get<JobListItem[]>("/api/job/my-jobs")
         );
         setJobListings(data);
-      } catch (err) {
+      } catch {
         // Error is handled by api-client
       } finally {
         setIsLoading(false);

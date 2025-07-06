@@ -44,7 +44,7 @@ export const useAdminLogin = () => {
     setIsLoading(true);
 
     try {
-      const response = await apiClient.withRetry(() =>
+      await apiClient.withRetry(() =>
         apiClient.post("/api/auth/admin/login", data)
       );
 

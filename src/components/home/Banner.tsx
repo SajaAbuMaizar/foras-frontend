@@ -45,7 +45,7 @@ export default function Banner({ searchParams }: BannerProps) {
     try {
       const params = new URLSearchParams(formState).toString();
       router.push(`/?${params}`);
-    } catch (err) {
+    } catch {
       toast.error('حدث خطأ أثناء البحث');
     } finally {
       setIsSearching(false);

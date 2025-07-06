@@ -39,7 +39,7 @@ const JobDetailsPage: React.FC = () => {
       await fetch(`/api/job/admin/approve-job/${job?.id}`, { method: "POST" });
       toast.success("המשרה אושרה בהצלחה");
       router.refresh();
-    } catch (error) {
+    } catch {
       toast.error("שגיאה באישור המשרה");
     }
   };
@@ -50,7 +50,7 @@ const JobDetailsPage: React.FC = () => {
         await fetch(`/api/admin/delete-job/${job?.id}`, { method: "POST" });
         toast.success("המשרה נמחקה בהצלחה");
         router.push("/admin/jobs");
-      } catch (error) {
+      } catch {
         toast.error("שגיאה במחיקת המשרה");
       }
     }
@@ -74,7 +74,7 @@ const JobDetailsPage: React.FC = () => {
       } else {
         throw new Error("Translation failed");
       }
-    } catch (error) {
+    } catch {
       toast.error("שגיאה בשמירת התרגום");
     } finally {
       setIsTranslating(false);

@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Phone, ArrowLeft, CheckCircle } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { requestPasswordReset } from "@/lib/api/employer-auth";
@@ -11,7 +10,6 @@ import { useLanguage } from "@/context/language/LanguageContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const ForgotPasswordPage = () => {
-  const router = useRouter();
   const t = useEmployerTranslations();
   const { lang } = useLanguage();
   const [isLoading, setIsLoading] = useState(false);

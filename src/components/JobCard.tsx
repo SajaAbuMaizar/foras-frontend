@@ -14,11 +14,6 @@ import {
   FaMapMarker,
   FaRoad,
   FaBus,
-  FaTimes,
-  FaInfoCircle,
-  FaClipboardList,
-  FaBuilding,
-  FaLanguage,
 } from "react-icons/fa";
 import Image from "next/image";
 import { useAuth } from "@/context/auth/AuthHooks";
@@ -159,17 +154,19 @@ export default function JobCard({ job, onLoginRequired }: Props) {
           <div className="relative mt-3 px-4 pb-5 text-center">
             {/* Company Logo */}
             <a href={`/jobs/${job.employer.id}`}>
-              <img
+              <Image
                 src={job.employer.companyLogoUrl}
                 alt="Logo"
+                width={50}
+                height={50}
                 className="w-[50px] h-[50px] object-contain absolute right-4 top-[-25px] rounded-full shadow-[0_0_0_2px_white,_0_0_0_4px_rgb(0,31,63)] bg-white"
               />
             </a>
 
-            {/* Tags */}
+            {/* Transportation and Hebrew Tags */}
             {job.transportationAvailable && (
               <div
-                className="absolute top-4 left-[-1px] top-[48px] bg-green-600 text-white px-3 py-1 text-sm font-medium shadow-md z-10"
+                className="absolute left-[-1px] top-[48px] bg-green-600 text-white px-3 py-1 text-sm font-medium shadow-md z-10"
                 style={{
                   clipPath: "polygon(0 0, 100% 0, 95% 50%, 100% 100%, 0 100%)",
                 }}

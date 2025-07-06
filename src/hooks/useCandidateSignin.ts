@@ -37,7 +37,7 @@ export const useCandidateSignin = (onSuccess?: () => void) => {
     setApiError(null);
 
     try {
-      const res = await loginCandidate(data.phone, data.password);
+      await loginCandidate(data.phone, data.password);
 
       // Success
       toast.success("تم تسجيل الدخول بنجاح");

@@ -1,7 +1,6 @@
 "use client";
 
 import { Candidate } from "@/types/candidate";
-import { useLanguage } from "@/context/language/LanguageContext";
 import { useEmployerTranslations } from "@/context/language/useEmployerTranslations";
 import { Users } from "lucide-react";
 import ApplicantCard from "./ApplicantCard";
@@ -11,7 +10,6 @@ interface ApplicantsListProps {
 }
 
 export default function ApplicantsList({ candidates }: ApplicantsListProps) {
-  const { lang } = useLanguage();
   const t = useEmployerTranslations();
 
   return (

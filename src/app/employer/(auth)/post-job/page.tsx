@@ -3,11 +3,8 @@
 import { motion } from "framer-motion";
 import PostJobHeader from "./components/PostJobHeader";
 import PostJobForm from "./components/PostJobForm";
-import { useLanguage } from "@/context/language/LanguageContext";
 
 export default function PostJobPage() {
-  const { lang } = useLanguage();
-
   return (
     <motion.div
       initial={{ opacity: 0 }}

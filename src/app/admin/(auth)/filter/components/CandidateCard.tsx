@@ -1,6 +1,7 @@
 "use client";
 
 import { Phone, MapPin, Languages, Award, Car, User } from "lucide-react";
+import Image from "next/image"; // Import the Image component
 
 interface CandidateResult {
   id: number;
@@ -52,11 +53,15 @@ export default function CandidateCard({ candidate }: Props) {
         <div className="flex items-center space-x-4 space-x-reverse">
           <div className="flex-shrink-0">
             {candidate.avatarUrl ? (
-              <img
-                className="h-16 w-16 rounded-full border-2 border-white object-cover"
-                src={candidate.avatarUrl}
-                alt={candidate.name}
-              />
+              <div className="h-16 w-16 rounded-full border-2 border-white overflow-hidden">
+                <Image
+                  className="object-cover"
+                  src={candidate.avatarUrl}
+                  alt={candidate.name}
+                  width={64}
+                  height={64}
+                />
+              </div>
             ) : (
               <div className="h-16 w-16 rounded-full border-2 border-white bg-white flex items-center justify-center">
                 <User size={32} className="text-blue-500" />
@@ -86,6 +91,7 @@ export default function CandidateCard({ candidate }: Props) {
         </div>
       </div>
 
+      {/* Rest of the component remains the same */}
       {/* Content */}
       <div className="p-4 space-y-4">
         {/* Contact Info */}

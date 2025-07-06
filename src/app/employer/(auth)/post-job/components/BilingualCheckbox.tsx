@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useLanguage } from "@/context/language/LanguageContext";
 
 interface BilingualCheckboxProps {
   id: string;
@@ -18,8 +17,6 @@ export default function BilingualCheckbox({
   checked,
   onChange,
 }: BilingualCheckboxProps) {
-  const { lang } = useLanguage();
-
   return (
     <motion.div
       initial={{ opacity: 0, x: -20 }}

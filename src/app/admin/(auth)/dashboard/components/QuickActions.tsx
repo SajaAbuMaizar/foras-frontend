@@ -40,7 +40,7 @@ export default function QuickActions({ onRefresh }: QuickActionsProps) {
       document.body.removeChild(a);
 
       toast.success("تم تصدير البيانات بنجاح", { id: "export" });
-    } catch (error) {
+    } catch {
       toast.error("فشل تصدير البيانات", { id: "export" });
     } finally {
       setExporting(false);

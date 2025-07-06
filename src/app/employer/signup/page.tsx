@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { toast } from "react-hot-toast";
 import { useEmployerSignup } from "@/hooks/useEmployerSignup";
 import {
   User,
@@ -12,7 +10,6 @@ import {
   Phone,
   Lock,
   CheckCircle,
-  ArrowLeft,
   AlertCircle,
 } from "lucide-react";
 import TermsModal from "@/components/modals/TermsModal";
@@ -22,7 +19,6 @@ import { useLanguage } from "@/context/language/LanguageContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const EmployerSignupPage = () => {
-  const router = useRouter();
   const t = useEmployerTranslations();
   const { lang } = useLanguage();
   const termsModal = useDisclosure();
@@ -34,7 +30,6 @@ const EmployerSignupPage = () => {
     watch,
   } = formMethods;
 
-  const agreeTerms = watch("agreeTerms");
 
   return (
     <div

@@ -52,7 +52,6 @@ const AccessibilityWidget: React.FC = () => {
   // Apply settings
   useEffect(() => {
     const root = document.documentElement;
-    const body = document.body;
 
     // Font size
     root.style.fontSize = `${settings.fontSize}%`;

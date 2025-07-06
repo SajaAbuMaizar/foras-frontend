@@ -1,7 +1,5 @@
 "use client";
 
-import { X } from "lucide-react";
-
 interface CandidateFilter {
   genders?: string[];
   skills?: string[];

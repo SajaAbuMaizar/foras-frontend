@@ -99,7 +99,7 @@ export function useSignup(onClose: () => void) {
       await refreshUser();
       reset();
       onClose();
-    } catch (error) {
+    } catch {
       setApiError({
         field: "general",
         message: "تعذر الاتصال بالخادم. يرجى المحاولة مرة أخرى",

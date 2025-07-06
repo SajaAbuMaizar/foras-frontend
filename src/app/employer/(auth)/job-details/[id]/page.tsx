@@ -2,7 +2,6 @@
 
 import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
-import { useLanguage } from "@/context/language/LanguageContext";
 import { useEmployerTranslations } from "@/context/language/useEmployerTranslations";
 import { getJobDetailsForEmployer } from "@/lib/api";
 import { EmployerJobDetailsItem } from "@/types/EmployerJobDetailsItem";
@@ -18,7 +17,6 @@ type Props = {
 export default function EmployerJobDetailsPage({ params }: Props) {
   const { id } = use(params);
   const router = useRouter();
-  const { lang } = useLanguage();
   const t = useEmployerTranslations();
   const [job, setJob] = useState<EmployerJobDetailsItem | null>(null);
   const [isLoading, setIsLoading] = useState(true);

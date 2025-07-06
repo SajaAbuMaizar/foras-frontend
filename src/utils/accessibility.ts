@@ -15,7 +15,7 @@ export const accessibilityUtils = {
   },
 
   // Get appropriate ARIA label for job card
-  getJobCardAriaLabel: (job: any): string => {
+  getJobCardAriaLabel: (job: { jobTitle: string; employer: { companyName: string }; salary: number; cityName: string }): string => {
     return `משרת ${job.jobTitle} בחברת ${job.employer.companyName}, משכורת ${job.salary} שקלים, ב${job.cityName}`;
   },
 

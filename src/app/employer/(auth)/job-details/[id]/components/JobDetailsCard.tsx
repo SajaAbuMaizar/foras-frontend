@@ -1,8 +1,6 @@
 "use client";
 
 import { EmployerJobDetailsItem } from "@/types/EmployerJobDetailsItem";
-import { useLanguage } from "@/context/language/LanguageContext";
-import { useEmployerTranslations } from "@/context/language/useEmployerTranslations";
 import JobInfoSection from "./JobInfoSection";
 import ApplicantsList from "./ApplicantsList";
 
@@ -11,8 +9,6 @@ interface JobDetailsCardProps {
 }
 
 export default function JobDetailsCard({ job }: JobDetailsCardProps) {
-  const { lang } = useLanguage();
-  const t = useEmployerTranslations();
 
   return (
     <div className="space-y-6">

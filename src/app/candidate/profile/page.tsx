@@ -50,12 +50,12 @@ const ProfilePage: NextPage = () => {
     key: keyof CandidateDetails,
     value: K
   ) => {
-    const arr = form[key] as unknown as K[];
+    const arr = form[key] as K[];
     update(
       key,
       arr.includes(value)
         ? arr.filter((v) => v !== value)
-        : ([...arr, value] as any)
+        : ([...arr, value] as K[])
     );
   };
 

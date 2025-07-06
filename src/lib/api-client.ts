@@ -1,24 +1,25 @@
 import axios from "axios";
 import type { AxiosInstance, AxiosError } from "axios";
 import toast from "react-hot-toast";
+import type { AxiosRequestConfig } from "axios";
 
 interface RetryConfig {
   retries?: number;
   retryDelay?: number;
-  retryCondition?: (error: any) => boolean;
+  retryCondition?: (error: unknown) => boolean;
 }
 
 class ApiClient {
   private client: AxiosInstance;
   private isRefreshing = false;
   private failedQueue: Array<{
-    resolve: (value?: any) => void;
-    reject: (reason?: any) => void;
+    resolve: (value?: unknown) => void;
+    reject: (reason?: unknown) => void;
   }> = [];
 
   constructor() {
     this.client = axios.create({
-      baseURL: process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080",
+      baseURL: process.env.NEXT_PUBLIC_API_URL || "https://foras.co.il",
       withCredentials: true,
       headers: {
         "Content-Type": "application/json",
@@ -44,7 +45,9 @@ class ApiClient {
     this.client.interceptors.response.use(
       (response) => response,
       async (error: AxiosError) => {
-        const originalRequest = error.config as any;
+        const originalRequest = error.config as AxiosRequestConfig & {
+          _retry?: boolean;
+        };
 
         // If no response or no originalRequest, reject immediately
         if (!error.response || !originalRequest) {
@@ -95,12 +98,12 @@ class ApiClient {
     );
   }
 
-  private processQueue(error: any) {
+  private processQueue(error: unknown) {
     this.failedQueue.forEach((prom) => {
-      if (error) {
+      if (error instanceof Error) {
         prom.reject(error);
       } else {
-        prom.resolve();
+        prom.reject(new Error("Unknown error occurred"));
       }
     });
     this.failedQueue = [];
@@ -111,7 +114,7 @@ class ApiClient {
       // Use a direct axios call to avoid interceptor loops
       const response = await axios.post(
         `${
-          process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080"
+          process.env.NEXT_PUBLIC_API_URL || "https://foras.co.il"
         }/api/auth/refresh`,
         {},
         { withCredentials: true }
@@ -144,11 +147,10 @@ class ApiClient {
           break;
         case 422:
           // Handle validation errors
-          if (data.errors) {
-            Object.values(data.errors).forEach((err: any) => {
-              toast.error(err as string);
-            });
-          }
+          Object.values(data.errors).forEach((err: unknown) => {
+            if (typeof err === "string") toast.error(err);
+          });
+
           break;
         case 500:
           toast.error("حدث خطأ في الخادم، يرجى المحاولة لاحقاً");
@@ -174,8 +176,11 @@ class ApiClient {
     const {
       retries = 3,
       retryDelay = 1000,
-      retryCondition = (error: any) => {
-        return !error.response || error.response.status >= 500;
+      retryCondition = (error: unknown) => {
+        if (axios.isAxiosError(error)) {
+          return !error.response || error.response.status >= 500;
+        }
+        return false;
       },
     } = config;
 
@@ -201,27 +206,43 @@ class ApiClient {
   }
 
   // Public methods
-  async get<T>(url: string, config?: any): Promise<T> {
+  async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
     const response = await this.client.get<T>(url, config);
     return response.data;
   }
 
-  async post<T>(url: string, data?: any, config?: any): Promise<T> {
+  async post<T, D = unknown>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
     const response = await this.client.post<T>(url, data, config);
     return response.data;
   }
 
-  async put<T>(url: string, data?: any, config?: any): Promise<T> {
+  async put<T, D = unknown>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
     const response = await this.client.put<T>(url, data, config);
     return response.data;
   }
 
-  async patch<T>(url: string, data?: any, config?: any): Promise<T> {
+  async patch<T, D = unknown>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
     const response = await this.client.patch<T>(url, data, config);
     return response.data;
   }
 
-  async delete<T>(url: string, config?: any): Promise<T> {
+  async delete<T, D = unknown>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
     const response = await this.client.delete<T>(url, config);
     return response.data;
   }

@@ -39,7 +39,7 @@ export function useOptions() {
         setCities(citiesData);
         setGenders(gendersData);
         setIndustries(industriesData);
-      } catch (error) {
+      } catch {
         toast.error("فشل تحميل بيانات النماذج");
       } finally {
         setLoading(false);

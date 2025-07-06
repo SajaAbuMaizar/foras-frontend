@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { toast } from "react-hot-toast";
 import { useEmployerTranslations } from "@/context/language/useEmployerTranslations";
 import { useLanguage } from "@/context/language/LanguageContext";
 import { useOptions } from "@/context/options/OptionsContext";
