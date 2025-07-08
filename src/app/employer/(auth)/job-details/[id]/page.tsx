@@ -9,6 +9,7 @@ import JobDetailsHeader from "./components/JobDetailsHeader";
 import JobDetailsCard from "./components/JobDetailsCard";
 import LoadingState from "./components/LoadingState";
 import ErrorState from "./components/ErrorState";
+import ApplicationsList from "./components/ApplicationsList";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -52,7 +53,10 @@ export default function EmployerJobDetailsPage({ params }: Props) {
           jobId={id}
           onBack={() => router.back()}
         />
+
         <JobDetailsCard job={job} />
+
+        <ApplicationsList jobId={id} />
       </div>
     </div>
   );

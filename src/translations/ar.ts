@@ -281,6 +281,13 @@ const ar = {
     noMessages: "لا توجد رسائل",
   },
 
+  filters: {
+    languages: "اللغات",
+    driverLicenses: "رخص القيادة",
+    needsHelp: "بحاجة إلى مساعدة",
+    // ... other filter translations if needed
+  },
+
   jobApplications,
 };
 

@@ -281,6 +281,13 @@ const he = {
     noMessages: "אין הודעות",
   },
 
+  filters: {
+    languages: "שפות",
+    driverLicenses: "רישיונות נהיגה",
+    needsHelp: "זקוק לעזרה",
+    // ... other filter translations if needed
+  },
+
   jobApplications,
 };
 

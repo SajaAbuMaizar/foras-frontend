@@ -96,7 +96,7 @@ export default function QuickActions({ onRefresh }: QuickActionsProps) {
       <div className="h-6 w-px bg-gray-300 mx-1" />
 
       <Link
-        href="/admin/jobs/new"
+        href="/admin/jobs/seed"
         className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors hover:shadow-lg"
       >
         <Plus className="h-4 w-4" />

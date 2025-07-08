@@ -119,7 +119,7 @@ const AccessibilityWidget: React.FC = () => {
       {/* Accessibility Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed left-0 top-1/2 -translate-y-1/2 bg-blue-600 text-white p-3 rounded-r-lg shadow-lg hover:bg-blue-700 transition-colors z-[9999] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        className="fixed left-0 top-[85%] -translate-y-1/2 bg-blue-600 text-white p-3 rounded-r-lg shadow-lg hover:bg-blue-700 transition-colors z-[9999] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         aria-label="פתח תפריט נגישות"
       >
         <svg

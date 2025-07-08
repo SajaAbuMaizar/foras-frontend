@@ -1,4 +1,4 @@
-import { Option } from "../types/jobs/postJobTypes";
+import { Option } from "@/types/jobs/postJobTypes";
 import { MainPageJobListItem } from "@/types/jobs/MainPageJobListItem";
 import { EmployerJobDetailsItem } from "@/types/EmployerJobDetailsItem";
 import { JobListItem } from "@/types/jobs/JobListItem";
