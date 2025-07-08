@@ -288,6 +288,21 @@ const he = {
     // ... other filter translations if needed
   },
 
+  export: {
+    title: "ייצוא",
+    excel: "ייצא ל-Excel",
+    pdf: "ייצא ל-PDF",
+    print: "הדפס",
+    downloading: "מוריד...",
+    success: "הייצוא הושלם בהצלחה",
+    error: "הייצוא נכשל",
+  },
+
+  nav: {
+    dashboard: "לוח בקרה",
+    myJobs: "המשרות שלי",
+  },
+
   jobApplications,
 };
 

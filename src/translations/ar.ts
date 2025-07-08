@@ -1,3 +1,4 @@
+import { DateSchema } from "yup";
 import { jobApplications } from "./jobApplications.ar";
 
 const ar = {
@@ -286,6 +287,21 @@ const ar = {
     driverLicenses: "رخص القيادة",
     needsHelp: "بحاجة إلى مساعدة",
     // ... other filter translations if needed
+  },
+
+  export: {
+    title: "تصدير",
+    excel: "Excel تصدير إلى",
+    pdf: "PDF تصدير إلى",
+    print: "طباعة",
+    downloading: "جاري التحميل...",
+    success: "تم التصدير بنجاح",
+    error: "فشل التصدير",
+  },
+
+  nav: {
+    dashboard: "لوحة التحكم",
+    myJobs: "وظائفي",
   },
 
   jobApplications,

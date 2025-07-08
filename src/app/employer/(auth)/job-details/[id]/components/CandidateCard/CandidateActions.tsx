@@ -5,6 +5,7 @@ import { useEmployerTranslations } from "@/context/language/useEmployerTranslati
 import { ApplicationStatus } from "@/types/ApplicationStatus";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
+import { updateApplicationStatus } from "@/lib/api";
 
 interface CandidateActionsProps {
   applicationId: string;
@@ -23,20 +24,7 @@ export default function CandidateActions({
   const handleStatusUpdate = async (newStatus: ApplicationStatus) => {
     setIsUpdating(true);
     try {
-      const response = await fetch(
-        `/api/job-application/${applicationId}/status`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ status: newStatus }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to update status");
-      }
+      await updateApplicationStatus(applicationId, newStatus);
 
       toast.success(
         newStatus === "ACCEPTED"

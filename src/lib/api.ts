@@ -6,6 +6,9 @@ import { EmployerLogoUrlItem } from "@/types/EmployerLogoUrlItem";
 import { PaginatedResponseItem } from "@/types/PaginatedResponseItem";
 import { apiClient } from "./api-client";
 import { JobApplication } from "@/types/JobApplication";
+import { JobApplicationResponse } from "@/types/JobApplicationResponse";
+import { JobApplicationWithCandidate } from "@/types/JobApplicationWithCandidate";
+import { mapJobApplicationToWithCandidate } from "@/utils/applicationMapper";
 
 export async function fetchCities(): Promise<Option[]> {
   try {
@@ -100,13 +103,14 @@ export async function fetchListJobs(): Promise<JobListItem[]> {
     throw error;
   }
 }
+
 export async function getJobApplications(
   jobId: string
-): Promise<JobApplication[]> {
+): Promise<JobApplicationResponse[]> {
   try {
     return await apiClient.withRetry(() =>
-      apiClient.get<JobApplication[]>(
-        `/api/job-application/job/${jobId}/applications`
+      apiClient.get<JobApplicationResponse[]>(
+        `/api/job-applications/job/${jobId}/applications`
       )
     );
   } catch (error) {
@@ -121,7 +125,7 @@ export async function updateApplicationStatus(
 ): Promise<void> {
   try {
     await apiClient.withRetry(() =>
-      apiClient.patch(`/api/job-application/${applicationId}/status`, {
+      apiClient.patch(`/api/job-applications/${applicationId}/status`, {
         status,
       })
     );

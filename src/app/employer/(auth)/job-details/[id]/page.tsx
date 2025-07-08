@@ -56,7 +56,7 @@ export default function EmployerJobDetailsPage({ params }: Props) {
 
         <JobDetailsCard job={job} />
 
-        <ApplicationsList jobId={id} />
+        <ApplicationsList jobId={id} jobTitle={job.jobTitle} />
       </div>
     </div>
   );

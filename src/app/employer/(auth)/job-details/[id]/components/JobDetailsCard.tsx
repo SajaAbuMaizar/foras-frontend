@@ -2,14 +2,12 @@
 
 import { EmployerJobDetailsItem } from "@/types/EmployerJobDetailsItem";
 import JobInfoSection from "./JobInfoSection";
-import ApplicantsList from "./ApplicantsList";
 
 interface JobDetailsCardProps {
   job: EmployerJobDetailsItem;
 }
 
 export default function JobDetailsCard({ job }: JobDetailsCardProps) {
-
   return (
     <div className="space-y-6">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
@@ -29,9 +27,6 @@ export default function JobDetailsCard({ job }: JobDetailsCardProps) {
           </div>
         </div>
       </div>
-
-      {/* Applicants Section */}
-      <ApplicantsList candidates={job.candidates} />
     </div>
   );
 }
