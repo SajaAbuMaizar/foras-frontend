@@ -20,6 +20,8 @@ const ar = {
     no: "لا",
     retry: "إعادة المحاولة",
     goBack: "العودة",
+    saving: "جاري الحفظ...",
+    uploading: "جاري الرفع...",
   },
 
   // Authentication
@@ -307,6 +309,41 @@ const ar = {
   gender: {
     MALE: "ذكر",
     FEMALE: "أنثى",
+  },
+
+  profile: {
+    title: "حسابي",
+    subtitle: "إدارة معلومات حسابك وشركتك",
+    sections: {
+      basicInfo: "المعلومات الأساسية",
+      companyLogo: "شعار الشركة",
+    },
+    fields: {
+      name: "الاسم",
+      companyName: "اسم الشركة",
+      email: "البريد الإلكتروني",
+      phone: "رقم الهاتف",
+      preferredLanguage: "اللغة المفضلة",
+    },
+    actions: {
+      uploadLogo: "رفع الشعار",
+      changeLogo: "تغيير الشعار",
+    },
+    logoRequirements: "PNG أو JPG أو GIF (حد أقصى 5 ميجابايت)",
+    success: {
+      updated: "تم تحديث الملف الشخصي بنجاح",
+      logoUploaded: "تم رفع الشعار بنجاح",
+      logoDeleted: "تم حذف الشعار بنجاح",
+    },
+    errors: {
+      loadFailed: "فشل تحميل الملف الشخصي",
+      updateFailed: "فشل تحديث الملف الشخصي",
+      uploadFailed: "فشل رفع الشعار",
+      deleteFailed: "فشل حذف الشعار",
+      invalidFileType: "يرجى اختيار ملف صورة",
+      fileTooLarge: "حجم الملف كبير جداً (الحد الأقصى 5 ميجابايت)",
+      notFound: "لم يتم العثور على الملف الشخصي",
+    },
   },
 
   jobApplications,

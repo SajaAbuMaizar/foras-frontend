@@ -137,7 +137,7 @@ export function Sidebar() {
               <ul className={`mt-2 space-y-1 pl-4`}>
                 <li>
                   <Link
-                    href="/employer/profile"
+                    href="/employer/my-account"
                     className="flex items-center px-3 py-1 rounded hover:bg-gray-100 text-sm text-gray-600"
                   >
                     <User className={`h-4 w-4 mr-2`} />

@@ -19,6 +19,8 @@ const he = {
     no: "לא",
     retry: "נסה שוב",
     goBack: "חזור",
+    saving: "שומר...",
+    uploading: "מעלה...",
   },
 
   // Authentication
@@ -306,6 +308,40 @@ const he = {
   gender: {
     MALE: "זכר",
     FEMALE: "נקבה",
+  },
+  profile: {
+    title: "החשבון שלי",
+    subtitle: "נהל את פרטי החשבון והחברה שלך",
+    sections: {
+      basicInfo: "מידע בסיסי",
+      companyLogo: "לוגו החברה",
+    },
+    fields: {
+      name: "שם",
+      companyName: "שם החברה",
+      email: "דוא״ל",
+      phone: "טלפון",
+      preferredLanguage: "שפה מועדפת",
+    },
+    actions: {
+      uploadLogo: "העלה לוגו",
+      changeLogo: "שנה לוגו",
+    },
+    logoRequirements: "PNG, JPG או GIF (עד 5MB)",
+    success: {
+      updated: "הפרופיל עודכן בהצלחה",
+      logoUploaded: "הלוגו הועלה בהצלחה",
+      logoDeleted: "הלוגו נמחק בהצלחה",
+    },
+    errors: {
+      loadFailed: "טעינת הפרופיל נכשלה",
+      updateFailed: "עדכון הפרופיל נכשל",
+      uploadFailed: "העלאת הלוגו נכשלה",
+      deleteFailed: "מחיקת הלוגו נכשלה",
+      invalidFileType: "אנא בחר קובץ תמונה",
+      fileTooLarge: "הקובץ גדול מדי (מקסימום 5MB)",
+      notFound: "הפרופיל לא נמצא",
+    },
   },
 
   jobApplications,
