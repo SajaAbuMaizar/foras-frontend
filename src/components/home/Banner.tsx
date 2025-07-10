@@ -1,11 +1,12 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useMediaQuery } from '@/hooks/useMediaQuery';
-import { useOptions } from '@/context/options/OptionsContext';
-import toast from 'react-hot-toast';
+import React, { useEffect, useState } from "react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
+import { useOptions } from "@/context/options/OptionsContext";
+import toast from "react-hot-toast";
+import { BannerSkeleton } from "@/components/ui/skeletons";
 
 type BannerProps = {
   searchParams: Record<string, string>;
@@ -16,16 +17,16 @@ export default function Banner({ searchParams }: BannerProps) {
   const router = useRouter();
 
   const [formState, setFormState] = useState({
-    city: 'all',
-    industry: 'all',
-    hebrewRequired: 'all',
-    transportationAvailable: 'all',
+    city: "all",
+    industry: "all",
+    hebrewRequired: "all",
+    transportationAvailable: "all",
   });
 
   const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
-    setFormState(prev => ({
+    setFormState((prev) => ({
       ...prev,
       ...searchParams,
     }));
@@ -33,7 +34,7 @@ export default function Banner({ searchParams }: BannerProps) {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormState(prev => ({
+    setFormState((prev) => ({
       ...prev,
       [name]: value,
     }));
@@ -46,23 +47,24 @@ export default function Banner({ searchParams }: BannerProps) {
       const params = new URLSearchParams(formState).toString();
       router.push(`/?${params}`);
     } catch {
-      toast.error('حدث خطأ أثناء البحث');
+      toast.error("حدث خطأ أثناء البحث");
     } finally {
       setIsSearching(false);
     }
   };
 
-  const isSmallest = useMediaQuery('(max-width: 450px)');
-  const isPhone = useMediaQuery('(max-width: 640px)');
-  const isTablet = useMediaQuery('(max-width: 1024px)');
+  const isSmallest = useMediaQuery("(max-width: 450px)");
+  const isPhone = useMediaQuery("(max-width: 640px)");
+  const isTablet = useMediaQuery("(max-width: 1024px)");
 
-  let imageSrc = '/images/avatar-girl.jpg';
-  if (isSmallest) imageSrc = '/images/avatar_girl_smallest.JPG';
-  else if (isPhone) imageSrc = '/images/avatar_girl_phone.JPG';
-  else if (isTablet) imageSrc = '/images/avatar_girl_700.JPG';
+  let imageSrc = "/images/avatar-girl.jpg";
+  if (isSmallest) imageSrc = "/images/avatar_girl_smallest.JPG";
+  else if (isPhone) imageSrc = "/images/avatar_girl_phone.JPG";
+  else if (isTablet) imageSrc = "/images/avatar_girl_700.JPG";
 
+  // Show skeleton while loading
   if (loading) {
-    return <div className="flex justify-center items-center h-[500px]">Loading options...</div>;
+    return <BannerSkeleton />;
   }
 
   return (
@@ -89,7 +91,7 @@ export default function Banner({ searchParams }: BannerProps) {
               className="w-[200px] p-3 xl:w-[170px] xl:p-4 font-semibold rounded-lg text-center shadow-inner"
             >
               <option value="all">📍 المنطقة</option>
-              {cities.map(city => (
+              {cities.map((city) => (
                 <option key={city.id} value={city.code}>
                   {city.nameAr}
                 </option>
@@ -103,7 +105,7 @@ export default function Banner({ searchParams }: BannerProps) {
               className="w-[200px] p-3 xl:w-[170px] xl:p-4 font-semibold rounded-lg text-center shadow-inner"
             >
               <option value="all">⚙️ المجال</option>
-              {industries.map(industry => (
+              {industries.map((industry) => (
                 <option key={industry.id} value={industry.code}>
                   {industry.nameAr}
                 </option>
@@ -139,7 +141,7 @@ export default function Banner({ searchParams }: BannerProps) {
                 text-lg px-7 py-3 xl:text-lg xl:px-7 xl:py-3 text-sm px-4 py-2
                 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              {isSearching ? 'جاري البحث...' : 'بحث'}
+              {isSearching ? "جاري البحث..." : "بحث"}
             </button>
           </div>
         </form>

@@ -1,193 +1,172 @@
 "use client";
 
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { useEmployerTranslations } from "@/context/language/useEmployerTranslations";
-import { useLanguage } from "@/context/language/LanguageContext";
+import { usePathname } from "next/navigation";
 import {
   Home,
-  Briefcase,
+  FileText,
+  Users,
+  MessageSquare,
   Settings,
+  ChevronDown,
+  Plus,
   User,
   Bell,
-  Link as LinkIcon,
-  ChevronDown,
-  MessageSquare,
-  Users,
-  BarChart3,
-  LogOut,
+  CreditCard,
 } from "lucide-react";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useLanguage } from "@/context/language/LanguageContext";
+import { useEmployerTranslations } from "@/context/language/useEmployerTranslations";
+import { SidebarSkeleton } from "@/components/ui/skeletons";
 
-export const Sidebar = () => {
-  const t = useEmployerTranslations();
+export function Sidebar() {
   const { lang } = useLanguage();
-  const router = useRouter();
-  const [openMenu, setOpenMenu] = useState<string | null>(null);
+  const t = useEmployerTranslations();
+  const pathname = usePathname();
+  const [openMenu, setOpenMenu] = useState<"settings" | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const toggleMenu = (menu: string) => {
+  useEffect(() => {
+    // Simulate loading
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, []);
+
+  const toggleMenu = (menu: "settings") => {
     setOpenMenu(openMenu === menu ? null : menu);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("employerToken");
-    router.push("/employer/signin");
-  };
+  if (isLoading) {
+    return (
+      <div className="fixed right-0 top-0 h-full w-64 pt-20">
+        <SidebarSkeleton />
+      </div>
+    );
+  }
 
   return (
     <aside
-      className="w-64 mt-20 bg-white border-l border-gray-200 h-screen p-4 overflow-y-auto shadow-md rtl fixed right-0 top-0"
+      className={`fixed right-0
+      } top-0 h-full w-64 bg-white shadow-lg border-r border-gray-200 pt-20`}
       dir="rtl"
     >
-      {/* Brand */}
-      <div className={`mb-6 ${lang === "ar" ? "mr-7" : "ml-7"}`}>
-        <Link
-          href="/employer/dashboard"
-          className="text-4xl font-bold text-primary"
-        >
-          Foras
-        </Link>
-      </div>
-
-      {/* Menu */}
-      <ul className="space-y-2 text-xl">
-        {/* Dashboard */}
-        <li>
-          <Link
-            href="/employer/dashboard"
-            className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
-          >
-            <Home className={`h-5 w-5 ${lang === "ar" ? "ml-3" : "mr-3"}`} />
-            {t.dashboard.title}
-          </Link>
-        </li>
-
-        {/* Post Job */}
-        <li>
-          <Link
-            href="/employer/post-job"
-            className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
-          >
-            <Briefcase
-              className={`h-5 w-5 ${lang === "ar" ? "ml-3" : "mr-3"}`}
-            />
-            {t.postJobPage.title}
-          </Link>
-        </li>
-
-        {/* Job Listings */}
-        <li>
-          <Link
-            href="/employer/job-listings"
-            className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
-          >
-            <BarChart3
-              className={`h-5 w-5 ${lang === "ar" ? "ml-3" : "mr-3"}`}
-            />
-            {t.jobListingsPage.heading}
-          </Link>
-        </li>
-
-        {/* Applicants */}
-        <li>
-          <Link
-            href="/employer/applicants"
-            className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
-          >
-            <Users className={`h-5 w-5 ${lang === "ar" ? "ml-3" : "mr-3"}`} />
-            {t.applicants.title}
-          </Link>
-        </li>
-
-        {/* Messages */}
-        <li>
-          <Link
-            href="/employer/messages"
-            className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
-          >
-            <MessageSquare
-              className={`h-5 w-5 ${lang === "ar" ? "ml-3" : "mr-3"}`}
-            />
-            {t.messages.title}
-          </Link>
-        </li>
-
-        {/* Header */}
-        <li className="mt-6 text-xs font-semibold text-gray-400 uppercase">
-          {t.settings.title}
-        </li>
-
-        {/* Account Settings Menu */}
-        <li>
-          <details className="group" open={openMenu === "settings"}>
-            <summary
-              className="cursor-pointer px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 flex justify-between items-center"
-              onClick={(e) => {
-                e.preventDefault();
-                toggleMenu("settings");
-              }}
+      <nav className="p-4">
+        <ul className="space-y-2">
+          {/* Dashboard */}
+          <li>
+            <Link
+              href="/employer/dashboard"
+              className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
             >
-              <span className="flex items-center">
-                <Settings
-                  className={`h-5 w-5 ${lang === "ar" ? "ml-3" : "mr-3"}`}
-                />
-                {t.settings.sections.account}
-              </span>
-              <ChevronDown
-                className={`h-4 w-4 transform transition-transform ${
-                  openMenu === "settings" ? "rotate-180" : ""
-                }`}
-              />
-            </summary>
-            <ul className={`mt-2 space-y-1 ${lang === "ar" ? "pr-4" : "pl-4"}`}>
-              <li>
-                <Link
-                  href="/employer/profile"
-                  className="flex items-center px-3 py-1 rounded hover:bg-gray-100 text-sm text-gray-600"
-                >
-                  <User
-                    className={`h-4 w-4 ${lang === "ar" ? "ml-2" : "mr-2"}`}
-                  />
-                  {t.companyProfile.title}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/employer/notifications"
-                  className="flex items-center px-3 py-1 rounded hover:bg-gray-100 text-sm text-gray-600"
-                >
-                  <Bell
-                    className={`h-4 w-4 ${lang === "ar" ? "ml-2" : "mr-2"}`}
-                  />
-                  {t.settings.sections.notifications}
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/employer/integrations"
-                  className="flex items-center px-3 py-1 rounded hover:bg-gray-100 text-sm text-gray-600"
-                >
-                  <LinkIcon
-                    className={`h-4 w-4 ${lang === "ar" ? "ml-2" : "mr-2"}`}
-                  />
-                  {t.settings.sections.integrations}
-                </Link>
-              </li>
-            </ul>
-          </details>
-        </li>
+              <Home className={`h-5 w-5 mr-3`} />
+              {t.dashboard.title}
+            </Link>
+          </li>
 
-        {/* Logout */}
-        <li className="mt-6">
-          <button
-            onClick={handleLogout}
-            className="w-full flex items-center px-3 py-2 rounded-lg hover:bg-red-50 text-red-600 transition-colors"
-          >
-            <LogOut className={`h-5 w-5 ${lang === "ar" ? "ml-3" : "mr-3"}`} />
-            {t.auth.signOut}
-          </button>
-        </li>
-      </ul>
+          {/* Create Job */}
+          <li>
+            <Link
+              href="/employer/post-job"
+              className="flex items-center px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition-colors"
+            >
+              <Plus className={`h-5 w-5 mr-3`} />
+              {t.postJobPage.title}
+            </Link>
+          </li>
+
+          {/* Jobs */}
+          <li>
+            <Link
+              href="/employer/jobs"
+              className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
+            >
+              <FileText className={`h-5 w-5 mr-3`} />
+              {t.jobListingsPage.heading}
+            </Link>
+          </li>
+
+          {/* Applicants */}
+          <li>
+            <Link
+              href="/employer/applicants"
+              className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
+            >
+              <Users className={`h-5 w-5 mr-3`} />
+              {t.applicants.title}
+            </Link>
+          </li>
+
+          {/* Messages */}
+          <li>
+            <Link
+              href="/employer/messages"
+              className="flex items-center px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 transition-colors"
+            >
+              <MessageSquare className={`h-5 w-5 mr-3`} />
+              {t.messages.title}
+            </Link>
+          </li>
+
+          {/* Settings Section */}
+          <li className="mt-6 text-xs font-semibold text-gray-400 uppercase">
+            {t.settings.title}
+          </li>
+
+          {/* Account Settings Menu */}
+          <li>
+            <details className="group" open={openMenu === "settings"}>
+              <summary
+                className="cursor-pointer px-3 py-2 rounded-lg hover:bg-gray-100 text-gray-700 flex justify-between items-center"
+                onClick={(e) => {
+                  e.preventDefault();
+                  toggleMenu("settings");
+                }}
+              >
+                <span className="flex items-center">
+                  <Settings className={`h-5 w-5 mr-3`} />
+                  {t.settings.sections.account}
+                </span>
+                <ChevronDown
+                  className={`h-4 w-4 transform transition-transform ${
+                    openMenu === "settings" ? "rotate-180" : ""
+                  }`}
+                />
+              </summary>
+              <ul className={`mt-2 space-y-1 pl-4`}>
+                <li>
+                  <Link
+                    href="/employer/profile"
+                    className="flex items-center px-3 py-1 rounded hover:bg-gray-100 text-sm text-gray-600"
+                  >
+                    <User className={`h-4 w-4 mr-2`} />
+                    {t.companyProfile.title}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/employer/notifications"
+                    className="flex items-center px-3 py-1 rounded hover:bg-gray-100 text-sm text-gray-600"
+                  >
+                    <Bell className={`h-4 w-4 mr-2`} />
+                    {t.settings.sections.notifications}
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    href="/employer/billing"
+                    className="flex items-center px-3 py-1 rounded hover:bg-gray-100 text-sm text-gray-600"
+                  >
+                    <CreditCard className={`h-4 w-4 mr-2`} />
+                    {t.settings.sections.billing}
+                  </Link>
+                </li>
+              </ul>
+            </details>
+          </li>
+        </ul>
+      </nav>
     </aside>
   );
-};
+}

@@ -15,6 +15,7 @@ export default function Home() {
   const searchParams = useSearchParams();
   const [jobs, setJobs] = useState<MainPageJobListItem[]>([]);
   const [logos, setLogos] = useState<EmployerLogoUrlItem[]>([]);
+  const [logosLoading, setLogosLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
@@ -57,7 +58,9 @@ export default function Home() {
   }, [searchParamsObj, loadJobs]);
 
   useEffect(() => {
-    fetchEmployerLogos().then(setLogos);
+    fetchEmployerLogos()
+      .then(setLogos)
+      .finally(() => setLogosLoading(false));
   }, []);
 
   useEffect(() => {
@@ -89,11 +92,10 @@ export default function Home() {
   return (
     <main className="min-h-screen">
       <Banner searchParams={searchParamsObj} />
-      <EmployerCarousel logos={logos} />
+      <EmployerCarousel logos={logos} isLoading={logosLoading} />
       <div className="flex flex-wrap justify-center gap-4 px-4 py-8">
         {isInitialLoad && isLoading
-          ? // Show skeletons on initial load
-            Array.from({ length: 6 }).map((_, i) => <JobCardSkeleton key={i} />)
+          ? Array.from({ length: 6 }).map((_, i) => <JobCardSkeleton key={i} />)
           : jobs.map((job) => (
               <JobCard
                 key={job.id}

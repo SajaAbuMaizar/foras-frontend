@@ -1,16 +1,40 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import { EmployerLogoUrlItem } from "@/types/EmployerLogoUrlItem";
+import { CompanyLogoCarouselSkeleton } from "@/components/ui/skeletons";
 
 type EmployerCarouselProps = {
   logos: EmployerLogoUrlItem[];
+  isLoading?: boolean;
 };
 
-export default function EmployerCarousel({ logos }: EmployerCarouselProps) {
+export default function EmployerCarousel({
+  logos,
+  isLoading = false,
+}: EmployerCarouselProps) {
   const [scrollIndex, setScrollIndex] = useState(0);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+
+  useEffect(() => {
+    if (logos.length > 0) {
+      // Preload images
+      const imagePromises = logos.map((logo) => {
+        return new Promise((resolve, reject) => {
+          const img = new window.Image();
+          img.src = logo.companyLogoUrl;
+          img.onload = resolve;
+          img.onerror = resolve; // Still resolve on error to not block
+        });
+      });
+
+      Promise.all(imagePromises).then(() => {
+        setImagesLoaded(true);
+      });
+    }
+  }, [logos]);
 
   const scrollLeft = () => {
     setScrollIndex((prev) => Math.max(prev - 1, 0));
@@ -19,6 +43,16 @@ export default function EmployerCarousel({ logos }: EmployerCarouselProps) {
   const scrollRight = () => {
     setScrollIndex((prev) => Math.min(prev + 1, logos.length - 1));
   };
+
+  // Show skeleton while loading
+  if (isLoading || !imagesLoaded) {
+    return <CompanyLogoCarouselSkeleton />;
+  }
+
+  // Don't render if no logos
+  if (logos.length === 0) {
+    return null;
+  }
 
   return (
     <div className="relative w-full py-8">

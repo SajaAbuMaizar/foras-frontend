@@ -1,8 +1,7 @@
-// src/app/admin/(auth)/components/Sidebar.tsx
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import {
   ChevronDown,
@@ -13,8 +12,10 @@ import {
   Settings,
   Bell,
   Users,
+  User,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { SidebarSkeleton } from "@/components/ui/skeletons";
 
 interface SidebarLinkProps {
   href: string;
@@ -53,7 +54,16 @@ const SidebarLink: React.FC<SidebarLinkProps> = ({
 
 const Sidebar: React.FC = () => {
   const [isAccountOpen, setIsAccountOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const pathname = usePathname();
+
+  useEffect(() => {
+    // Simulate loading delay
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 500);
+    return () => clearTimeout(timer);
+  }, []);
 
   const menuItems: MenuItem[] = [
     { href: "/admin/dashboard", label: "לוח בקרה", icon: <Home size={20} /> },
@@ -76,16 +86,21 @@ const Sidebar: React.FC = () => {
     { href: "/admin/connections", label: "חיבורים", icon: <Users size={18} /> },
   ];
 
+  if (isLoading) {
+    return <SidebarSkeleton />;
+  }
+
   return (
     <aside className="h-full bg-white shadow-xl border-l border-gray-200 overflow-y-auto">
       <div className="p-6">
         {/* Logo/Brand */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-800">לוח ניהול</h2>
-          <p className="text-sm text-gray-500 mt-1">מערכת ניהול Foras</p>
+
+          <p className="text-sm text-gray-500 mt-1">מערכת ניהול משרות</p>
         </div>
 
-        {/* Main Navigation */}
+        {/* Navigation */}
         <nav>
           <ul className="space-y-2">
             {menuItems.map((item) => (
@@ -97,69 +112,48 @@ const Sidebar: React.FC = () => {
                 isActive={pathname === item.href}
               />
             ))}
-          </ul>
 
-          {/* Divider */}
-          <div className="my-6 border-t border-gray-200" />
+            {/* Account Section */}
+            <li className="pt-4 border-t border-gray-200 mt-6">
+              <button
+                onClick={() => setIsAccountOpen(!isAccountOpen)}
+                className="w-full flex items-center justify-between px-4 py-3 text-gray-700 rounded-lg hover:bg-gray-100 transition-all"
+              >
+                <span className="flex items-center gap-3">
+                  <User size={20} />
+                  <span>ניהול חשבון</span>
+                </span>
+                <ChevronDown
+                  size={16}
+                  className={cn(
+                    "transition-transform",
+                    isAccountOpen && "rotate-180"
+                  )}
+                />
+              </button>
 
-          {/* Apps & Pages Section */}
-          <p className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">
-            אפליקציות ודפים
-          </p>
-
-          {/* Account Settings Collapsible */}
-          <li className="list-none">
-            <button
-              onClick={() => setIsAccountOpen((prev) => !prev)}
-              className={cn(
-                "flex items-center justify-between w-full px-4 py-3 text-left rounded-lg transition-all",
-                "hover:bg-gray-100 text-gray-700"
+              {/* Dropdown Items */}
+              {isAccountOpen && (
+                <ul className="mt-2 space-y-1 pr-4">
+                  {accountItems.map((item) => (
+                    <li key={item.href}>
+                      <Link
+                        href={item.href}
+                        className={cn(
+                          "flex items-center gap-2 px-4 py-2 text-sm text-gray-600 rounded hover:bg-gray-100 transition-all",
+                          pathname === item.href && "bg-gray-100 text-gray-900"
+                        )}
+                      >
+                        {item.icon}
+                        <span>{item.label}</span>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
               )}
-            >
-              <div className="flex items-center gap-3">
-                <Settings size={20} />
-                <span>הגדרות חשבון</span>
-              </div>
-              <ChevronDown
-                className={cn(
-                  "h-4 w-4 transition-transform text-gray-400",
-                  isAccountOpen && "rotate-180"
-                )}
-              />
-            </button>
-
-            {isAccountOpen && (
-              <ul className="mt-2 mr-4 space-y-1">
-                {accountItems.map((item) => (
-                  <SidebarLink
-                    key={item.href}
-                    href={item.href}
-                    label={item.label}
-                    icon={item.icon}
-                    isActive={pathname === item.href}
-                  />
-                ))}
-              </ul>
-            )}
-          </li>
+            </li>
+          </ul>
         </nav>
-
-        {/* User Info */}
-        <div className="absolute bottom-6 left-6 right-6">
-          <div className="bg-gray-50 rounded-lg p-4">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center text-white font-medium">
-                A
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-gray-900 truncate">
-                  מנהל מערכת
-                </p>
-                <p className="text-xs text-gray-500">admin@foras.co.il</p>
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </aside>
   );

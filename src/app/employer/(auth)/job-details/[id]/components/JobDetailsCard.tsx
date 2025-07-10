@@ -2,12 +2,32 @@
 
 import { EmployerJobDetailsItem } from "@/types/EmployerJobDetailsItem";
 import JobInfoSection from "./JobInfoSection";
+import { JobDetailsModalSkeleton } from "@/components/ui/skeletons";
+import { useState, useEffect } from "react";
 
 interface JobDetailsCardProps {
   job: EmployerJobDetailsItem;
+  isLoading?: boolean;
 }
 
-export default function JobDetailsCard({ job }: JobDetailsCardProps) {
+export default function JobDetailsCard({
+  job,
+  isLoading = false,
+}: JobDetailsCardProps) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  useEffect(() => {
+    if (job?.imageUrl) {
+      const img = new Image();
+      img.src = job.imageUrl;
+      img.onload = () => setImageLoaded(true);
+    }
+  }, [job?.imageUrl]);
+
+  if (isLoading || !imageLoaded) {
+    return <JobDetailsModalSkeleton />;
+  }
+
   return (
     <div className="space-y-6">
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
