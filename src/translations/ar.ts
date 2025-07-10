@@ -304,6 +304,11 @@ const ar = {
     myJobs: "وظائفي",
   },
 
+  gender: {
+    MALE: "ذكر",
+    FEMALE: "أنثى",
+  },
+
   jobApplications,
 };
 

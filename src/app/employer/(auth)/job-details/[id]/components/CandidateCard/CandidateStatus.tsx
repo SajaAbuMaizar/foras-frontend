@@ -6,15 +6,9 @@ import { ApplicationStatus } from "@/types/ApplicationStatus";
 
 interface CandidateStatusProps {
   status: ApplicationStatus;
-  knowsHebrew: boolean;
-  needsHelp: boolean;
 }
 
-export default function CandidateStatus({
-  status,
-  knowsHebrew,
-  needsHelp,
-}: CandidateStatusProps) {
+export default function CandidateStatus({ status }: CandidateStatusProps) {
   const t = useEmployerTranslations();
 
   const getStatusStyle = () => {
@@ -41,20 +35,6 @@ export default function CandidateStatus({
           ]
         }
       </span>
-
-      {knowsHebrew && (
-        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300">
-          <Languages className="h-4 w-4" />
-          {t.jobDetails.hebrewRequired}
-        </span>
-      )}
-
-      {needsHelp && (
-        <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium bg-orange-100 dark:bg-orange-900/20 text-orange-700 dark:text-orange-300">
-          <HelpCircle className="h-4 w-4" />
-          {t.filters.needsHelp}
-        </span>
-      )}
     </div>
   );
 }

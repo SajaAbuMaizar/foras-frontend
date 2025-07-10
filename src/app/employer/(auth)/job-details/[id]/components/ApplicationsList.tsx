@@ -2,11 +2,13 @@
 
 import { useState, useEffect } from "react";
 import { JobApplicationResponse } from "@/types/JobApplicationResponse";
-import SimpleCandidateCard from "./SimpleCandidateCard";
+import { JobApplicationWithCandidate } from "@/types/JobApplicationWithCandidate";
+import CandidateCard from "./CandidateCard";
 import ExportActions from "./ExportActions";
 import { useEmployerTranslations } from "@/context/language/useEmployerTranslations";
 import { Users, Loader2 } from "lucide-react";
 import { getJobApplications } from "@/lib/api";
+import { mapJobApplicationToWithCandidate } from "@/utils/applicationMapper";
 
 interface ApplicationsListProps {
   jobId: string;
@@ -18,9 +20,9 @@ export default function ApplicationsList({
   jobTitle,
 }: ApplicationsListProps) {
   const t = useEmployerTranslations();
-  const [applications, setApplications] = useState<JobApplicationResponse[]>(
-    []
-  );
+  const [applications, setApplications] = useState<
+    JobApplicationWithCandidate[]
+  >([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,7 +33,8 @@ export default function ApplicationsList({
   const fetchApplications = async () => {
     try {
       const data = await getJobApplications(jobId);
-      setApplications(data);
+      const mappedApplications = data.map(mapJobApplicationToWithCandidate);
+      setApplications(mappedApplications);
     } catch (err) {
       setError(err instanceof Error ? err.message : "An error occurred");
     } finally {
@@ -83,13 +86,13 @@ export default function ApplicationsList({
           </span>
         </div>
 
-        {/* <ExportActions applications={applications} jobTitle={jobTitle} /> */}
+        <ExportActions applications={applications} jobTitle={jobTitle} />
       </div>
 
       {applications.length > 0 ? (
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid gap-6">
           {applications.map((application) => (
-            <SimpleCandidateCard
+            <CandidateCard
               key={application.id}
               application={application}
               onStatusChange={handleStatusChange}
@@ -98,7 +101,6 @@ export default function ApplicationsList({
         </div>
       ) : (
         <div className="text-center py-12">
-          <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <p className="text-gray-500 dark:text-gray-400">
             {t.jobDetails.noApplicantsYet}
           </p>

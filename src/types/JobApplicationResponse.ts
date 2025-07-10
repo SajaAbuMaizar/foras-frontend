@@ -4,6 +4,7 @@ export interface JobApplicationResponse {
   candidateId: string;
   candidateName: string;
   candidateEmail?: string;
+  candidateGender: "MALE" | "FEMALE";
   candidatePhone: string;
   candidateAvatar?: string;
   candidateLocation?: string;

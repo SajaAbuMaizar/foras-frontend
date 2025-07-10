@@ -303,6 +303,11 @@ const he = {
     myJobs: "המשרות שלי",
   },
 
+  gender: {
+    MALE: "זכר",
+    FEMALE: "נקבה",
+  },
+
   jobApplications,
 };
 

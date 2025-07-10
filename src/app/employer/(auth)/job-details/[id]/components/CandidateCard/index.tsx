@@ -35,8 +35,6 @@ export default function CandidateCard({
 
         <CandidateStatus
           status={application.status}
-          knowsHebrew={candidate.knowsHebrew}
-          needsHelp={candidate.needsHelp}
         />
 
         {candidate.skills.length > 0 && (

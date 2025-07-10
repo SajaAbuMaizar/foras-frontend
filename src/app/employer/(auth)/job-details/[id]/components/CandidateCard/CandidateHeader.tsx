@@ -5,6 +5,7 @@ import { useLanguage } from "@/context/language/LanguageContext";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
 import { ar, he } from "date-fns/locale";
+import { useEmployerTranslations } from "@/context/language/useEmployerTranslations";
 
 interface CandidateHeaderProps {
   name: string;
@@ -21,6 +22,7 @@ export default function CandidateHeader({
   avatarUrl,
   appliedAt,
 }: CandidateHeaderProps) {
+  const t = useEmployerTranslations().gender;
   const { lang } = useLanguage();
   const locale = lang === "ar" ? ar : he;
 
@@ -63,6 +65,15 @@ export default function CandidateHeader({
         <div>
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
             {name}
+            <span
+              className={`ml-2 rounded-full px-2 py-0.5 text-xs font-medium mr-2 ${
+                gender === "MALE"
+                  ? "bg-blue-100 text-blue-600 dark:bg-blue-900 dark:text-blue-300"
+                  : "bg-pink-100 text-pink-600 dark:bg-pink-900 dark:text-pink-300"
+              }`}
+            >
+              {t[gender]}
+            </span>
           </h3>
           <div className="flex items-center gap-4 text-sm text-gray-600 dark:text-gray-400">
             <div className="flex items-center gap-1">

@@ -11,8 +11,6 @@ export interface JobApplicationWithCandidate {
     phone: string;
     area: string;
     gender: "MALE" | "FEMALE";
-    knowsHebrew: boolean;
-    needsHelp: boolean;
     skills: string[];
     languages: string[];
     driverLicenses: string[];
